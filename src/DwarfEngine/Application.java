@@ -1,25 +1,28 @@
 package DwarfEngine;
+
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.io.IOException;
 
-
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.SimpleGraphics2D.Draw2D;
 
-public abstract class Engine extends Canvas implements Runnable {
+public abstract class Application extends Canvas implements Runnable {
 
     private static final long serialVersionUID = 1L;
     private static int FPS = 0;
     public static double deltaTime;
     public static double time;
     private static double startTime;
-    private int WindowWidth = 0; 
-    private int WindowHeight = 0;
+    private int FrameWidth = 0; 
+    private int FrameHeight = 0;
     public int scaleX = 0;
     public int scaleY = 0;
     public static String AppName = "Untitled"; 
@@ -35,14 +38,9 @@ public abstract class Engine extends Canvas implements Runnable {
     private BufferedImage image;
     private int[] pixels;
 
-    public static void PrintLn(Object msg) {
-		System.out.println(msg);
-	}
-    
-
     private boolean resizable = false;
     private boolean fullscreen = false;
-   
+    
     public void SetFullscreen() {
     	GameWindow.dispose();
     	if (!fullscreen) {
@@ -62,47 +60,18 @@ public abstract class Engine extends Canvas implements Runnable {
     public void SetResizable(boolean resizable) {
     	this.resizable = resizable;
     }
-    public void Construct(int width, int height) {
-    	WindowWidth = width;
-    	WindowHeight = height;
-    	if (fullscreen) {
-    		this.scaleX = getWidth() / width;
-    		this.scaleY = getHeight() / height;
-    		PrintLn(scaleX);
-    	}
-    	else {
-			this.scaleX = 1;
-			this.scaleY = 1;
-		}
-    	
-    	image = new BufferedImage(WindowWidth, WindowHeight, BufferedImage.TYPE_INT_RGB);
-    	pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-    	Dimension size = new Dimension(WindowWidth * scaleX, WindowHeight * scaleY);
-        setPreferredSize(size);
-        
-        screen = Screen.getInstance(WindowWidth, WindowHeight); 
-        Draw2D.screen = screen;
-        GameWindow = new JFrame();
-        
-        input = Input.GetInstance();
-        addKeyListener(input);
-        addMouseListener(input);
-        addMouseMotionListener(input);
-        
-        Start();
-    }
     public void Construct(int width, int height, int scale) {
-    	WindowWidth = width;
-    	WindowHeight = height;
+    	FrameWidth = width;
+    	FrameHeight = height;
     	this.scaleX = scale;
     	this.scaleY = scale;
     	
-    	image = new BufferedImage(WindowWidth, WindowHeight, BufferedImage.TYPE_INT_RGB);
+    	image = new BufferedImage(FrameWidth, FrameHeight, BufferedImage.TYPE_INT_RGB);
     	pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-    	Dimension size = new Dimension(WindowWidth * scaleX, WindowHeight * scaleY);
+    	Dimension size = new Dimension(FrameWidth * scaleX, FrameHeight * scaleY);
         setPreferredSize(size);
         
-        screen = Screen.getInstance(WindowWidth, WindowHeight); 
+        screen = Screen.getInstance(FrameWidth, FrameHeight); 
         Draw2D.screen = screen;
         GameWindow = new JFrame();
         
@@ -118,10 +87,25 @@ public abstract class Engine extends Canvas implements Runnable {
     		GameWindow.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(imagepath)));
     	}
     	catch (Exception e) {
-    		PrintLn("failed to load icon");
+    		Debug.println("failed to load icon");
 			return;
 		}
     }
+    public void saveImage(String directory) {
+    	File outputFile = new File(directory + "/render.png");
+    	int i = 1;
+    	while (outputFile.exists()) {
+    		outputFile = new File(directory + "/render" + i + ".png");
+    		i++;
+    	}
+    	try {
+			ImageIO.write(image, "png", outputFile);
+		} catch (IOException e) {
+			Debug.println("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
+			e.printStackTrace();
+		}
+    }
+    
     
     public abstract void OnStart(); 
     public abstract void OnUpdate();
@@ -134,7 +118,8 @@ public abstract class Engine extends Canvas implements Runnable {
         GameWindow.setLocationRelativeTo(null);
         GameWindow.setVisible(true);
         GameWindow.setResizable(resizable);
-        GameWindow.setBackground(Color.black);
+        Toolkit.getDefaultToolkit().setDynamicLayout(false);
+        GameWindow.getContentPane().setBackground(Color.black);
         
         Running = true;
         GameThread = new Thread(this, "Dwarf Engine Main Thread");
@@ -142,7 +127,7 @@ public abstract class Engine extends Canvas implements Runnable {
         startTime = System.currentTimeMillis();
         GameThread.start();
     }
-
+    
     public synchronized void Exit () {
         
         Running = false;
@@ -156,18 +141,18 @@ public abstract class Engine extends Canvas implements Runnable {
 
     public void run () {
         long lastTime = System.nanoTime();
-        double OneSecond = 0;
+        double fpsUpdateRate = 0;
         while (Running) {
             long now = System.nanoTime();
             deltaTime = (now - lastTime) / 1000000000.0;
             lastTime = now;
-            OneSecond += deltaTime;
-            if  (OneSecond >= 1) { 
+            fpsUpdateRate += deltaTime;
+            if  (fpsUpdateRate >= .5f) { 
                 FPS = (int) (1 / deltaTime);
                 // set the title to the current FPS
                 title = "Dwarf Engine - " + AppName + " | FPS: " + FPS;
                 GameWindow.setTitle(title);
-                OneSecond = 0;
+                fpsUpdateRate = 0;
             }
             time = (System.currentTimeMillis()-startTime)/1000;
             render();
@@ -177,14 +162,14 @@ public abstract class Engine extends Canvas implements Runnable {
     
     public Vector2 getWindowSize() {
     	
-    	return new Vector2(WindowWidth, WindowHeight);
+    	return new Vector2(FrameWidth, FrameHeight);
     }
     
     private void utility() {
-    	windowSize.x = WindowWidth;
-    	windowSize.y = WindowHeight;
+    	windowSize.x = FrameWidth;
+    	windowSize.y = FrameHeight;
     	OnUpdate();
-        input.SetDimensions(new Vector2(getWidth(), getHeight()), WindowWidth, WindowHeight);
+        input.SetDimensions(new Vector2(getWidth(), getHeight()), FrameWidth, FrameHeight);
     }
     
     public void clear(Color color) {
@@ -204,7 +189,7 @@ public abstract class Engine extends Canvas implements Runnable {
         }
 
         Graphics graphics = bufferStrategy.getDrawGraphics();
-        graphics.setColor(Color.black);
+        
         graphics.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         graphics.dispose();
         bufferStrategy.show();

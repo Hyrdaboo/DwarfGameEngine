@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import DwarfEngine.Engine;
+import DwarfEngine.Application;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
@@ -49,7 +49,7 @@ public final class Sprite {
 	}
 	
 	
-	protected int GetPixel(int x, int y) {
+	public int GetPixel(int x, int y) {
 		return pixels[x+y*width];
 	}
 }

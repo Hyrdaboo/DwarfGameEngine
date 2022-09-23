@@ -1,6 +1,6 @@
 package DwarfEngine.MathTypes;
 
-import DwarfEngine.Engine;
+import DwarfEngine.Application;
 
 public final class Vector2 {
 	public float x = 0;
@@ -17,8 +17,8 @@ public final class Vector2 {
 		angle *= Mathf.Deg2Rad;
 		float xTrans = point.x - pivot.x;
 		float yTrans = point.y - pivot.y;
-		float x = (float) (xTrans*Math.cos(angle) - yTrans*Math.sin(angle));
-		float y = (float) (xTrans*Math.sin(angle) + yTrans*Math.cos(angle));
+		float x = xTrans*Mathf.cos(angle) - yTrans*Mathf.sin(angle);
+		float y = xTrans*Mathf.sin(angle) + yTrans*Mathf.cos(angle);
 		x += pivot.x;
 		y += pivot.y;
 		return new Vector2(x, y);
@@ -47,9 +47,5 @@ public final class Vector2 {
 	
 	public Vector2 normalized() {
 		return new Vector2(x/magnitude(), y/magnitude());
-	}
-	
-	public void PrintVector() {
-		Engine.PrintLn(x + ", " + y);
 	}
 }

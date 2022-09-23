@@ -1,14 +1,22 @@
 package DwarfEngine.SimpleGraphics2D;
 
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.beans.VetoableChangeSupport;
+import java.lang.ProcessBuilder.Redirect;
+import java.net.CookieManager;
+import java.text.spi.DateFormatSymbolsProvider;
+import java.util.Iterator;
+import java.util.concurrent.Delayed;
 
-import DwarfEngine.Engine;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.plaf.ColorUIResource;
+import javax.xml.stream.events.StartDocument;
+
+import DwarfEngine.Application;
 import DwarfEngine.Screen;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
-import DwarfEngine.SimpleGraphics2D.Draw2D.SpriteDrawMode;
 
 public final class Draw2D {
 	public static Screen screen = null;
@@ -181,6 +189,13 @@ public final class Draw2D {
     	return highest;
     }
     
+    private static boolean pointInTriangle(Vector2 A, Vector2 B, Vector2 C, int x, int y) {
+    	float w1 = (A.x*(C.y-A.y) + (y - A.y)*(C.x-A.x) - x*(C.y-A.y)) / ((B.y - A.y)*(C.x - A.x) - (B.x-A.x)*(C.y-A.y)); 
+		float w2 = (y - A.y - w1*(B.y - A.y)) / (C.y-A.y);
+		
+		if (w1 >= 0 && w2 >= 0 && (w1+w2) <= 1) return true;
+		else return false;
+    }
     
     public static void FillTriangle(Vector2 A, Vector2 B, Vector2 C, Color color) {
     	float startX = minFrom3(A.x, B.x, C.x);
@@ -190,18 +205,12 @@ public final class Draw2D {
     	
     	startX = Math.max(startX, 0);
     	startY = Math.max(startY, 0);
-    	endX = Math.min(endX, Engine.windowSize.x-1);
-    	endY = Math.min(endY, Engine.windowSize.y-1);
+    	endX = Math.min(endX, Application.windowSize.x-1);
+    	endY = Math.min(endY, Application.windowSize.y-1);
     	
-    	//DrawRect(new Vector2(startX, startY), new Vector2(endX, endY), Color.blue);
     	for (int y = (int) startY; y < endY; y++) {
     		for (int x = (int) startX; x < endX; x++) {
-    			float w1 = (A.x*(C.y-A.y) + (y - A.y)*(C.x-A.x) - x*(C.y-A.y)) / ((B.y - A.y)*(C.x - A.x) - (B.x-A.x)*(C.y-A.y)); 
-    			float w2 = (y - A.y - w1*(B.y - A.y)) / (C.y-A.y);
-    			
-    			if (w1 >= 0 && w2 >= 0 && (w1+w2) <= 1) {
-    				SetPixel(x, y, color);
-    			}
+    			if (pointInTriangle(A, B, C, x, y)) SetPixel(x, y, color);
     		}
     	} 
     }  
@@ -226,6 +235,63 @@ public final class Draw2D {
     	return (rgb >> 24) & 0xFF;
     }
     
+    public static void DrawSpriteTransformed(Sprite s, Vector2 pos, float angle) {
+    	Vector2 center = new Vector2((s.width*s.scale.x)/2, (s.height*s.scale.y)/2);
+    	
+    	Matrix3x3 matCenterTrans;
+		Matrix3x3 matTrans;
+		Matrix3x3 matScale;
+		Matrix3x3 matRot;
+		Matrix3x3 matFinal = Matrix3x3.Identity();
+		Matrix3x3 matFinalInv;
+		
+		matTrans = Matrix3x3.Translate(new Vector2(-center.x, -center.y));
+		matRot = Matrix3x3.Rotate(angle);
+		matScale = Matrix3x3.Scale(s.scale);
+		
+		matCenterTrans = Matrix3x3.MatrixMultiply(matRot, matTrans);
+		matTrans = Matrix3x3.Translate(pos);
+		matFinal = Matrix3x3.MatrixMultiply(matTrans, matCenterTrans);
+		matFinal = Matrix3x3.MatrixMultiply(matFinal, matScale);
+		
+		matFinalInv = Matrix3x3.Invert(matFinal);
+		
+		
+		float sx, sy;
+		float ex, ey;
+		Vector2 p;
+		
+		p = Matrix3x3.Forward(matFinal, 0.0f, 0.0f);
+		sx = p.x; sy = p.y;
+		ex = p.x; ey = p.y;
+		
+		p = Matrix3x3.Forward(matFinal, (float)s.getWidth(), (float)s.getHeight());
+		sx = Math.min(sx, p.x); sy = Math.min(sy, p.y);
+		ex = Math.max(ex, p.x); ey = Math.max(ey, p.y);
+		
+		p = Matrix3x3.Forward(matFinal, 0.0f, (float)s.getHeight());
+		sx = Math.min(sx, p.x); sy = Math.min(sy, p.y);
+		ex = Math.max(ex, p.x); ey = Math.max(ey, p.y);
+		
+		p = Matrix3x3.Forward(matFinal, (float)s.getWidth(), 0.0f);
+		sx = Math.min(sx, p.x); sy = Math.min(sy, p.y);
+		ex = Math.max(ex, p.x); ey = Math.max(ey, p.y);
+		
+		//Draw2D.DrawRect(new Vector2(sx-1, sy-1), new Vector2(ex-sx, ey-sy), Color.green);
+		
+		for (int x = (int) sx; x < ex; x++) {
+			for (int y = (int) sy; y < ey; y++) {
+				Vector2 newPos = Matrix3x3.Forward(matFinalInv, (float)x, (float)y);
+				
+				int px = (int)(newPos.x+0.5f);
+				int py = (int)(newPos.y+0.5f);
+				if (px < 0 || px >= s.getWidth() || py < 0 || py >= s.getHeight()) continue;
+				int rgb = s.GetPixel(px, py);
+				Draw2D.SetPixel(x, y, new Color(rgb));
+			}
+		}
+    }
+    
     public static void DrawSprite(Sprite s, Vector2 pos) {
     	if (s == null) return;
     	int w = (int) (s.width*s.scale.x);
@@ -235,7 +301,8 @@ public final class Draw2D {
     		for (int x = 0; x < w; x++) {
     			int px = (int)(x+pos.x);
     			int py = (int)(y+pos.y);
-    			if (px > Engine.windowSize.x || px < 0 || py > Engine.windowSize.y || py < 0) continue;
+    			
+    			if (px > Application.windowSize.x || px < 0 || py > Application.windowSize.y || py < 0) continue;
     			
     			float xLerp = Mathf.Lerp(0, s.width, (float)x/w);
     			float yLerp = Mathf.Lerp(0, s.height, (float)y/h);
@@ -250,7 +317,7 @@ public final class Draw2D {
     			if (drawMode.equals(SpriteDrawMode.transparent) && c.getAlpha() == 0) continue;
     			SetPixel(px, py, c);
     		}
-    	}
+    	} 	
     }
     
     public static void DrawSprite(SpriteSheet sheet, Vector2 pos, int x, int y) {
@@ -263,7 +330,7 @@ public final class Draw2D {
     		for (int i = 0; i < w; i++) {
     			int px = i+(int)pos.x;
     			int py = j+(int)pos.y;
-    			if (px > Engine.windowSize.x || px < 0 || py > Engine.windowSize.y || py < 0) continue;
+    			if (px > Application.windowSize.x || px < 0 || py > Application.windowSize.y || py < 0) continue;
     			
     			float xLerp = Mathf.Lerp(0, sheet.spriteWidth, (float)i/w);
     			float yLerp = Mathf.Lerp(0, sheet.spriteHeight, (float)j/h);

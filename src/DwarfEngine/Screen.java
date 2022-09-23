@@ -1,6 +1,8 @@
 package DwarfEngine;
+
 import java.awt.Color;
 import java.util.Arrays;
+
 public class Screen {
     private int width;
     private int height;

@@ -1,7 +1,5 @@
 package DwarfEngine.MathTypes;
 
-import java.security.PublicKey;
-
 public final class Matrix4x4 {
 	private float matrix[][];
 	
@@ -53,15 +51,17 @@ public final class Matrix4x4 {
 		return out;
 	}
 	
-	public static Matrix4x4 ProjectionMatrix(float fov, float aspectRatio, float near, float far) {
-		Matrix4x4 projectionMatrix = new Matrix4x4();
-		projectionMatrix.matrix[0][0] = aspectRatio * fov;
-		projectionMatrix.matrix[1][1] = fov;
+	public static void ProjectionMatrix(float fov, float aspectRatio, float near, float far, Matrix4x4 projectionMatrix) {
+		fov = Mathf.Clamp(fov, 1, 179);
+		
+		float fovRad = 1.0f / Mathf.tan(fov * 0.5f * Mathf.Deg2Rad);
+
+		projectionMatrix.matrix[0][0] = aspectRatio * fovRad;
+		projectionMatrix.matrix[1][1] = fovRad;
 		projectionMatrix.matrix[2][2] = far / (far - near);
-		projectionMatrix.matrix[2][3] = (-far * near) / (far - near);
-		projectionMatrix.matrix[3][2] = 1.0f;
+		projectionMatrix.matrix[2][3] = 1.0f;
+		projectionMatrix.matrix[3][2] = (-far * near) / (far - near);
 		projectionMatrix.matrix[3][3] = 0.0f; 
-		return projectionMatrix;
 	}
 	
 	public void makeTranslation(Vector3 pos) {
@@ -76,27 +76,27 @@ public final class Matrix4x4 {
 	
 	public void rotateAroundX(float angleRad) {
 		matrix[0][0] = 1;
-		matrix[1][1] = (float) Math.cos(angleRad);
-		matrix[1][2] = (float) Math.sin(angleRad);
-		matrix[2][1] = (float) -Math.sin(angleRad);
-		matrix[2][2] = (float) Math.cos(angleRad);
+		matrix[1][1] = Mathf.cos(angleRad);
+		matrix[1][2] = Mathf.sin(angleRad);
+		matrix[2][1] = -Mathf.sin(angleRad);
+		matrix[2][2] = Mathf.cos(angleRad);
 		matrix[3][3] = 1;
 	}
 	
 	public void rotateAroundY(float angleRad) {
-		matrix[0][0] = (float) Math.cos(angleRad);
-		matrix[0][2] = (float) Math.sin(angleRad);
-		matrix[2][0] = (float) -Math.sin(angleRad);
+		matrix[0][0] = Mathf.cos(angleRad);
+		matrix[0][2] = Mathf.sin(angleRad);
 		matrix[1][1] = 1;
-		matrix[2][2] = (float) Math.cos(angleRad);
+		matrix[2][0] = -Mathf.sin(angleRad);
+		matrix[2][2] = Mathf.cos(angleRad);
 		matrix[3][3] = 1;
 	}
 	
 	public void rotateAroundZ(float angleRad) {
-		matrix[0][0] = (float) Math.cos(angleRad);
-		matrix[0][1] = (float) Math.sin(angleRad);
-		matrix[1][0] = (float) -Math.sin(angleRad);
-		matrix[1][1] = (float) Math.cos(angleRad);
+		matrix[0][0] = Mathf.cos(angleRad);
+		matrix[0][1] = Mathf.sin(angleRad);
+		matrix[1][0] = -Mathf.sin(angleRad);
+		matrix[1][1] = Mathf.cos(angleRad);
 		matrix[2][2] = 1;
 		matrix[3][3] = 1;
 	}

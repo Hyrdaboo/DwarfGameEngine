@@ -13,8 +13,10 @@ public enum Keycode {
 	 Space(32),
 	 LeftShift(16),
 	 LeftCtrl(17),
-	 F11(122),
+	 LefrAlt(18),
+	 F1(112),
 	 F3(114),
+	 F11(122),
 	 Escape(27);
 	 
 	private final int num;

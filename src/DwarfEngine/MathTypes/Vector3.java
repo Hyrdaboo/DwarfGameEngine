@@ -1,14 +1,18 @@
 package DwarfEngine.MathTypes;
 
-import DwarfEngine.Engine;
+import DwarfEngine.Application;
 
 public final class Vector3 {
 	public float x = 0;
 	public float y = 0;
 	public float z = 0;
 	
-	public static final Vector3 zero = new Vector3(0, 0, 0);
-	public static final Vector3 one = new Vector3(1, 1, 1);
+	public static Vector3 zero() {
+		return new Vector3(0, 0, 0);
+	}
+	public static Vector3 one() {
+		return new Vector3(1, 1, 1);
+	}
 	
 	public Vector3(float x, float y, float z) {
 		this.x = x;
@@ -17,9 +21,6 @@ public final class Vector3 {
 		
 	}
 	
-	public void PrintVector() {
-		Engine.PrintLn(x + ", " + y + ", " + z);
-	}
 	public void addTo(Vector3 vec) {
 		x += vec.x;
 		y += vec.y;
@@ -47,9 +48,6 @@ public final class Vector3 {
 	}
 	public static Vector3 mulVecFloat(Vector3 vec, float num) {
 		return new Vector3(vec.x*num, vec.y*num, vec.z*num);
-	}
-	public static Vector3 mul2Vecs(Vector3 vec1, Vector3 vec2) {
-		return new Vector3(vec1.x*vec2.x, vec1.y*vec2.y, vec1.z*vec2.z);
 	}
 	public static Vector3 div2Vecs(Vector3 vec1, Vector3 vec2) {
 		return new Vector3(vec1.x/vec2.x, vec1.y/vec2.y, vec1.z/vec2.z);

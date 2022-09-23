@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import DwarfEngine.Engine;
+import DwarfEngine.Application;
+import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Mathf;
@@ -28,14 +29,14 @@ class Tile {
 	
 	public void DrawTile () {
 		if (sprite == null) {
-			Engine.PrintLn("Sprite is null");
+			Debug.println("Sprite is null");
 			return;
 		}
 		Draw2D.DrawSprite(sprite, new Vector2(x*sprite.getWidth(), y*sprite.getHeight()));
 	}
 }
 
-class Tetris extends Engine {
+class Tetris extends Application {
 	private static final long serialVersionUID = 1L;
 	
 	private Tile[] tiles;
@@ -153,7 +154,6 @@ class Tetris extends Engine {
 			gameOver(true);
 		}
 		ty = 0;
-		PrintLn(selectedColor);
 		for (Vector2 v : tetromino) {
 			fallenBlocks.add(v);
 			fallenBlockColors.putIfAbsent(v, selectedColor);
