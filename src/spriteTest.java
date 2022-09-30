@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.io.File;
 
 import DwarfEngine.Application;
 import DwarfEngine.Debug;
