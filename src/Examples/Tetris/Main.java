@@ -99,6 +99,7 @@ class Tetris extends Application {
 	private Vector2[][] allTetrominos = new Vector2[][]{T, square, straight, z, reverseZ, L, reverseL};
 	private int[] randRotation = {0, 90, 180, 270};
 	
+	public int score = 0;
 	public void OnStart() {
 	    w = (int) getWindowSize().x;
 		h = (int) getWindowSize().y;
@@ -180,6 +181,7 @@ class Tetris extends Application {
 						if ((int)fallenBlocks.get(i).y == y) {
 							fallenBlockColors.remove(fallenBlocks.get(i));
 							fallenBlocks.remove(i);
+							score += 10;
 						}
 					}
 				}
@@ -189,6 +191,7 @@ class Tetris extends Application {
 					}
 				}
 				destroy = false;
+				Debug.println(score);
 			}
 		}
 	}
@@ -299,6 +302,7 @@ class Tetris extends Application {
 	private void gameOver(boolean end) {
 		gameIsOver = end;
 		fallenBlocks.clear();
+		if (end) Debug.println("GAME OVER! SCORE: " + score);
 	}
 }
 

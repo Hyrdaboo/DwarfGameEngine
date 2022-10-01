@@ -36,6 +36,10 @@ public final class Matrix4x4 {
 		return mat;
 	}
  	
+	/**
+	 * Note that this method does a perspective divide on all 3 axes.
+	 *
+	 **/
 	public Vector3 MultiplyByVector(Vector3 vec) {
 		Vector3 out = new Vector3(0, 0, 0);
 		out.x = vec.x*matrix[0][0] + vec.y*matrix[1][0] + vec.z*matrix[2][0] + matrix[3][0];
@@ -74,7 +78,7 @@ public final class Matrix4x4 {
 		matrix[3][2] = pos.z;
 	}
 	
-	public void rotateAroundX(float angleRad) {
+	public void xRotation(float angleRad) {
 		matrix[0][0] = 1;
 		matrix[1][1] = Mathf.cos(angleRad);
 		matrix[1][2] = Mathf.sin(angleRad);
@@ -83,7 +87,7 @@ public final class Matrix4x4 {
 		matrix[3][3] = 1;
 	}
 	
-	public void rotateAroundY(float angleRad) {
+	public void yRotation(float angleRad) {
 		matrix[0][0] = Mathf.cos(angleRad);
 		matrix[0][2] = Mathf.sin(angleRad);
 		matrix[1][1] = 1;
@@ -92,12 +96,18 @@ public final class Matrix4x4 {
 		matrix[3][3] = 1;
 	}
 	
-	public void rotateAroundZ(float angleRad) {
+	public void zRotation(float angleRad) {
 		matrix[0][0] = Mathf.cos(angleRad);
 		matrix[0][1] = Mathf.sin(angleRad);
 		matrix[1][0] = -Mathf.sin(angleRad);
 		matrix[1][1] = Mathf.cos(angleRad);
 		matrix[2][2] = 1;
+		matrix[3][3] = 1;
+	}
+	public void scaleMatrix(Vector3 scale) {
+		matrix[0][0] = scale.x;
+		matrix[1][1] = scale.y;
+		matrix[2][2] = scale.z;
 		matrix[3][3] = 1;
 	}
 	
@@ -119,6 +129,9 @@ public final class Matrix4x4 {
 		return mat;
 	}
 	
+	/**
+	 * Only for Rotation/Translation Matrices. Copied from Javidx9 like most of the other functions :)
+	 * */
 	public static Matrix4x4 inverseMatrix(Matrix4x4 mat) {
 		Matrix4x4 inversed = new Matrix4x4();
 		inversed.matrix[0][0] = mat.matrix[0][0]; inversed.matrix[0][1] = mat.matrix[1][0]; inversed.matrix[0][2] = mat.matrix[2][0]; inversed.matrix[0][3] = 0.0f;
@@ -129,14 +142,5 @@ public final class Matrix4x4 {
 		inversed.matrix[3][2] = -(mat.matrix[3][0] * inversed.matrix[0][2] + mat.matrix[3][1] * inversed.matrix[1][2] + mat.matrix[3][2] * inversed.matrix[2][2]);
 		inversed.matrix[3][3] = 1.0f;
 		return inversed;
-	}
-	
-	public void PrintMatrix() {
-		for (int y = 0; y < 4; y++) {
-			for (int x = 0; x < 4; x++) {
-				System.out.print(matrix[x][y] + ", ");
-			}
-			System.out.println("\n");
-		}
 	}
 }

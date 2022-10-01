@@ -5,7 +5,10 @@ import java.util.List;
 
 import DwarfEngine.Application;
 import DwarfEngine.Debug;
+import DwarfEngine.Input;
+import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
@@ -51,6 +54,7 @@ class demo3d extends Application {
 	private Matrix4x4 rotationX = Matrix4x4.identityMatrix();
 	private Matrix4x4 rotationY = Matrix4x4.identityMatrix();
 	private Matrix4x4 rotationZ = Matrix4x4.identityMatrix(); 
+	private Matrix4x4 scaleMatrix = Matrix4x4.identityMatrix();
 	
 	Mesh mesh;
 	Camera camera;
@@ -87,8 +91,9 @@ class demo3d extends Application {
 	
 	Vector3 camPos = new Vector3(0, 0, 0);
 	Vector3 lightDir = new Vector3(0, 0, 1);
-	Vector3 eulerAngles = new Vector3(1, 215, 0);
-	Vector3 position = new Vector3(-.5f*0, -.5f*0, 2.5f);
+	Vector3 position = new Vector3(0, 0, 2.5f);
+	Vector3 eulerAngles = new Vector3(1, 215*0, 0);
+	Vector3 scale = new Vector3(1, 1, 1);
 	
 	Color objectColor = new Color(102, 51, 47);
 	Color ambientLight = new Color(.25f*1, .25f*1, .25f*1);
@@ -100,7 +105,7 @@ class demo3d extends Application {
 			}
 		}*/
 		//eulerAngles.x += deltaTime*30;
-		//eulerAngles.y += deltaTime*25;
+		if (Input.OnKeyHeld(Keycode.Space)) eulerAngles.y += deltaTime*45;
 		//eulerAngles.z += deltaTime*35;
 		
 		Vector2 windowSize = new Vector2(getWidth()/scaleX, getHeight()/scaleY);
@@ -108,12 +113,14 @@ class demo3d extends Application {
 		
 		Matrix4x4.ProjectionMatrix(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
 		translation.makeTranslation(position);
-		rotationX.rotateAroundX(eulerAngles.x * Mathf.Deg2Rad);
-		rotationY.rotateAroundY(eulerAngles.y * Mathf.Deg2Rad);
-		rotationZ.rotateAroundZ(eulerAngles.z * Mathf.Deg2Rad);
+		rotationX.xRotation(eulerAngles.x * Mathf.Deg2Rad);
+		rotationY.yRotation(eulerAngles.y * Mathf.Deg2Rad);
+		rotationZ.zRotation(eulerAngles.z * Mathf.Deg2Rad);
+		scaleMatrix.scaleMatrix(scale);
 		
 		worldMatrix = Matrix4x4.identityMatrix();
 		tranformMatrix = Matrix4x4.identityMatrix();
+		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, scaleMatrix);
 		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationX);
 		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationY);
 		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationZ);
@@ -177,6 +184,9 @@ class demo3d extends Application {
 			Draw2D.FillTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
 					new Vector2(projected.points[1].x, projected.points[1].y),
 					new Vector2(projected.points[2].x, projected.points[2].y), projected.color);
+			/*Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
+					new Vector2(projected.points[1].x, projected.points[1].y),
+					new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);*/
 		}
 	}
 	
