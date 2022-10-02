@@ -13,6 +13,15 @@ public final class Vector3 {
 	public static Vector3 one() {
 		return new Vector3(1, 1, 1);
 	}
+	public static Vector3 up() {
+		return new Vector3(0, 1, 0);
+	}
+	public static Vector3 forward() {
+		return new Vector3(0, 0, 1);
+	}
+	public static Vector3 right() {
+		return new Vector3(1, 0, 0);
+	}
 	
 	public Vector3(float x, float y, float z) {
 		this.x = x;
@@ -75,6 +84,7 @@ public final class Vector3 {
 		z /= magnitude();
 	}
 	public Vector3 normalized() {
-		return new Vector3(x/magnitude(), y/magnitude(), z/magnitude());
+		float mag = magnitude();
+		return mag == 0 ? Vector3.zero() : new Vector3(x/mag, y/mag, z/mag);
 	}
 }

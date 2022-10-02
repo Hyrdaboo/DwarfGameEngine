@@ -8,7 +8,6 @@ import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Mathf;
-import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
@@ -16,6 +15,7 @@ import DwarfEngine.SimpleGraphics2D.Draw2D;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
+import Renderer3D.Transform;
 
 
 class Triangle {
@@ -46,15 +46,9 @@ class Triangle {
 
 @SuppressWarnings("serial")
 class demo3d extends Application {
-	
-	private Matrix4x4 worldMatrix = Matrix4x4.identityMatrix();
-	private Matrix4x4 tranformMatrix = Matrix4x4.identityMatrix();
+
 	private Matrix4x4 projectionMatrix = new Matrix4x4();
-	private Matrix4x4 translation = Matrix4x4.identityMatrix();
-	private Matrix4x4 rotationX = Matrix4x4.identityMatrix();
-	private Matrix4x4 rotationY = Matrix4x4.identityMatrix();
-	private Matrix4x4 rotationZ = Matrix4x4.identityMatrix(); 
-	private Matrix4x4 scaleMatrix = Matrix4x4.identityMatrix();
+	private Transform objectTransform = new Transform();
 	
 	Mesh mesh;
 	Camera camera;
@@ -67,7 +61,7 @@ class demo3d extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//mesh = Mesh.MakeCube();
+		mesh = Mesh.MakeCube();
 		InitMesh(mesh);
 		
 		camera = new Camera();
@@ -89,44 +83,104 @@ class demo3d extends Application {
 		}
 	}
 	
-	Vector3 camPos = new Vector3(0, 0, 0);
+	Vector3 camPos = new Vector3(0, 0, -5);
+	Vector3 camRot = new Vector3(0, 0, 0);
+	Vector3 camRight = Vector3.right();
+	Vector3 camUp = Vector3.up();
+	Vector3 camForw = Vector3.forward();
+	
 	Vector3 lightDir = new Vector3(0, 0, 1);
-	Vector3 position = new Vector3(0, 0, 2.5f);
-	Vector3 eulerAngles = new Vector3(1, 215*0, 0);
-	Vector3 scale = new Vector3(1, 1, 1);
 	
 	Color objectColor = new Color(102, 51, 47);
 	Color ambientLight = new Color(.25f*1, .25f*1, .25f*1);
+	boolean wireframe = false;
 	public void OnUpdate() {
 		clear(Color.black);
-		/*for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				Draw2D.SetPixel(x, y, new Color((float)x/getWidth(), (float)y/getHeight(), 1));
-			}
-		}*/
-		//eulerAngles.x += deltaTime*30;
-		if (Input.OnKeyHeld(Keycode.Space)) eulerAngles.y += deltaTime*45;
-		//eulerAngles.z += deltaTime*35;
+		
+		
+		float speed = 10;
+		float lookSpeed = 100;
+		if (Input.OnKeyHeld(Keycode.W)) {
+			Vector3 forward = Vector3.mulVecFloat(camForw, speed*(float)deltaTime);
+			camPos = Vector3.add2Vecs(camPos, forward);
+		}
+		if (Input.OnKeyHeld(Keycode.S)) {
+			Vector3 forward = Vector3.mulVecFloat(camForw, -speed*(float)deltaTime);
+			camPos = Vector3.add2Vecs(camPos, forward);
+		}
+		if (Input.OnKeyHeld(Keycode.A)) {
+			Vector3 right = Vector3.mulVecFloat(camRight, -speed*(float)deltaTime);
+			camPos = Vector3.add2Vecs(camPos, right);
+			Debug.Log(right);
+		}
+		if (Input.OnKeyHeld(Keycode.D)) {
+			Vector3 right = Vector3.mulVecFloat(camRight, speed*(float)deltaTime);
+			camPos = Vector3.add2Vecs(camPos, right);
+		}
+		
+		if (Input.OnKeyHeld(Keycode.Q)) {
+			camPos.y += deltaTime * speed;
+		}
+		if (Input.OnKeyHeld(Keycode.E)) {
+			camPos.y -= deltaTime * speed;
+		}
+		// rotate camera
+		if (Input.OnKeyHeld(Keycode.I)) {
+			camRot.x -= deltaTime * lookSpeed;
+		}
+		if (Input.OnKeyHeld(Keycode.J)) {
+			camRot.y += deltaTime * lookSpeed;
+		}
+		if (Input.OnKeyHeld(Keycode.K)) {
+			camRot.x += deltaTime * lookSpeed;
+		}
+		if (Input.OnKeyHeld(Keycode.L)) {
+			camRot.y -= deltaTime * lookSpeed;
+		}
+		if (Input.OnKeyHeld(Keycode.U)) {
+			camRot.z -= deltaTime * lookSpeed;
+		}
+		if (Input.OnKeyHeld(Keycode.O)) {
+			camRot.z += deltaTime * lookSpeed;
+		}
+		
+		objectTransform.position.z = 2;
+		//objectTransform.rotation.y = 15;
+		//objectTransform.rotation.x += deltaTime * 40;
+		//objectTransform.rotation.y += deltaTime * 50;
+		//objectTransform.rotation.z += deltaTime * 60;
 		
 		Vector2 windowSize = new Vector2(getWidth()/scaleX, getHeight()/scaleY);
 		float aspectRatio = windowSize.y/windowSize.x;
 		
 		Matrix4x4.ProjectionMatrix(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
-		translation.makeTranslation(position);
-		rotationX.xRotation(eulerAngles.x * Mathf.Deg2Rad);
-		rotationY.yRotation(eulerAngles.y * Mathf.Deg2Rad);
-		rotationZ.zRotation(eulerAngles.z * Mathf.Deg2Rad);
-		scaleMatrix.scaleMatrix(scale);
+		Matrix4x4 tranformMatrix = objectTransform.getTransformMatrix();
 		
-		worldMatrix = Matrix4x4.identityMatrix();
-		tranformMatrix = Matrix4x4.identityMatrix();
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, scaleMatrix);
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationX);
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationY);
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, rotationZ);
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, translation);
-		tranformMatrix = Matrix4x4.matrixMultiplyMatrix(tranformMatrix, worldMatrix);
-		worldMatrix = Matrix4x4.matrixMultiplyMatrix(worldMatrix, projectionMatrix);
+		Vector3 targetRight = Vector3.right();
+		Vector3 targetUp = Vector3.up();
+		Vector3 targetForward = Vector3.forward();
+		
+		// perform camera matrix rotations
+		Matrix4x4 camRotX = Matrix4x4.identityMatrix();
+		Matrix4x4 camRotY = Matrix4x4.identityMatrix();
+		Matrix4x4 camRotZ = Matrix4x4.identityMatrix();
+		camRotX.xRotation(camRot.x*Mathf.Deg2Rad);
+		camRotY.yRotation(camRot.y*Mathf.Deg2Rad);
+		camRotZ.zRotation(camRot.z*Mathf.Deg2Rad);
+		
+		Matrix4x4 combinedRotation = Matrix4x4.matrixMultiplyMatrix(camRotX, camRotY);
+		combinedRotation = Matrix4x4.matrixMultiplyMatrix(combinedRotation, camRotZ);
+		
+		camRight = combinedRotation.MultiplyByVector(targetRight);
+		camUp = combinedRotation.MultiplyByVector(targetUp);
+		camForw = combinedRotation.MultiplyByVector(targetForward);
+		
+		targetForward = Vector3.add2Vecs(camPos, camForw);
+		Matrix4x4 cameraMatrix = Matrix4x4.MatrixPointAt(camPos, targetForward, Vector3.up());
+		Matrix4x4 viewMatrix = Matrix4x4.inverseMatrix(cameraMatrix);
+		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(tranformMatrix, viewMatrix);
+		Matrix4x4 worldMatrix = Matrix4x4.matrixMultiplyMatrix(cameraObjectCombined, projectionMatrix);
+		
 		
 		List<Triangle> trianglesToRaster = new ArrayList<Triangle>();
 		for (Triangle t : triangles) {
@@ -140,8 +194,8 @@ class demo3d extends Application {
 			
 			Vector3 normal = surfaceNormalFromIndices(transformed.points[0], transformed.points[1], transformed.points[2]);
 			Vector3 dirToCamera = Vector3.subtract2Vecs(camPos, transformed.points[0]).normalized();
-			
-			// back culling
+						
+			// backface culling
 			if (Vector3.Dot(normal, dirToCamera) < 0.0f) continue;
 			
 			float intensity = Vector3.Dot(normal, Vector3.mulVecFloat(lightDir.normalized(), -1));
@@ -181,12 +235,15 @@ class demo3d extends Application {
 		});
 		
 		for (Triangle projected : trianglesToRaster) {
-			Draw2D.FillTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
+			if (!wireframe) {
+				Draw2D.FillTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
+						new Vector2(projected.points[1].x, projected.points[1].y),
+						new Vector2(projected.points[2].x, projected.points[2].y), projected.color); 
+				continue;
+			}
+			Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
 					new Vector2(projected.points[1].x, projected.points[1].y),
-					new Vector2(projected.points[2].x, projected.points[2].y), projected.color);
-			/*Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
-					new Vector2(projected.points[1].x, projected.points[1].y),
-					new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);*/
+					new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);
 		}
 	}
 	

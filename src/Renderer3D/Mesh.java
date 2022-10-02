@@ -2,7 +2,7 @@ package Renderer3D;
 
 import DwarfEngine.MathTypes.Vector3;
 
-public class Mesh {
+public final class Mesh {
 	public Vector3[] vertices;
 	public int[] triangles;
 	
