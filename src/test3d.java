@@ -61,7 +61,7 @@ class demo3d extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		mesh = Mesh.MakeCube();
+		//mesh = Mesh.MakeCube();
 		InitMesh(mesh);
 		
 		camera = new Camera();
@@ -92,11 +92,10 @@ class demo3d extends Application {
 	Vector3 lightDir = new Vector3(0, 0, 1);
 	
 	Color objectColor = new Color(102, 51, 47);
-	Color ambientLight = new Color(.25f*1, .25f*1, .25f*1);
+	Color ambientLight = new Color(.35f*1, .35f*1, .35f*1);
 	boolean wireframe = false;
 	public void OnUpdate() {
 		clear(Color.black);
-		
 		
 		float speed = 10;
 		float lookSpeed = 100;
@@ -111,11 +110,14 @@ class demo3d extends Application {
 		if (Input.OnKeyHeld(Keycode.A)) {
 			Vector3 right = Vector3.mulVecFloat(camRight, -speed*(float)deltaTime);
 			camPos = Vector3.add2Vecs(camPos, right);
-			Debug.Log(right);
+			
+			//camPos.x -= speed * deltaTime; 
 		}
 		if (Input.OnKeyHeld(Keycode.D)) {
 			Vector3 right = Vector3.mulVecFloat(camRight, speed*(float)deltaTime);
 			camPos = Vector3.add2Vecs(camPos, right);
+			
+			//camPos.x += speed * deltaTime;
 		}
 		
 		if (Input.OnKeyHeld(Keycode.Q)) {
@@ -160,23 +162,24 @@ class demo3d extends Application {
 		Vector3 targetUp = Vector3.up();
 		Vector3 targetForward = Vector3.forward();
 		
-		// perform camera matrix rotations
+		// perform camera rotations
 		Matrix4x4 camRotX = Matrix4x4.identityMatrix();
 		Matrix4x4 camRotY = Matrix4x4.identityMatrix();
 		Matrix4x4 camRotZ = Matrix4x4.identityMatrix();
 		camRotX.xRotation(camRot.x*Mathf.Deg2Rad);
 		camRotY.yRotation(camRot.y*Mathf.Deg2Rad);
 		camRotZ.zRotation(camRot.z*Mathf.Deg2Rad);
-		
-		Matrix4x4 combinedRotation = Matrix4x4.matrixMultiplyMatrix(camRotX, camRotY);
-		combinedRotation = Matrix4x4.matrixMultiplyMatrix(combinedRotation, camRotZ);
-		
+	
+		Matrix4x4 combinedRotation = Matrix4x4.matrixMultiplyMatrix(camRotZ, camRotX);	
+		combinedRotation = Matrix4x4.matrixMultiplyMatrix(combinedRotation, camRotY);
+
+		// camera direction vectors. Forward is used for pointing
 		camRight = combinedRotation.MultiplyByVector(targetRight);
 		camUp = combinedRotation.MultiplyByVector(targetUp);
 		camForw = combinedRotation.MultiplyByVector(targetForward);
 		
 		targetForward = Vector3.add2Vecs(camPos, camForw);
-		Matrix4x4 cameraMatrix = Matrix4x4.MatrixPointAt(camPos, targetForward, Vector3.up());
+		Matrix4x4 cameraMatrix = Matrix4x4.MatrixPointAt(camPos, targetForward, camUp);
 		Matrix4x4 viewMatrix = Matrix4x4.inverseMatrix(cameraMatrix);
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(tranformMatrix, viewMatrix);
 		Matrix4x4 worldMatrix = Matrix4x4.matrixMultiplyMatrix(cameraObjectCombined, projectionMatrix);

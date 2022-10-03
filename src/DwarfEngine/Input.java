@@ -41,6 +41,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		}
 		return false;
 	}
+	//TODO heldKeys.get(i) returns null sometimes. Deal with it
 	public static boolean OnKeyHeld(Keycode e) {
 		for (int i = 0; i < heldKeys.size(); i++) {
 			if (heldKeys.get(i) == e.GetKeyCode()) {
