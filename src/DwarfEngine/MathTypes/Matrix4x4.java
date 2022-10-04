@@ -89,9 +89,9 @@ public final class Matrix4x4 {
 	
 	public void yRotation(float angleRad) {
 		matrix[0][0] = Mathf.cos(angleRad);
-		matrix[0][2] = Mathf.sin(angleRad);
+		matrix[0][2] = -Mathf.sin(angleRad);
 		matrix[1][1] = 1;
-		matrix[2][0] = -Mathf.sin(angleRad);
+		matrix[2][0] = Mathf.sin(angleRad);
 		matrix[2][2] = Mathf.cos(angleRad);
 		matrix[3][3] = 1;
 	}

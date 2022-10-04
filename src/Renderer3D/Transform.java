@@ -25,9 +25,9 @@ public class Transform {
 		
 		transformMatrix = Matrix4x4.identityMatrix();
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, scaleMatrix);
+		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, rotationZ);
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, rotationX);
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, rotationY);
-		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, rotationZ);
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, translation);
 		
 		return transformMatrix;

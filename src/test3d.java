@@ -83,7 +83,7 @@ class demo3d extends Application {
 		}
 	}
 	
-	Vector3 camPos = new Vector3(0, 0, -5);
+	Vector3 camPos = new Vector3(0, 0, -3);
 	Vector3 camRot = new Vector3(0, 0, 0);
 	Vector3 camRight = Vector3.right();
 	Vector3 camUp = Vector3.up();
@@ -131,13 +131,13 @@ class demo3d extends Application {
 			camRot.x -= deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.J)) {
-			camRot.y += deltaTime * lookSpeed;
+			camRot.y -= deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.K)) {
 			camRot.x += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.L)) {
-			camRot.y -= deltaTime * lookSpeed;
+			camRot.y += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.U)) {
 			camRot.z -= deltaTime * lookSpeed;
@@ -146,11 +146,12 @@ class demo3d extends Application {
 			camRot.z += deltaTime * lookSpeed;
 		}
 		
-		objectTransform.position.z = 2;
-		//objectTransform.rotation.y = 15;
-		//objectTransform.rotation.x += deltaTime * 40;
-		//objectTransform.rotation.y += deltaTime * 50;
-		//objectTransform.rotation.z += deltaTime * 60;
+		//objectTransform.position.z = 2;
+		objectTransform.rotation.y = 215;
+		//objectTransform.rotation.x -= deltaTime * 50;
+		//objectTransform.scale.x = 2;
+		//objectTransform.rotation.y -= deltaTime * 50;
+		//objectTransform.rotation.z -= deltaTime * 50;
 		
 		Vector2 windowSize = new Vector2(getWidth()/scaleX, getHeight()/scaleY);
 		float aspectRatio = windowSize.y/windowSize.x;
