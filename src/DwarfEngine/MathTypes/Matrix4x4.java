@@ -78,31 +78,48 @@ public final class Matrix4x4 {
 		matrix[3][2] = pos.z;
 	}
 	
-	public void xRotation(float angleRad) {
-		matrix[0][0] = 1;
-		matrix[1][1] = Mathf.cos(angleRad);
-		matrix[1][2] = Mathf.sin(angleRad);
-		matrix[2][1] = -Mathf.sin(angleRad);
-		matrix[2][2] = Mathf.cos(angleRad);
-		matrix[3][3] = 1;
+	public static Matrix4x4 xRotation(float angleRad) {
+		Matrix4x4 m = new Matrix4x4();
+		m.matrix[0][0] = 1;
+		m.matrix[1][1] = Mathf.cos(angleRad);
+		m.matrix[1][2] = Mathf.sin(angleRad);
+		m.matrix[2][1] = -Mathf.sin(angleRad);
+		m.matrix[2][2] = Mathf.cos(angleRad);
+		m.matrix[3][3] = 1;
+		return m;
 	}
 	
-	public void yRotation(float angleRad) {
-		matrix[0][0] = Mathf.cos(angleRad);
-		matrix[0][2] = -Mathf.sin(angleRad);
-		matrix[1][1] = 1;
-		matrix[2][0] = Mathf.sin(angleRad);
-		matrix[2][2] = Mathf.cos(angleRad);
-		matrix[3][3] = 1;
+	public static Matrix4x4 yRotation(float angleRad) {
+		Matrix4x4 m = new Matrix4x4();
+		m.matrix[0][0] = Mathf.cos(angleRad);
+		m.matrix[0][2] = -Mathf.sin(angleRad);
+		m.matrix[1][1] = 1;
+		m.matrix[2][0] = Mathf.sin(angleRad);
+		m.matrix[2][2] = Mathf.cos(angleRad);
+		m.matrix[3][3] = 1;
+		return m;
 	}
 	
-	public void zRotation(float angleRad) {
-		matrix[0][0] = Mathf.cos(angleRad);
-		matrix[0][1] = Mathf.sin(angleRad);
-		matrix[1][0] = -Mathf.sin(angleRad);
-		matrix[1][1] = Mathf.cos(angleRad);
-		matrix[2][2] = 1;
-		matrix[3][3] = 1;
+	public static Matrix4x4 zRotation(float angleRad) {
+		Matrix4x4 m = new Matrix4x4();
+		m.matrix[0][0] = Mathf.cos(angleRad);
+		m.matrix[0][1] = Mathf.sin(angleRad);
+		m.matrix[1][0] = -Mathf.sin(angleRad);
+		m.matrix[1][1] = Mathf.cos(angleRad);
+		m.matrix[2][2] = 1;
+		m.matrix[3][3] = 1;
+		return m;
+	}
+	public static Matrix4x4 GetRotation(Vector3 angles) {
+		Matrix4x4 x = xRotation(angles.x*Mathf.Deg2Rad);
+		Matrix4x4 y = yRotation(angles.y*Mathf.Deg2Rad);
+		Matrix4x4 z = zRotation(angles.z*Mathf.Deg2Rad);
+		
+		//yxz
+		Matrix4x4 combined = matrixMultiplyMatrix(z, x);
+		combined = matrixMultiplyMatrix(combined, y);
+		
+		return combined;
 	}
 	public void scaleMatrix(Vector3 scale) {
 		matrix[0][0] = scale.x;

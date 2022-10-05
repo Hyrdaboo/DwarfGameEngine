@@ -53,8 +53,7 @@ class demo3d extends Application {
 	Mesh mesh;
 	Camera camera;
 	public void OnStart() {
-		AppName = "new 3d";
-		
+		AppName = "new 3d";		
 		try {
 			ObjLoader loader = new ObjLoader("./res/3D-Objects/monke.obj");
 			mesh = loader.Load();
@@ -65,6 +64,7 @@ class demo3d extends Application {
 		InitMesh(mesh);
 		
 		camera = new Camera();
+		camera.transform.position.z = -3;
 	}
 	
 	private Triangle[] triangles;
@@ -83,12 +83,6 @@ class demo3d extends Application {
 		}
 	}
 	
-	Vector3 camPos = new Vector3(0, 0, -3);
-	Vector3 camRot = new Vector3(0, 0, 0);
-	Vector3 camRight = Vector3.right();
-	Vector3 camUp = Vector3.up();
-	Vector3 camForw = Vector3.forward();
-	
 	Vector3 lightDir = new Vector3(0, 0, 1);
 	
 	Color objectColor = new Color(102, 51, 47);
@@ -99,54 +93,55 @@ class demo3d extends Application {
 		
 		float speed = 10;
 		float lookSpeed = 100;
+		Transform camTransform = camera.transform;
 		if (Input.OnKeyHeld(Keycode.W)) {
-			Vector3 forward = Vector3.mulVecFloat(camForw, speed*(float)deltaTime);
-			camPos = Vector3.add2Vecs(camPos, forward);
+			Vector3 forward = Vector3.mulVecFloat(camTransform.forward, speed*(float)deltaTime);
+			camTransform.position = Vector3.add2Vecs(camTransform.position, forward);
 		}
 		if (Input.OnKeyHeld(Keycode.S)) {
-			Vector3 forward = Vector3.mulVecFloat(camForw, -speed*(float)deltaTime);
-			camPos = Vector3.add2Vecs(camPos, forward);
+			Vector3 forward = Vector3.mulVecFloat(camTransform.forward, -speed*(float)deltaTime);
+			camTransform.position = Vector3.add2Vecs(camTransform.position, forward);
 		}
 		if (Input.OnKeyHeld(Keycode.A)) {
-			Vector3 right = Vector3.mulVecFloat(camRight, -speed*(float)deltaTime);
-			camPos = Vector3.add2Vecs(camPos, right);
+			Vector3 right = Vector3.mulVecFloat(camTransform.right, -speed*(float)deltaTime);
+			camTransform.position = Vector3.add2Vecs(camTransform.position, right);
 			
 			//camPos.x -= speed * deltaTime; 
 		}
 		if (Input.OnKeyHeld(Keycode.D)) {
-			Vector3 right = Vector3.mulVecFloat(camRight, speed*(float)deltaTime);
-			camPos = Vector3.add2Vecs(camPos, right);
+			Vector3 right = Vector3.mulVecFloat(camTransform.right, speed*(float)deltaTime);
+			camTransform.position = Vector3.add2Vecs(camTransform.position, right);
 			
 			//camPos.x += speed * deltaTime;
 		}
 		
 		if (Input.OnKeyHeld(Keycode.Q)) {
-			camPos.y += deltaTime * speed;
+			camTransform.position.y += deltaTime * speed;
 		}
 		if (Input.OnKeyHeld(Keycode.E)) {
-			camPos.y -= deltaTime * speed;
+			camTransform.position.y -= deltaTime * speed;
 		}
 		// rotate camera
 		if (Input.OnKeyHeld(Keycode.I)) {
-			camRot.x -= deltaTime * lookSpeed;
+			camTransform.rotation.x -= deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.J)) {
-			camRot.y -= deltaTime * lookSpeed;
+			camTransform.rotation.y -= deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.K)) {
-			camRot.x += deltaTime * lookSpeed;
+			camTransform.rotation.x += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.L)) {
-			camRot.y += deltaTime * lookSpeed;
+			camTransform.rotation.y += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.U)) {
-			camRot.z -= deltaTime * lookSpeed;
+			camTransform.rotation.z -= deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.O)) {
-			camRot.z += deltaTime * lookSpeed;
+			camTransform.rotation.z += deltaTime * lookSpeed;
 		}
 		
-		//objectTransform.position.z = 2;
+		objectTransform.position.z = 2;
 		objectTransform.rotation.y = 215;
 		//objectTransform.rotation.x -= deltaTime * 50;
 		//objectTransform.scale.x = 2;
@@ -158,33 +153,9 @@ class demo3d extends Application {
 		
 		Matrix4x4.ProjectionMatrix(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
 		Matrix4x4 tranformMatrix = objectTransform.getTransformMatrix();
-		
-		Vector3 targetRight = Vector3.right();
-		Vector3 targetUp = Vector3.up();
-		Vector3 targetForward = Vector3.forward();
-		
-		// perform camera rotations
-		Matrix4x4 camRotX = Matrix4x4.identityMatrix();
-		Matrix4x4 camRotY = Matrix4x4.identityMatrix();
-		Matrix4x4 camRotZ = Matrix4x4.identityMatrix();
-		camRotX.xRotation(camRot.x*Mathf.Deg2Rad);
-		camRotY.yRotation(camRot.y*Mathf.Deg2Rad);
-		camRotZ.zRotation(camRot.z*Mathf.Deg2Rad);
-	
-		Matrix4x4 combinedRotation = Matrix4x4.matrixMultiplyMatrix(camRotZ, camRotX);	
-		combinedRotation = Matrix4x4.matrixMultiplyMatrix(combinedRotation, camRotY);
-
-		// camera direction vectors. Forward is used for pointing
-		camRight = combinedRotation.MultiplyByVector(targetRight);
-		camUp = combinedRotation.MultiplyByVector(targetUp);
-		camForw = combinedRotation.MultiplyByVector(targetForward);
-		
-		targetForward = Vector3.add2Vecs(camPos, camForw);
-		Matrix4x4 cameraMatrix = Matrix4x4.MatrixPointAt(camPos, targetForward, camUp);
-		Matrix4x4 viewMatrix = Matrix4x4.inverseMatrix(cameraMatrix);
+		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(tranformMatrix, viewMatrix);
 		Matrix4x4 worldMatrix = Matrix4x4.matrixMultiplyMatrix(cameraObjectCombined, projectionMatrix);
-		
 		
 		List<Triangle> trianglesToRaster = new ArrayList<Triangle>();
 		for (Triangle t : triangles) {
@@ -197,7 +168,7 @@ class demo3d extends Application {
 			}
 			
 			Vector3 normal = surfaceNormalFromIndices(transformed.points[0], transformed.points[1], transformed.points[2]);
-			Vector3 dirToCamera = Vector3.subtract2Vecs(camPos, transformed.points[0]).normalized();
+			Vector3 dirToCamera = Vector3.subtract2Vecs(camTransform.position, transformed.points[0]).normalized();
 						
 			// backface culling
 			if (Vector3.Dot(normal, dirToCamera) < 0.0f) continue;
