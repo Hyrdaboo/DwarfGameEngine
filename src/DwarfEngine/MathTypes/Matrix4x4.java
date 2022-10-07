@@ -36,26 +36,16 @@ public final class Matrix4x4 {
 		return mat;
 	}
  	
-	/**
-	 * Note that this method does a perspective divide on all 3 axes.
-	 *
-	 **/
 	public Vector3 MultiplyByVector(Vector3 vec) {
 		Vector3 out = new Vector3(0, 0, 0);
 		out.x = vec.x*matrix[0][0] + vec.y*matrix[1][0] + vec.z*matrix[2][0] + matrix[3][0];
 		out.y = vec.x*matrix[0][1] + vec.y*matrix[1][1] + vec.z*matrix[2][1] + matrix[3][1];
 		out.z = vec.x*matrix[0][2] + vec.y*matrix[1][2] + vec.z*matrix[2][2] + matrix[3][2];
-		float w = vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z*matrix[2][3] + matrix[3][3];
-		
-		if (w != 0.0f) {
-			out.x /= w;
-			out.y /= w;
-			out.z /= w;
-		}
+		out.w = vec.x*matrix[0][3] + vec.y*matrix[1][3] + vec.z*matrix[2][3] + matrix[3][3];
 		return out;
 	}
 	
-	public static void ProjectionMatrix(float fov, float aspectRatio, float near, float far, Matrix4x4 projectionMatrix) {
+	public static void PerspectiveProjection(float fov, float aspectRatio, float near, float far, Matrix4x4 projectionMatrix) {
 		fov = Mathf.Clamp(fov, 1, 179);
 		
 		float fovRad = 1.0f / Mathf.tan(fov * 0.5f * Mathf.Deg2Rad);

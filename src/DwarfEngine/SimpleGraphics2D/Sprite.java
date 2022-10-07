@@ -6,8 +6,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import DwarfEngine.Application;
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 public final class Sprite {

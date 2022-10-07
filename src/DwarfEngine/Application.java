@@ -91,15 +91,16 @@ public abstract class Application extends Canvas implements Runnable {
 			return;
 		}
     }
-    public void saveImage(String directory) {
-    	File outputFile = new File(directory + "/render.png");
+    public void saveImage(String directory, String imageName) {
+    	File outputFile = new File(directory + "/" + imageName + ".png");
     	int i = 1;
     	while (outputFile.exists()) {
-    		outputFile = new File(directory + "/render" + i + ".png");
+    		outputFile = new File(directory + "/" + imageName + i + ".png");
     		i++;
     	}
     	try {
 			ImageIO.write(image, "png", outputFile);
+			Debug.println("Image " + imageName + ".png" + " saved to " + directory);
 		} catch (IOException e) {
 			Debug.println("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
 			e.printStackTrace();

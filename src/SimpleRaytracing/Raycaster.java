@@ -1,6 +1,7 @@
 package SimpleRaytracing;
 
 import DwarfEngine.Debug;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 public class Raycaster {
@@ -68,6 +69,8 @@ public class Raycaster {
 		if (hitPoint == null) return false;
 		
 		hit.point = hitPoint;
+		Vector3 normal = Vector3.subtract2Vecs(hit.point, center).normalized();
+		hit.normal = normal;
 		return true;
 	}
 	

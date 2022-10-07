@@ -1,17 +1,6 @@
 package DwarfEngine.SimpleGraphics2D;
 
 import java.awt.Color;
-import java.beans.VetoableChangeSupport;
-import java.lang.ProcessBuilder.Redirect;
-import java.net.CookieManager;
-import java.text.spi.DateFormatSymbolsProvider;
-import java.util.Iterator;
-import java.util.concurrent.Delayed;
-
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.plaf.ColorUIResource;
-import javax.xml.stream.events.StartDocument;
-
 import DwarfEngine.Application;
 import DwarfEngine.Screen;
 import DwarfEngine.MathTypes.Mathf;

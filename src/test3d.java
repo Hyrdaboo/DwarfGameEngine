@@ -135,14 +135,14 @@ class demo3d extends Application {
 			camTransform.rotation.y += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.U)) {
-			camTransform.rotation.z -= deltaTime * lookSpeed;
+			camTransform.rotation.z += deltaTime * lookSpeed;
 		}
 		if (Input.OnKeyHeld(Keycode.O)) {
-			camTransform.rotation.z += deltaTime * lookSpeed;
+			camTransform.rotation.z -= deltaTime * lookSpeed;
 		}
 		
 		objectTransform.position.z = 2;
-		objectTransform.rotation.y = 215;
+		objectTransform.rotation.y = 181;
 		//objectTransform.rotation.x -= deltaTime * 50;
 		//objectTransform.scale.x = 2;
 		//objectTransform.rotation.y -= deltaTime * 50;
@@ -151,7 +151,7 @@ class demo3d extends Application {
 		Vector2 windowSize = new Vector2(getWidth()/scaleX, getHeight()/scaleY);
 		float aspectRatio = windowSize.y/windowSize.x;
 		
-		Matrix4x4.ProjectionMatrix(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
+		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
 		Matrix4x4 tranformMatrix = objectTransform.getTransformMatrix();
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(tranformMatrix, viewMatrix);
@@ -189,8 +189,9 @@ class demo3d extends Application {
 			Color faceColor = new Color(r, g, b);
 			projected.color = faceColor;
 			
-			// convert to screen point
+			// convert to screen coordinates
 			for (int i = 0; i < 3; i++) {
+				projected.points[i].divideBy(projected.points[i].w);
 				projected.points[i] = ViewportPointToScreenPoint(projected.points[i]);
 			}
 			

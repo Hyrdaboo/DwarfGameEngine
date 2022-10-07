@@ -1,6 +1,5 @@
 package Renderer3D;
 
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector3;
 

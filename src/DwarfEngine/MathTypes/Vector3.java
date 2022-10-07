@@ -1,11 +1,14 @@
 package DwarfEngine.MathTypes;
 
-import DwarfEngine.Application;
-
 public final class Vector3 {
 	public float x = 0;
 	public float y = 0;
 	public float z = 0;
+	/**
+	 * Need a fourth term for doing perspective operations.
+	 * Do not directly edit this value
+	 **/
+	public float w = 1;
 	
 	public static Vector3 zero() {
 		return new Vector3(0, 0, 0);
@@ -54,6 +57,11 @@ public final class Vector3 {
 		x *= a;
 		y *= a;
 		z *= a;
+	}
+	public void divideBy(float a) {
+		x /= a;
+		y /= a;
+		z /= a;
 	}
 	public static Vector3 mulVecFloat(Vector3 vec, float num) {
 		return new Vector3(vec.x*num, vec.y*num, vec.z*num);

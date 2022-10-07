@@ -1,12 +1,10 @@
 package DwarfEngine;
-import java.awt.MouseInfo;
-import java.awt.Point;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.font.GlyphVector;
 import java.util.*;
 
 import DwarfEngine.MathTypes.Vector2;
