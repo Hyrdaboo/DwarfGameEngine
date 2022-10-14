@@ -26,7 +26,7 @@ public abstract class Application extends Canvas implements Runnable {
     public int scaleX = 0;
     public int scaleY = 0;
     public static String AppName = "Untitled"; 
-    public static Vector2 windowSize = Vector2.zero;
+    public static Vector2 windowSize = Vector2.zero();
     
     private String title = "Dwarf Engine - initializing...";
     private Thread GameThread;
@@ -162,7 +162,6 @@ public abstract class Application extends Canvas implements Runnable {
     }
     
     public Vector2 getWindowSize() {
-    	
     	return new Vector2(FrameWidth, FrameHeight);
     }
     
@@ -170,7 +169,9 @@ public abstract class Application extends Canvas implements Runnable {
     	windowSize.x = FrameWidth;
     	windowSize.y = FrameHeight;
     	OnUpdate();
-        input.SetDimensions(new Vector2(getWidth(), getHeight()), FrameWidth, FrameHeight);
+    	
+    	Input.applicationWindow = GameWindow;
+    	Input.canvasSize = new Point(getWidth(), getHeight());
     }
     
     public void clear(Color color) {
@@ -190,7 +191,6 @@ public abstract class Application extends Canvas implements Runnable {
         }
 
         Graphics graphics = bufferStrategy.getDrawGraphics();
-        
         graphics.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         graphics.dispose();
         bufferStrategy.show();

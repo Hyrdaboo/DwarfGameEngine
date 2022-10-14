@@ -6,7 +6,7 @@ public final class SpriteSheet {
 	protected Sprite spritesheet;
 	public int spriteWidth;
 	public int spriteHeight;
-	public Vector2 scale = Vector2.one;
+	public Vector2 scale = Vector2.one();
 	private int[] pixels;
 	
 	public SpriteSheet(Sprite spritesheet, int spriteWidth, int spriteHeight) {

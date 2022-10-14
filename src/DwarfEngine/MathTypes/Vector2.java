@@ -4,8 +4,12 @@ public final class Vector2 {
 	public float x = 0;
 	public float y = 0;
 	
-	public static final Vector2 zero = new Vector2(0, 0); 
-	public static final Vector2 one = new Vector2(1, 1); 
+	public static Vector2 zero() {
+		return new Vector2(0, 0);
+	}
+	public static Vector2 one() {
+		return new Vector2(1, 1);
+	}
 	public Vector2(float x, float y) {
 		this.x = x;
 		this.y = y;

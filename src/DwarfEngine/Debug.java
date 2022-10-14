@@ -1,5 +1,7 @@
 package DwarfEngine;
 
+import java.io.IOException;
+
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;

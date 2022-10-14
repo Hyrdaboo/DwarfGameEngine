@@ -53,7 +53,9 @@ class demo3d extends Application {
 	Mesh mesh;
 	Camera camera;
 	public void OnStart() {
-		AppName = "new 3d";		
+		AppName = "new 3d";
+		Input.setMouseCheckAccuracy(5);
+		
 		try {
 			ObjLoader loader = new ObjLoader("./res/3D-Objects/monke.obj");
 			mesh = loader.Load();
@@ -88,6 +90,7 @@ class demo3d extends Application {
 	Color objectColor = new Color(102, 51, 47);
 	Color ambientLight = new Color(.35f*1, .35f*1, .35f*1);
 	boolean wireframe = false;
+	boolean locked = false;
 	public void OnUpdate() {
 		clear(Color.black);
 		
@@ -140,6 +143,18 @@ class demo3d extends Application {
 		if (Input.OnKeyHeld(Keycode.O)) {
 			camTransform.rotation.z -= deltaTime * lookSpeed;
 		}
+		
+		if (Input.OnKeyPressed(Keycode.Escape)) {
+			locked = !locked;
+			Input.lockMouse(locked);
+			Debug.println(locked);
+		}
+		
+		// camera look with mouse
+		Vector2 mouseDelta = Input.getMouseDelta();
+		camTransform.rotation.y += deltaTime * lookSpeed * 60 * mouseDelta.x;
+		camTransform.rotation.x += deltaTime * lookSpeed * 60 * mouseDelta.y;
+		
 		
 		objectTransform.position.z = 2;
 		objectTransform.rotation.y = 181;

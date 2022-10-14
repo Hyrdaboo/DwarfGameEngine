@@ -13,7 +13,7 @@ public final class Sprite {
 	private int[] pixels;
 	protected int width;
 	protected int height;
-	public Vector2 scale = Vector2.one;
+	public Vector2 scale = Vector2.one();
 	public Color tint = Color.white;
 	
 	public Sprite(String path) {
