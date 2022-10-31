@@ -1,23 +1,16 @@
 package DwarfEngine;
 
 import java.awt.AWTException;
-import java.awt.Canvas;
 import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Parameter;
-import java.security.Timestamp;
 import java.util.*;
 
 import javax.swing.JFrame;
