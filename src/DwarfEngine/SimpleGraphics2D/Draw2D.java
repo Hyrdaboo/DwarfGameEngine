@@ -8,14 +8,12 @@ import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 
 public final class Draw2D {
-	public static Screen screen = null;
-	
 	private Draw2D() {
 		
 	}
 	
 	public static void SetPixel(int x, int y, Color color) {
-		screen.SetPixel(x, y, color);
+		Screen.SetPixel(x, y, color);
 	}
 	
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {
@@ -198,8 +196,8 @@ public final class Draw2D {
     	
     	startX = Math.max(startX, 0);
     	startY = Math.max(startY, 0);
-    	endX = Math.min(endX, Application.windowSize.x-1);
-    	endY = Math.min(endY, Application.windowSize.y-1);
+    	endX = Math.min(endX, Application.windowSize.x);
+    	endY = Math.min(endY, Application.windowSize.y);
     	
     	for (int y = (int) startY; y < endY; y++) {
     		for (int x = (int) startX; x < endX; x++) {

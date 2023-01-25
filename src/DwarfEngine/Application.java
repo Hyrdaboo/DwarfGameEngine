@@ -16,24 +16,24 @@ import DwarfEngine.SimpleGraphics2D.Draw2D;
 
 public abstract class Application extends Canvas implements Runnable {
 
-    private static final long serialVersionUID = 1L;
-    private static int FPS = 0;
-    public static double deltaTime;
-    public static double time;
-    private static double startTime;
-    private int FrameWidth = 0; 
-    private int FrameHeight = 0;
-    public int scaleX = 0;
+	public static double deltaTime;
+	public static double time;
+	public int scaleX = 0;
     public int scaleY = 0;
     public static String AppName = "Untitled"; 
     public static Vector2 windowSize = Vector2.zero();
+    
+	private static final long serialVersionUID = 1L;
+    private static int FPS = 0;
+    private static double startTime;
+    private int FrameWidth = 0; 
+    private int FrameHeight = 0;
     
     private String title = "Dwarf Engine - initializing...";
     private Thread GameThread;
     private JFrame GameWindow;
     private boolean Running = false;
 
-    private Screen screen;
     private Input input;
     private BufferedImage image;
     private int[] pixels;
@@ -57,10 +57,10 @@ public abstract class Application extends Canvas implements Runnable {
         GameWindow.setVisible(true);
         fullscreen = false;
     }
-    public void SetResizable(boolean resizable) {
+    public final void SetResizable(boolean resizable) {
     	this.resizable = resizable;
     }
-    public void Construct(int width, int height, int scale) {
+    public final void Construct(int width, int height, int scale) {
     	FrameWidth = width;
     	FrameHeight = height;
     	this.scaleX = scale;
@@ -71,8 +71,7 @@ public abstract class Application extends Canvas implements Runnable {
     	Dimension size = new Dimension(FrameWidth * scaleX, FrameHeight * scaleY);
         setPreferredSize(size);
         
-        screen = Screen.getInstance(FrameWidth, FrameHeight); 
-        Draw2D.screen = screen;
+        Screen.Initialize(FrameWidth, FrameHeight); 
         GameWindow = new JFrame();
         
         input = Input.GetInstance();
@@ -82,7 +81,7 @@ public abstract class Application extends Canvas implements Runnable {
         
         Start();
     }
-    public void setIcon(String imagepath) {
+    public final void setIcon(String imagepath) {
     	try {
     		GameWindow.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(imagepath)));
     	}
@@ -161,7 +160,7 @@ public abstract class Application extends Canvas implements Runnable {
         }
     }
     
-    public Vector2 getWindowSize() {
+    public final Vector2 getWindowSize() {
     	return new Vector2(FrameWidth, FrameHeight);
     }
     
@@ -174,11 +173,11 @@ public abstract class Application extends Canvas implements Runnable {
     	Input.canvasSize = new Point(getWidth(), getHeight());
     }
     
-    public void clear(Color color) {
-    	screen.clear(color);
+    public final void clear(Color color) {
+    	Screen.clear(color);
     }
     
-    public void render () {
+    private void render () {
         BufferStrategy bufferStrategy = getBufferStrategy();
         
         if (bufferStrategy == null) {
@@ -187,7 +186,7 @@ public abstract class Application extends Canvas implements Runnable {
         }
         
         for (int i = 0; i < pixels.length; i++) {
-            pixels[i] = screen.pixels[i];
+            pixels[i] = Screen.pixels[i];
         }
 
         Graphics graphics = bufferStrategy.getDrawGraphics();
