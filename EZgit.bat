@@ -1,7 +1,7 @@
 cd C:\Users\USER\eclipse-workspace\Dwarf
 git init
 git rm EZgit.bat --cached
-git rm .gitignore --cached
+
 git add --all
 git commit -m "Added scanline triangle rasterization."
 git branch -M Dev 
