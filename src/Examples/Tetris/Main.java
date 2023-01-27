@@ -101,8 +101,8 @@ class Tetris extends Application {
 	
 	public int score = 0;
 	public void OnStart() {
-	    w = (int) getWindowSize().x;
-		h = (int) getWindowSize().y;
+	    w = (int) getFrameSize().x;
+		h = (int) getFrameSize().y;
 		xTiles = (w/tileSprite.getWidth());
 		yTiles = (h/tileSprite.getHeight());
 		

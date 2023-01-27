@@ -75,4 +75,21 @@ public final class Mesh {
 		return cube;
 	}
 	
+	public static Mesh MakeQuad() {
+		Mesh quad = new Mesh();
+		
+		quad.vertices = new Vector3[] {
+				new Vector3(-0.5f, -0.5f, 0),
+				new Vector3(0.5f, -0.5f, 0),
+				new Vector3(-0.5f, 0.5f, 0),
+				new Vector3(0.5f, 0.5f, 0),				
+		};
+		quad.triangles = new int[] {
+				0, 2, 3,
+				3, 1, 0
+		};
+		
+		return quad;
+	}
+	
 }

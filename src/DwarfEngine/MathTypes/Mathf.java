@@ -33,4 +33,13 @@ public final class Mathf {
 	public static float atan2(float y, float x) {
 		return (float) Math.atan2(y, x);
 	}
+	public static float sign(float a) {
+		return (float) Math.signum(a);
+	}
+	public static float ceil(float a) {
+		return (float) Math.ceil(a);
+	}
+	public static float floor(float a) {
+		return (float) Math.floor(a);
+	}
 }

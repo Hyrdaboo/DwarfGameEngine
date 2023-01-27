@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import DwarfEngine.MathTypes.Vector2;
-import DwarfEngine.SimpleGraphics2D.Draw2D;
 
 public abstract class Application extends Canvas implements Runnable {
 
@@ -160,7 +159,7 @@ public abstract class Application extends Canvas implements Runnable {
         }
     }
     
-    public final Vector2 getWindowSize() {
+    public final Vector2 getFrameSize() {
     	return new Vector2(FrameWidth, FrameHeight);
     }
     

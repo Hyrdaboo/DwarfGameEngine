@@ -2,7 +2,9 @@ package Renderer3D;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -22,6 +24,7 @@ public final class Pipeline {
 	
 	private Application application;
 	private Camera camera;
+	@SuppressWarnings("unused")
 	private Mesh mesh;
 	
 	private Matrix4x4 projectionMatrix;
@@ -39,6 +42,28 @@ public final class Pipeline {
 		triangles = Triangle.CreateIndexedTriangleStream(mesh);
 	}
 	
+	@SuppressWarnings("serial")
+	HashMap<Vector3, Color> colorMap = new HashMap<Vector3, Color>() {
+		{
+			put(Vector3.up(), Color.green);
+			put(Vector3.down(), Color.magenta);
+			put(Vector3.right(), Color.red);
+			put(Vector3.left(), Color.orange);
+			put(Vector3.forward(), Color.blue);
+			put(Vector3.back(), Color.cyan);
+		}
+	};
+	
+	Color hashmapGet(Vector3 vec) {
+		for (Vector3 v : colorMap.keySet()) {
+			if (v.equals(vec)) {
+				return colorMap.get(v);
+			}
+		}
+		
+		return null;
+	}
+	
 	public void ProcessMesh() {
 		Vector2 windowSize = new Vector2(application.getWidth()/application.scaleX, application.getHeight()/application.scaleY);
 		float aspectRatio = windowSize.y / windowSize.x;
@@ -52,6 +77,10 @@ public final class Pipeline {
 		for (Triangle t : triangles) {
 			Triangle fullyTransformed = new Triangle();
 			Triangle transformed = new Triangle();
+			
+			Vector3 n = surfaceNormalFromIndices(t.points[0], t.points[1], t.points[2]);
+			t.color = hashmapGet(n);
+			if (t.color == null) t.color = Color.gray;
 			
 			for (int i = 0; i < 3; i++) {
 				transformed.points[i] = transformMatrix.MultiplyByVector(t.points[i]);
@@ -76,6 +105,7 @@ public final class Pipeline {
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
 				
+				clipped.color = t.color;
 				trianglesToRaster.add(clipped);
 			}	
 		}
@@ -89,14 +119,11 @@ public final class Pipeline {
 				else if (z1 > z2) return -1;
 				else return 1;
 			}
-			
 		});
 		
 		for (Triangle projected : trianglesToRaster) {
 			if (drawFlag != DrawFlag.wireframe) {
-				Draw2D.FillTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
-						new Vector2(projected.points[1].x, projected.points[1].y),
-						new Vector2(projected.points[2].x, projected.points[2].y), Color.white); 
+				DrawTriangle(projected.points, projected.color);
 				continue;
 			}
 			Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
@@ -108,11 +135,86 @@ public final class Pipeline {
 	
 	//REGION Utility Functions
 	
+	private void DrawTriangle(Vector3[] verts, Color col) {
+		Arrays.sort(verts, Comparator.comparingDouble(p -> p.y));
+		
+		Vector3 v1 = verts[0], v2 = verts[1], v3 = verts[2];
+		
+		if (v2.y == v3.y) {
+			if (v2.x > v3.x) {
+				DrawFlatBottomTriangle(v1, v3, v2, col);
+			}
+			DrawFlatBottomTriangle(v1, v2, v3, col);
+		}
+		else if (v1.y == v2.y) {
+			if (v1.x > v2.x) {
+				DrawFlatTopTriangle(v2, v1, v3, col);
+			}
+			DrawFlatTopTriangle(v1, v2, v3, col);
+		}
+		else {
+			Vector3 v4 = new Vector3(0, v2.y, 0);
+			v4.x = (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x));
+			
+			if (v4.x < v2.x) {
+				DrawFlatBottomTriangle(v1, v4, v2, col);
+				DrawFlatTopTriangle(v4, v2, v3, col);
+			}
+			else {
+				DrawFlatBottomTriangle(v1, v2, v4, col);
+				DrawFlatTopTriangle(v2, v4, v3, col);
+			}
+		}
+	}
+	
+	private void DrawFlatTopTriangle(Vector3 v1, Vector3 v2, Vector3 v3, Color col) {
+		float slope1 = (v3.x - v1.x) / (v3.y - v1.y);
+		float slope2 = (v3.x - v2.x) / (v3.y - v2.y);
+		
+		
+		int startY = (int) Mathf.ceil(v1.y - 0.5f);
+		int endY = (int) Mathf.ceil(v3.y - 0.5f);
+		
+		for (int y = startY; y < endY; y++) {
+			
+			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
+			float px2 = slope2 * ((float)y + 0.5f - v2.y) + v2.x;
+			
+			int startX = (int) Mathf.floor(px1 - 0.5f);
+			int endX = (int) Mathf.ceil(px2 - 0.5f);
+			
+			for (int x = startX; x < endX; x++) {
+				Draw2D.SetPixel(x, y, col);
+			}
+		}
+	}
+	
+	private void DrawFlatBottomTriangle(Vector3 v1, Vector3 v2, Vector3 v3, Color col) {
+		float slope1 = (v2.x - v1.x) / (v2.y - v1.y);
+		float slope2 = (v3.x - v1.x) / (v3.y - v1.y);
+		
+		int startY = (int) Mathf.ceil(v1.y - 0.5f);
+		int endY = (int) Mathf.ceil(v3.y - 0.5f);
+		
+		for (int y = startY; y < endY; y++) {
+			
+			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
+			float px2 = slope2 * ((float)y + 0.5f - v1.y) + v1.x;
+			
+			int startX = (int) Mathf.floor(px1 - 0.5f);
+			int endX = (int) Mathf.ceil(px2 - 0.5f);
+			
+			for (int x = startX; x < endX; x++) {
+				Draw2D.SetPixel(x, y, col);
+			}
+		}
+	}
+	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {
 		float x = Mathf.InverseLerp(-1, 1, point.x);
 		float y = Mathf.InverseLerp(1, -1, point.y);
 		
-		Vector2 windowSize = application.getWindowSize();
+		Vector2 windowSize = application.getFrameSize();
 		point.x = x*windowSize.x; point.y = y*windowSize.y;
 		return point;
 	}

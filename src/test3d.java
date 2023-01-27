@@ -1,15 +1,19 @@
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import DwarfEngine.Application;
+import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
+import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.SimpleGraphics2D.Draw2D;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
-import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
 import Renderer3D.Transform;
-import Renderer3D.Pipeline.DrawFlag;
 
 @SuppressWarnings("serial")
 class demo3D extends Application {
@@ -28,7 +32,7 @@ class demo3D extends Application {
 		cam.transform.position.z = -3;
 		cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam, mesh, transform);
-		pipeline.drawFlag = DrawFlag.wireframe;
+		//pipeline.drawFlag = DrawFlag.wireframe;
 		
 	}
 
@@ -37,9 +41,7 @@ class demo3D extends Application {
 		clear(Color.black);
 		GetInput();
 		pipeline.ProcessMesh();
-		
 	}
-	
 	
 	void GetInput() {
 		float mul = 0.1f;

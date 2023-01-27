@@ -1,5 +1,7 @@
 package DwarfEngine.MathTypes;
 
+import java.util.Objects;
+
 public final class Vector3 {
 	public float x = 0;
 	public float y = 0;
@@ -19,11 +21,43 @@ public final class Vector3 {
 	public static Vector3 up() {
 		return new Vector3(0, 1, 0);
 	}
+	public static Vector3 down() {
+		return new Vector3(0, -1, 0);
+	}
 	public static Vector3 forward() {
 		return new Vector3(0, 0, 1);
 	}
+	public static Vector3 back() {
+		return new Vector3(0, 0, -1);
+	}
 	public static Vector3 right() {
 		return new Vector3(1, 0, 0);
+	}
+	public static Vector3 left() {
+		return new Vector3(-1, 0, 0);
+	}
+	
+	public boolean equals(Object obj) {
+		
+		if (obj == null) {
+			return false;
+		}
+		
+		if (obj.getClass() != this.getClass()) {
+			return false;
+		}
+		
+		final Vector3 other = (Vector3) obj;
+		if (this.x == other.x && this.y == other.y && this.z == other.z) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y, z);
 	}
 	
 	public Vector3(float x, float y, float z) {
