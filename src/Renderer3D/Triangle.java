@@ -6,7 +6,7 @@ import DwarfEngine.Debug;
 import DwarfEngine.MathTypes.Vector3;
 
 final class Triangle {
-	public Vector3[] points;
+	public final Vector3[] points;
 	public Color color;
 	
 	public Triangle(Vector3 a, Vector3 b, Vector3 c) {

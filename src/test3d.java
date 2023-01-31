@@ -12,7 +12,9 @@ import DwarfEngine.MathTypes.Vector3;
 import DwarfEngine.SimpleGraphics2D.Draw2D;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
+import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
+import Renderer3D.RenderObject;
 import Renderer3D.Transform;
 
 @SuppressWarnings("serial")
@@ -20,18 +22,28 @@ class demo3D extends Application {
 
 	Pipeline pipeline;
 	Camera cam;
-	Mesh mesh;
-	Transform transform;
+	
+	RenderObject cube;
+	RenderObject monke;
 	@Override
 	public void OnStart() {
 		cam = new Camera();
-		transform = new Transform();
-		mesh = Mesh.MakeCube();
 		
-		transform.rotation.y = 45;
+		Mesh cubeMesh = Mesh.MakeCube();
+		cube = new RenderObject(cubeMesh);
+		
+		try {
+			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
+			monke = new RenderObject(monkeMesh);
+			monke.transform.position.z = 3;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		cam.transform.position.z = -3;
 		cam.transform.position.y = 1;
-		pipeline = new Pipeline(this, cam, mesh, transform);
+		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
 		
 	}
@@ -40,7 +52,8 @@ class demo3D extends Application {
 	public void OnUpdate() {
 		clear(Color.black);
 		GetInput();
-		pipeline.ProcessMesh();
+		pipeline.DrawMesh(cube);
+		pipeline.DrawMesh(monke);
 	}
 	
 	void GetInput() {

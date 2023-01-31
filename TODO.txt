@@ -1,3 +1,2 @@
-*Screen space clipping for triangles
-*Ability to render multiple objects
 *Z-Buffering
+*Screen space clipping for triangles

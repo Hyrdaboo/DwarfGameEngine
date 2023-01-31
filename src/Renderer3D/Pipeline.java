@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 
 import DwarfEngine.Application;
+import DwarfEngine.Debug;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
@@ -24,22 +25,15 @@ public final class Pipeline {
 	
 	private Application application;
 	private Camera camera;
-	@SuppressWarnings("unused")
-	private Mesh mesh;
 	
 	private Matrix4x4 projectionMatrix;
-	private Transform objectTransform;
 	
-	private Triangle[] triangles;
 	
-	public Pipeline(Application application, Camera camera, Mesh mesh, Transform objectTransform) {
+	public Pipeline(Application application, Camera camera) {
 		this.application = application;
 		this.camera = camera;
-		this.mesh = mesh;
-		this.objectTransform = objectTransform;
 		
 		projectionMatrix = new Matrix4x4();
-		triangles = Triangle.CreateIndexedTriangleStream(mesh);
 	}
 	
 	@SuppressWarnings("serial")
@@ -64,17 +58,22 @@ public final class Pipeline {
 		return null;
 	}
 	
-	public void ProcessMesh() {
+	public void DrawMesh(RenderObject renderObject) {
+		if (renderObject == null) {
+			Debug.println("WARNING: RenderObject is null!!!");
+			return;
+		}
+		
 		Vector2 windowSize = new Vector2(application.getWidth()/application.scaleX, application.getHeight()/application.scaleY);
 		float aspectRatio = windowSize.y / windowSize.x;
 		
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
-		Matrix4x4 transformMatrix = objectTransform.getTransformMatrix();
+		Matrix4x4 transformMatrix = renderObject.transform.getTransformMatrix();
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 		
 		List<Triangle> trianglesToRaster = new ArrayList<Triangle>();
-		for (Triangle t : triangles) {
+		for (Triangle t : renderObject.triangles) {
 			Triangle fullyTransformed = new Triangle();
 			Triangle transformed = new Triangle();
 			
@@ -171,35 +170,24 @@ public final class Pipeline {
 		float slope1 = (v3.x - v1.x) / (v3.y - v1.y);
 		float slope2 = (v3.x - v2.x) / (v3.y - v2.y);
 		
-		
-		int startY = (int) Mathf.ceil(v1.y - 0.5f);
-		int endY = (int) Mathf.ceil(v3.y - 0.5f);
-		
-		for (int y = startY; y < endY; y++) {
-			
-			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
-			float px2 = slope2 * ((float)y + 0.5f - v2.y) + v2.x;
-			
-			int startX = (int) Mathf.floor(px1 - 0.5f);
-			int endX = (int) Mathf.ceil(px2 - 0.5f);
-			
-			for (int x = startX; x < endX; x++) {
-				Draw2D.SetPixel(x, y, col);
-			}
-		}
+		DrawFlatTriangle(v1, v2, v3, slope1, slope2, v2, col);
 	}
 	
 	private void DrawFlatBottomTriangle(Vector3 v1, Vector3 v2, Vector3 v3, Color col) {
 		float slope1 = (v2.x - v1.x) / (v2.y - v1.y);
 		float slope2 = (v3.x - v1.x) / (v3.y - v1.y);
 		
+		DrawFlatTriangle(v1, v2, v3, slope1, slope2, v1, col);
+	}
+	
+	private void DrawFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3, float slope1, float slope2, Vector3 startV, Color col) {
 		int startY = (int) Mathf.ceil(v1.y - 0.5f);
 		int endY = (int) Mathf.ceil(v3.y - 0.5f);
 		
 		for (int y = startY; y < endY; y++) {
 			
 			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
-			float px2 = slope2 * ((float)y + 0.5f - v1.y) + v1.x;
+			float px2 = slope2 * ((float)y + 0.5f - startV.y) + startV.x;
 			
 			int startX = (int) Mathf.floor(px1 - 0.5f);
 			int endX = (int) Mathf.ceil(px2 - 0.5f);
