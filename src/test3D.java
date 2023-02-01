@@ -1,15 +1,9 @@
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import DwarfEngine.Application;
-import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
-import DwarfEngine.MathTypes.Mathf;
-import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import DwarfEngine.SimpleGraphics2D.Draw2D;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;

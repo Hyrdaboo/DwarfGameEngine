@@ -36,28 +36,6 @@ public final class Pipeline {
 		projectionMatrix = new Matrix4x4();
 	}
 	
-	@SuppressWarnings("serial")
-	HashMap<Vector3, Color> colorMap = new HashMap<Vector3, Color>() {
-		{
-			put(Vector3.up(), Color.green);
-			put(Vector3.down(), Color.magenta);
-			put(Vector3.right(), Color.red);
-			put(Vector3.left(), Color.orange);
-			put(Vector3.forward(), Color.blue);
-			put(Vector3.back(), Color.cyan);
-		}
-	};
-	
-	Color hashmapGet(Vector3 vec) {
-		for (Vector3 v : colorMap.keySet()) {
-			if (v.equals(vec)) {
-				return colorMap.get(v);
-			}
-		}
-		
-		return null;
-	}
-	
 	public void DrawMesh(RenderObject renderObject) {
 		if (renderObject == null) {
 			Debug.println("WARNING: RenderObject is null!!!");
@@ -72,14 +50,9 @@ public final class Pipeline {
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 		
-		List<Triangle> trianglesToRaster = new ArrayList<Triangle>();
 		for (Triangle t : renderObject.triangles) {
 			Triangle fullyTransformed = new Triangle();
 			Triangle transformed = new Triangle();
-			
-			Vector3 n = surfaceNormalFromIndices(t.points[0], t.points[1], t.points[2]);
-			t.color = hashmapGet(n);
-			if (t.color == null) t.color = Color.gray;
 			
 			for (int i = 0; i < 3; i++) {
 				transformed.points[i] = transformMatrix.MultiplyByVector(t.points[i]);
@@ -94,41 +67,29 @@ public final class Pipeline {
 			Triangle[] clippedTris = triangleClipAgainstPlane(new Vector3(0, 0, camera.near), Vector3.forward(), fullyTransformed);
 			for (Triangle clipped : clippedTris) {
 				if (clipped == null) continue;
-				Triangle fullyProcessed = clipped;
 				
 				// convert to screen coordinates
 				for (int i = 0; i < 3; i++) {
-					fullyProcessed.points[i] = projectionMatrix.MultiplyByVector(clipped.points[i]);
+					clipped.points[i] = projectionMatrix.MultiplyByVector(clipped.points[i]);
 					clipped.points[i].divideBy(clipped.points[i].w);
 					
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
 				
 				clipped.color = t.color;
-				trianglesToRaster.add(clipped);
+				DrawProjectedTriangle(clipped);
 			}	
 		}
-		
-		trianglesToRaster.sort(new Comparator<Triangle>() {
-			@Override
-			public int compare(Triangle t1, Triangle t2) {
-				float z1 = (t1.points[0].z + t1.points[1].z + t1.points[2].z) / 3.0f;
-				float z2 = (t2.points[0].z + t2.points[1].z + t2.points[2].z) / 3.0f;
-				if (z1 == z2) return 0;
-				else if (z1 > z2) return -1;
-				else return 1;
-			}
-		});
-		
-		for (Triangle projected : trianglesToRaster) {
-			if (drawFlag != DrawFlag.wireframe) {
-				DrawTriangle(projected.points, projected.color);
-				continue;
-			}
-			Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
-					new Vector2(projected.points[1].x, projected.points[1].y),
-					new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);
+	}
+	
+	private void DrawProjectedTriangle(Triangle projected) {
+		if (drawFlag != DrawFlag.wireframe) {
+			DrawTriangle(projected.points, projected.color);
+			return;
 		}
+		Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
+				new Vector2(projected.points[1].x, projected.points[1].y),
+				new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);
 	}
 	
 	
