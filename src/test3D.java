@@ -5,11 +5,19 @@ import DwarfEngine.Input;
 import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Camera;
+import Renderer3D.DwarfShader;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
 import Renderer3D.RenderObject;
 import Renderer3D.Transform;
+
+class myShader implements DwarfShader {
+	public Color Fragment() {
+		return Color.gray;
+	}
+	
+}
 
 @SuppressWarnings("serial")
 class demo3D extends Application {
@@ -23,21 +31,23 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeCube();
+		Mesh cubeMesh = Mesh.MakeQuad();
 		cube = new RenderObject(cubeMesh);
+		cube.shader = new myShader();
 		
 		try {
-			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/teapot.obj").Load();
+			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
 			monke = new RenderObject(monkeMesh);
+			monke.shader = new myShader();
 			monke.transform.position.z = 3;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		cam.transform.position.z = -1;
-		cam.transform.rotation.y = 45;
-		cam.transform.position.x = -1;
+		cam.transform.position.z = -1.5f;
+		//cam.transform.rotation.y = 45;
+		//cam.transform.position.x = -1;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -49,7 +59,7 @@ class demo3D extends Application {
 		clear(Color.black);
 		GetInput();
 		
-		pipeline.DrawMesh(monke);
+		pipeline.DrawMesh(cube);
 	}
 	
 	void GetInput() {

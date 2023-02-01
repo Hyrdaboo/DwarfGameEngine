@@ -14,6 +14,12 @@ import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import DwarfEngine.SimpleGraphics2D.Draw2D;
 
+class ErrorShader implements DwarfShader {
+	public Color Fragment() {
+		return Color.magenta;
+	}
+	
+}
 
 public final class Pipeline {
 
@@ -24,11 +30,13 @@ public final class Pipeline {
 	private Camera camera;
 	private Matrix4x4 projectionMatrix;
 	
+	private ErrorShader errorShader;
 	public Pipeline(Application application, Camera camera) {
 		this.application = application;
 		this.camera = camera;
 		
-		projectionMatrix = new Matrix4x4();	
+		projectionMatrix = new Matrix4x4();
+		errorShader = new ErrorShader();
 	}
 	
 	public void DrawMesh(RenderObject renderObject) {
@@ -71,14 +79,15 @@ public final class Pipeline {
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
 				
-				DrawProjectedTriangle(clipped);
-			}	
+				DwarfShader shader = renderObject.shader == null ? errorShader : renderObject.shader;
+				DrawProjectedTriangle(clipped, shader);
+			}
 		}
 	}
 	
-	private void DrawProjectedTriangle(Triangle projected) {
+	private void DrawProjectedTriangle(Triangle projected, DwarfShader shader) {
 		if (drawFlag != DrawFlag.wireframe) {
-			DrawTriangle(projected.points, Color.white);
+			DrawTriangle(projected.points, shader.Fragment());
 			return;
 		}
 		Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
