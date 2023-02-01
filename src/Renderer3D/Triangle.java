@@ -21,13 +21,15 @@ final class Triangle {
 	}
 	
 	public static Triangle[] CreateIndexedTriangleStream(Mesh mesh) {
-		Triangle[] triangles = new Triangle[mesh.triangles.length/3];
-
+		Triangle[] triangles = new Triangle[mesh.triangleCount()/3];
+		Vector3[] vertices = mesh.getVetices();
+		int[] tris = mesh.getTriangles();
+		
 		for (int i = 0; i < triangles.length; i++) {
 			Triangle t = new Triangle();
-			t.points[0] = mesh.vertices[mesh.triangles[0+i*3]];
-			t.points[1] = mesh.vertices[mesh.triangles[1+i*3]];
-			t.points[2] = mesh.vertices[mesh.triangles[2+i*3]];
+			t.points[0] = vertices[tris[0+i*3]];
+			t.points[1] = vertices[tris[1+i*3]];
+			t.points[2] = vertices[tris[2+i*3]];
 			
 			triangles[i] = t;
 		}

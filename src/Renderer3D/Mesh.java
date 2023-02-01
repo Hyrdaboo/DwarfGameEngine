@@ -4,10 +4,45 @@ import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 public final class Mesh {
-	public Vector3[] vertices;
-	public Vector2[] uvs;
-	public int[] triangles;
+	private Vector3[] vertices;
+	private Vector2[] uv;
+	private int[] triangles;
 	
+	public void setVertices(Vector3[] vertices) {
+		this.vertices = vertices;
+	}
+	public Vector3[] getVetices() {
+		return vertices;
+	}
+	public int vertexCount() {
+		return vertices.length;
+	}
+	
+	public void setTriangles(int[] triangles) {
+		if (triangles.length % 3 != 0) {
+			throw new IllegalArgumentException("Triangles size must be divisible by 3!");
+		}
+		this.triangles = triangles;
+	}
+	public int[] getTriangles() {
+		return triangles;
+	}
+	public int triangleCount() {
+		return triangles.length;
+	}
+	
+	public void setUV(Vector2[] uvs) {
+		if (uvs.length != vertices.length) {
+			throw new IllegalArgumentException("uvs must be the same size as vertices");
+		}
+		this.uv = uvs;
+	}
+	public Vector2[] getUV() {
+		return uv;
+	}
+	public int getUVCount() {
+		return uv.length;
+	}
 	
 	public static Mesh MakeCube() {
 		Mesh cube = new Mesh();
@@ -89,6 +124,12 @@ public final class Mesh {
 		quad.triangles = new int[] {
 				0, 2, 3,
 				3, 1, 0
+		};
+		quad.uv = new Vector2[] {
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(0, 1),
+				new Vector2(1, 1),
 		};
 		
 		return quad;

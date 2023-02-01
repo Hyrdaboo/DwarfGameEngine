@@ -71,9 +71,9 @@ public final class ObjLoader {
 		
 		
 		loadedMesh = new Mesh();
-		loadedMesh.vertices = (Vector3[]) vertices.toArray(new Vector3[vertices.size()]);
-		loadedMesh.triangles = indices.stream().mapToInt(Integer::intValue).toArray();
-		Debug.println("Finished loading mesh! Loaded "+loadedMesh.vertices.length+" vertices, "+loadedMesh.triangles.length+" triangles");
+		loadedMesh.setVertices((Vector3[]) vertices.toArray(new Vector3[vertices.size()]));
+		loadedMesh.setTriangles(indices.stream().mapToInt(Integer::intValue).toArray());
+		Debug.println("Finished loading mesh! Loaded "+loadedMesh.vertexCount()+" vertices, "+loadedMesh.triangleCount()+" triangles");
 		return loadedMesh;
 	}	
 	

@@ -59,7 +59,7 @@ class demo3D extends Application {
 		clear(Color.black);
 		GetInput();
 		
-		pipeline.DrawMesh(cube);
+		pipeline.DrawMesh(monke);
 	}
 	
 	void GetInput() {
