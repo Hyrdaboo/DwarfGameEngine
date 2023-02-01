@@ -23,7 +23,7 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeCube();
+		Mesh cubeMesh = Mesh.MakeQuad();
 		cube = new RenderObject(cubeMesh);
 		
 		try {
@@ -35,8 +35,10 @@ class demo3D extends Application {
 			e.printStackTrace();
 		}
 		
-		cam.transform.position.z = -3;
-		cam.transform.position.y = 1;
+		cam.transform.position.z = -1;
+		cam.transform.rotation.y = 45;
+		cam.transform.position.x = -1;
+		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
 		
@@ -47,7 +49,7 @@ class demo3D extends Application {
 		clear(Color.black);
 		GetInput();
 		pipeline.DrawMesh(cube);
-		pipeline.DrawMesh(monke);
+		//pipeline.DrawMesh(monke);
 	}
 	
 	void GetInput() {
