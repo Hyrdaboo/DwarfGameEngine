@@ -42,4 +42,7 @@ public final class Mathf {
 	public static float floor(float a) {
 		return (float) Math.floor(a);
 	}
+	public static float sqrt(float a) {
+		return (float) Math.sqrt(a);
+	}
 }
