@@ -1,14 +1,10 @@
 package Renderer3D;
 
-import java.awt.Color;
-
 import DwarfEngine.Debug;
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 
 final class Triangle {
 	public final Vector3[] points;
-	public Color color = Color.white;
 	
 	public Triangle(Vector3 a, Vector3 b, Vector3 c) {
 		points = new Vector3[3];
@@ -37,18 +33,6 @@ final class Triangle {
 		}
 		
 		return triangles;
-	}
-	
-	public float calculateArea() {
-		Vector3 v1 = points[0], v2 = points[1], v3 = points[2];
-		
-		float a = Vector3.subtract2Vecs(v3, v1).magnitude();
-		float b = Vector3.subtract2Vecs(v3, v2).magnitude();
-		float c = Vector3.subtract2Vecs(v2, v1).magnitude();
-		
-		float p = (a+b+c)/2;
-		
-		return Mathf.sqrt(p*(p-a)*(p-b)*(p-c));
 	}
 	
 	public void print() {

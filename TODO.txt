@@ -1,2 +1,5 @@
+*Shaders
+*Texturing
+*Perspective correction
 *Z-Buffering
 *Screen space clipping for triangles

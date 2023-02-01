@@ -24,23 +24,11 @@ public final class Pipeline {
 	private Camera camera;
 	private Matrix4x4 projectionMatrix;
 	
-	private float[][] DepthBuffer;
-	
 	public Pipeline(Application application, Camera camera) {
 		this.application = application;
 		this.camera = camera;
 		
-		projectionMatrix = new Matrix4x4();
-		
-		Vector2 frameSize = application.getFrameSize();
-		DepthBuffer = new float[(int) frameSize.x][(int) frameSize.y];
-		clearDepth();
-	}
-	
-	private void clearDepth() {
-		for (float[] f : DepthBuffer) {
-			Arrays.fill(f, Float.MAX_VALUE);
-		}
+		projectionMatrix = new Matrix4x4();	
 	}
 	
 	public void DrawMesh(RenderObject renderObject) {
@@ -83,7 +71,6 @@ public final class Pipeline {
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
 				
-				clipped.color = t.color;
 				DrawProjectedTriangle(clipped);
 			}	
 		}
@@ -91,7 +78,7 @@ public final class Pipeline {
 	
 	private void DrawProjectedTriangle(Triangle projected) {
 		if (drawFlag != DrawFlag.wireframe) {
-			DrawTriangle(projected.points, projected.color);
+			DrawTriangle(projected.points, Color.white);
 			return;
 		}
 		Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
@@ -160,27 +147,11 @@ public final class Pipeline {
 			int endX = (int) Mathf.ceil(px2 - 0.5f);
 			
 			for (int x = startX; x < endX; x++) {
-				float z = CalculatePixelDepth(v1, v2, v3, new Vector3(x, y, 0));
-				z = 1/z;
-				
 				
 				Draw2D.SetPixel(x, y, col);
 			}
 		}
-		application.Exit();
-	}
-	
-	private float CalculatePixelDepth(Vector3 A, Vector3 B, Vector3 C, Vector3 P) {
-		Vector3 ab = Vector3.subtract2Vecs(B, A);
-		Vector3 ac = Vector3.subtract2Vecs(C, A);
-		
-		Vector3 N = Vector3.Cross(ab, ac);
-		float D = A.magnitude();
-		
-		float Ax = N.x*P.x;
-		float By = N.y*P.y;
-		
-		return (D-Ax-By)/N.z;
+		//application.Exit();
 	}
 	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {

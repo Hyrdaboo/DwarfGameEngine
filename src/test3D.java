@@ -23,11 +23,11 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeQuad();
+		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
 		
 		try {
-			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
+			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/teapot.obj").Load();
 			monke = new RenderObject(monkeMesh);
 			monke.transform.position.z = 3;
 		} catch (Exception e) {
@@ -48,8 +48,8 @@ class demo3D extends Application {
 	public void OnUpdate() {
 		clear(Color.black);
 		GetInput();
-		pipeline.DrawMesh(cube);
-		//pipeline.DrawMesh(monke);
+		
+		pipeline.DrawMesh(monke);
 	}
 	
 	void GetInput() {
