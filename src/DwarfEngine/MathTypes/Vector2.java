@@ -107,4 +107,16 @@ public final class Vector2 {
 	public Vector2 normalized() {
 		return new Vector2(x/magnitude(), y/magnitude());
 	}
+	
+	public static float distance(Vector2 from, Vector2 to) {
+		Vector2 v = Vector2.subtract2Vecs(to, from);
+		return v.magnitude();
+	}
+	
+	public static float InverseLerp(Vector2 a, Vector2 b, Vector2 value)
+    {
+        Vector2 AB = Vector2.subtract2Vecs(b, a);
+        Vector2 AV = Vector2.subtract2Vecs(value, a);
+        return Vector2.Dot(AV, AB) / Vector2.Dot(AB, AB);
+    }
 }

@@ -35,16 +35,16 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
 		//cube.transform.rotation.y = 45;
+		//cube.transform.scale = new Vector3(3f, 0.5f, 0.5f);
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
-		cube2.transform.position.z = 5;
+		//cube2.transform.position.z = 5;
 		
-		cam.transform.position.z = -1.5f;
+		cam.transform.position.z = -3.5f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
-		
 	}
 	
 	Mesh monke() {
@@ -65,10 +65,11 @@ class demo3D extends Application {
 		pipeline.clearDepth();
 		GetInput();
 		
+		float speed = (float) deltaTime * 20;
+		cube.transform.rotation.x += speed;
+		
 		pipeline.DrawMesh(cube);
-		//Exit();
 		pipeline.DrawMesh(cube2);
-		//Exit();
 	}
 	
 	void GetInput() {

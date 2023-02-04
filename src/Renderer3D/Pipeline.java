@@ -136,10 +136,12 @@ public final class Pipeline {
 		else {
 			Vector3 v4 = new Vector3(0, v2.y, 0);
 			v4.x = (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x));
-			Arrays.sort(verts, Comparator.comparingDouble(p -> p.x));
-			Vector3 leftMost = verts[0], rightMost = verts[2];
-			float t = Mathf.InverseLerp(leftMost.x, rightMost.x, v4.x);
-			v4.w = Mathf.Lerp(leftMost.w, rightMost.w, t);
+			
+			Vector2 sv1 = new Vector2(v1.x, v1.y);
+			Vector2 sv3 = new Vector2(v3.x, v3.y);
+			Vector2 sv4 = new Vector2(v4.x, v4.y);		
+			float t = Vector2.InverseLerp(sv1, sv3, sv4);
+			v4.w = Mathf.Lerp(v1.w, v3.w, t);
 			
 			if (v4.x < v2.x) {
 				DrawFlatBottomTriangle(v1, v4, v2, col);

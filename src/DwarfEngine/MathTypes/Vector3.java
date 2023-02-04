@@ -129,4 +129,9 @@ public final class Vector3 {
 		float mag = magnitude();
 		return mag == 0 ? Vector3.zero() : new Vector3(x/mag, y/mag, z/mag);
 	}
+	
+	public static float distance(Vector3 from, Vector3 to) {
+		Vector3 v = Vector3.subtract2Vecs(to, from);
+		return v.magnitude();
+	}
 }
