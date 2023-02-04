@@ -1,6 +1,7 @@
-*Shaders
 *Texturing
 *Perspective correction
-*Z-Buffering
+*Shaders
 #Push to master
 *Screen space clipping for triangles
+*Fix screen clamping for LineTo and DrawTriangle in Draw2D
+*Refactor camera class with get/setters

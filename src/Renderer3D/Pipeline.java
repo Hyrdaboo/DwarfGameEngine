@@ -18,7 +18,6 @@ class ErrorShader implements DwarfShader {
 	public Color Fragment() {
 		return Color.magenta;
 	}
-	
 }
 
 public final class Pipeline {
@@ -30,13 +29,19 @@ public final class Pipeline {
 	private Camera camera;
 	private Matrix4x4 projectionMatrix;
 	
+	private float[] depthBuffer;
+	private Vector2 frameSize;
 	private ErrorShader errorShader;
+	
 	public Pipeline(Application application, Camera camera) {
 		this.application = application;
 		this.camera = camera;
 		
 		projectionMatrix = new Matrix4x4();
 		errorShader = new ErrorShader();
+		
+		frameSize = application.getFrameSize();
+		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
 	}
 	
 	public void DrawMesh(RenderObject renderObject) {
@@ -97,6 +102,20 @@ public final class Pipeline {
 	
 	//REGION Utility Functions
 	
+	public void clearDepth() {
+		Arrays.fill(depthBuffer, Float.MAX_VALUE);
+	}
+	private float ReadDepth(int x, int y) {
+		if (x < 0 || y < 0 || x >= frameSize.x || y >= frameSize.y)
+			return 0;
+		return depthBuffer[(int)(x + y*frameSize.x)];
+	}
+	private void WriteDepth(int x, int y, float val) {
+		if (x < 0 || y < 0 || x >= frameSize.x || y >= frameSize.y)
+			return;
+		depthBuffer[(int)(x + y*frameSize.x)] = val;
+	}
+	
 	private void DrawTriangle(Vector3[] verts, Color col) {
 		Arrays.sort(verts, Comparator.comparingDouble(p -> p.y));
 		
@@ -117,6 +136,10 @@ public final class Pipeline {
 		else {
 			Vector3 v4 = new Vector3(0, v2.y, 0);
 			v4.x = (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x));
+			Arrays.sort(verts, Comparator.comparingDouble(p -> p.x));
+			Vector3 leftMost = verts[0], rightMost = verts[2];
+			float t = Mathf.InverseLerp(leftMost.x, rightMost.x, v4.x);
+			v4.w = Mathf.Lerp(leftMost.w, rightMost.w, t);
 			
 			if (v4.x < v2.x) {
 				DrawFlatBottomTriangle(v1, v4, v2, col);
@@ -133,17 +156,27 @@ public final class Pipeline {
 		float slope1 = (v3.x - v1.x) / (v3.y - v1.y);
 		float slope2 = (v3.x - v2.x) / (v3.y - v2.y);
 		
-		DrawFlatTriangle(v1, v2, v3, slope1, slope2, v2, col);
+		float wSlope1 = (v3.w - v1.w) / (v3.y - v1.y);
+		float wSlope2 = (v3.w - v2.w) / (v3.y - v2.y);
+		
+		DrawFlatTriangle(v1, v2, v3, slope1, slope2, wSlope1, wSlope2, v2, col);
 	}
 	
 	private void DrawFlatBottomTriangle(Vector3 v1, Vector3 v2, Vector3 v3, Color col) {
 		float slope1 = (v2.x - v1.x) / (v2.y - v1.y);
 		float slope2 = (v3.x - v1.x) / (v3.y - v1.y);
 		
-		DrawFlatTriangle(v1, v2, v3, slope1, slope2, v1, col);
+		float wSlope1 = (v2.w - v1.w) / (v2.y - v1.y);
+		float wSlope2 = (v3.w - v1.w) / (v3.y - v1.y);
+		
+		DrawFlatTriangle(v1, v2, v3, slope1, slope2, wSlope1, wSlope2, v1, col);
 	}
 	
-	private void DrawFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3, float slope1, float slope2, Vector3 startV, Color col) {
+	private void DrawFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3, 
+								  float slope1, float slope2,
+								  float wSlope1, float wSlope2,
+								  Vector3 startV, Color col) 
+	{
 		int startY = (int) Mathf.ceil(v1.y - 0.5f);
 		int endY = (int) Mathf.ceil(v3.y - 0.5f);
 		
@@ -152,15 +185,22 @@ public final class Pipeline {
 			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
 			float px2 = slope2 * ((float)y + 0.5f - startV.y) + startV.x;
 			
+			float pw1 = wSlope1 * ((float)y + 0.5f - v1.y) + v1.w;
+			float pw2 = wSlope2 * ((float)y + 0.5f - startV.y) + startV.w;
+			
 			int startX = (int) Mathf.floor(px1 - 0.5f);
 			int endX = (int) Mathf.ceil(px2 - 0.5f);
 			
 			for (int x = startX; x < endX; x++) {
+				float t = Mathf.InverseLerp(startX, endX, x);
+				float w = Mathf.Lerp(pw1, pw2, t);
 				
-				Draw2D.SetPixel(x, y, col);
+				if (w < ReadDepth(x, y)) {
+					WriteDepth(x, y, w);
+					Draw2D.SetPixel(x, y, col);
+				}
 			}
 		}
-		//application.Exit();
 	}
 	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {

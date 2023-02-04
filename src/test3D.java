@@ -1,6 +1,7 @@
 import java.awt.Color;
 
 import DwarfEngine.Application;
+import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Vector3;
@@ -16,7 +17,6 @@ class myShader implements DwarfShader {
 	public Color Fragment() {
 		return Color.gray;
 	}
-	
 }
 
 @SuppressWarnings("serial")
@@ -26,40 +26,49 @@ class demo3D extends Application {
 	Camera cam;
 	
 	RenderObject cube;
-	RenderObject monke;
+	RenderObject cube2;
 	@Override
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeQuad();
+		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
+		//cube.transform.rotation.y = 45;
 		
-		try {
-			Mesh monkeMesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
-			monke = new RenderObject(monkeMesh);
-			monke.shader = new myShader();
-			monke.transform.position.z = 3;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Mesh cube2Mesh = monke();
+		cube2 = new RenderObject(cube2Mesh);
+		cube2.transform.position.z = 5;
 		
 		cam.transform.position.z = -1.5f;
-		//cam.transform.rotation.y = 45;
-		//cam.transform.position.x = -1;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
 		
 	}
+	
+	Mesh monke() {
+		Mesh mesh = null;
+		try {
+			mesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return mesh;
+	}
 
 	@Override
 	public void OnUpdate() {
 		clear(Color.black);
+		pipeline.clearDepth();
 		GetInput();
 		
-		pipeline.DrawMesh(monke);
+		pipeline.DrawMesh(cube);
+		//Exit();
+		pipeline.DrawMesh(cube2);
+		//Exit();
 	}
 	
 	void GetInput() {
@@ -124,6 +133,7 @@ public class test3D {
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
 		d.SetResizable(true);
+		//d.Construct(144, 81, 6);
 		d.Construct(1280, 720, 1);
 	}
 }
