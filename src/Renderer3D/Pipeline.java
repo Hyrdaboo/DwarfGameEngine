@@ -82,8 +82,9 @@ public final class Pipeline {
 					clipped.points[i].divideBy(clipped.points[i].w);
 					
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
+					clipped.texcoord[i] = t.texcoord[i];
 				}
-				
+
 				DwarfShader shader = renderObject.shader == null ? errorShader : renderObject.shader;
 				DrawProjectedTriangle(clipped, shader);
 			}
