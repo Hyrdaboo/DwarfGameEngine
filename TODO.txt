@@ -1,6 +1,7 @@
 *Texturing
 *Perspective correction
 *Shaders
+*Scene functionality
 #Push to master
 *Screen space clipping for triangles
 *Fix screen clamping for LineTo and DrawTriangle in Draw2D

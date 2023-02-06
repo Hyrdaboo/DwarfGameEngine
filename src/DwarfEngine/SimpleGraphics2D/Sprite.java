@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 public final class Sprite {
@@ -49,5 +50,14 @@ public final class Sprite {
 	
 	public int GetPixel(int x, int y) {
 		return pixels[x+y*width];
+	}
+	public Color SampleColor(float u, float v) {
+		u = Mathf.frac(u);
+		v = Mathf.frac(v);
+		
+		int x = (int)Mathf.Lerp(0, width, u);
+		int y = (int)Mathf.Lerp(0, height, v);
+		
+		return new Color(GetPixel(x, y));
 	}
 }

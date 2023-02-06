@@ -4,7 +4,9 @@ import DwarfEngine.Application;
 import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
+import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.SimpleGraphics2D.Sprite;
 import Renderer3D.Camera;
 import Renderer3D.DwarfShader;
 import Renderer3D.Mesh;
@@ -31,7 +33,7 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeCube();
+		Mesh cubeMesh = Mesh.MakeQuad();
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
 		//cube.transform.rotation.y = 45;
@@ -41,7 +43,7 @@ class demo3D extends Application {
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
 		
-		cam.transform.position.z = -3.5f;
+		cam.transform.position.z = -1.5f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -65,11 +67,7 @@ class demo3D extends Application {
 		pipeline.clearDepth();
 		GetInput();
 		
-		float speed = (float) deltaTime * 20;
-		cube.transform.rotation.x += speed;
-		
 		pipeline.DrawMesh(cube);
-		pipeline.DrawMesh(cube2);
 	}
 	
 	void GetInput() {
