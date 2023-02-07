@@ -1,11 +1,15 @@
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import DwarfEngine.Application;
 import DwarfEngine.Debug;
 import DwarfEngine.Input;
 import DwarfEngine.Keycode;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.SimpleGraphics2D.Draw2D;
 import DwarfEngine.SimpleGraphics2D.Sprite;
 import Renderer3D.Camera;
 import Renderer3D.DwarfShader;
@@ -47,7 +51,10 @@ class demo3D extends Application {
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
+		
+		spr = new Sprite("/Textures/uvtest.png");
 	}
+	Sprite spr;
 	
 	Mesh monke() {
 		Mesh mesh = null;
@@ -60,14 +67,15 @@ class demo3D extends Application {
 		
 		return mesh;
 	}
-
+	
 	@Override
 	public void OnUpdate() {
 		clear(Color.black);
+		
 		pipeline.clearDepth();
 		GetInput();
-		
 		pipeline.DrawMesh(cube);
+		
 	}
 	
 	void GetInput() {
