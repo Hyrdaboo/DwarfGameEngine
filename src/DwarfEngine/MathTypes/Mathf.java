@@ -46,6 +46,6 @@ public final class Mathf {
 		return (float) Math.sqrt(a);
 	}
 	public static float frac(float a) {
-		return abs(a - (int)a);
+		return a - (int)a;
 	}
 }

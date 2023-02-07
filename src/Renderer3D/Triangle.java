@@ -44,12 +44,7 @@ final class Triangle {
 			t.points[1] = vertices[tris[1+i*3]];
 			t.points[2] = vertices[tris[2+i*3]];
 			
-			if (uv == null) {
-				t.texcoord[0] = Vector2.zero();
-				t.texcoord[1] = Vector2.zero();
-				t.texcoord[2] = Vector2.zero();
-			}
-			else {
+			if (uv != null) {
 				t.texcoord[0] = uv[tris[0+i*3]];
 				t.texcoord[1] = uv[tris[1+i*3]];
 				t.texcoord[2] = uv[tris[2+i*3]];

@@ -52,8 +52,8 @@ public final class Sprite {
 		return pixels[x+y*width];
 	}
 	public Color SampleColor(float u, float v) {
-		u = Mathf.frac(u);
-		v = Mathf.frac(v);
+		u = Mathf.abs(Mathf.frac(u));
+		v = Mathf.abs(Mathf.frac(v));
 		
 		int x = (int)Mathf.Lerp(0, width, u);
 		int y = (int)Mathf.Lerp(0, height, v);
