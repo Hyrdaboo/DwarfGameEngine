@@ -134,4 +134,11 @@ public final class Vector3 {
 		Vector3 v = Vector3.subtract2Vecs(to, from);
 		return v.magnitude();
 	}
+	public static Vector3 Lerp(Vector3 a, Vector3 b, float t) {
+		Vector3 v = Vector3.zero(); 
+		v.x = Mathf.Lerp(a.x, b.x, t);
+		v.y = Mathf.Lerp(a.y, b.y, t);
+		v.z = Mathf.Lerp(a.z, b.z, t);
+		return v;
+	}
 }

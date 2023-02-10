@@ -44,7 +44,7 @@ public final class Pipeline {
 		frameSize = application.getFrameSize();
 		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
 		
-		spr = new Sprite("/Textures/grass-side.png");
+		spr = new Sprite("/Textures/uvtest.png");
 	}
 	Sprite spr;
 	
@@ -121,24 +121,43 @@ public final class Pipeline {
 		depthBuffer[(int)(x + y*frameSize.x)] = val;
 	}
 	
-	private void DrawTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
-		Arrays.sort(verts, Comparator.comparingDouble(p -> p.y));
-		Arrays.sort(texcoord, Comparator.comparingDouble(p -> p.y));
+	private Color LerpColor(Color c1, Color c2, float t) {
+		float r = Mathf.Lerp(c1.getRed(), c2.getRed(), t) / 255.0f;
+		float g = Mathf.Lerp(c1.getGreen(), c2.getGreen(), t) / 255.0f;
+		float b = Mathf.Lerp(c1.getBlue(), c2.getBlue(), t) / 255.0f;
+		Color c = new Color(r, g, b);
 		
-		Vector3 v1 = verts[0], v2 = verts[1], v3 = verts[2];
-		Vector2 t1 = texcoord[0], t2 = texcoord[1], t3 = texcoord[2];
+		return c;
+	}
+	
+	private void DrawTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
+		class Vertex {
+			Vector3 vert;
+			Vector2 uv;
+		}
+		Vertex[] Verts = new Vertex[3];
+		for (int i = 0; i < 3; i++) {
+			Verts[i] = new Vertex();
+			Verts[i].vert = verts[i];
+			Verts[i].uv = texcoord[i];
+		}
+		
+		Arrays.sort(Verts, Comparator.comparingDouble(v -> v.vert.y));
+		
+		Vector3 v1 = Verts[0].vert, v2 = Verts[1].vert, v3 = Verts[2].vert;
+		Vector2 t1 = Verts[0].uv, t2 = Verts[1].uv, t3 = Verts[2].uv;
 		
 		if (v2.y == v3.y) {
 			if (v2.x > v3.x) {
-				DrawFlatBottomTriangle(v1, v3, v2, t1, t3, t2, col);
+				DrawFlatBottomTriangle(v1, v3, v2, t1, t3, t2);
 			}
-			DrawFlatBottomTriangle(v1, v2, v3, t1, t2, t3, col);
+			DrawFlatBottomTriangle(v1, v2, v3, t1, t2, t3);
 		}
 		else if (v1.y == v2.y) {
 			if (v1.x > v2.x) {
-				DrawFlatTopTriangle(v2, v1, v3, t2, t1, t3, col);
+				DrawFlatTopTriangle(v2, v1, v3, t2, t1, t3);
 			}
-			DrawFlatTopTriangle(v1, v2, v3, t1, t2, t3, col);
+			DrawFlatTopTriangle(v1, v2, v3, t1, t2, t3);
 		}
 		else {
 			Vector3 v4 = new Vector3(0, v2.y, 0);
@@ -154,33 +173,30 @@ public final class Pipeline {
 			v4.w = Mathf.Lerp(v1.w, v3.w, t);
 			
 			if (v4.x < v2.x) {
-				DrawFlatBottomTriangle(v1, v4, v2, t1, t4, t2, col);
-				DrawFlatTopTriangle(v4, v2, v3, t4, t2, t3, col);
+				DrawFlatBottomTriangle(v1, v4, v2, t1, t4, t2);
+				DrawFlatTopTriangle(v4, v2, v3, t4, t2, t3);
 			}
 			else {
-				DrawFlatBottomTriangle(v1, v2, v4, t1, t2, t4, col);
-				DrawFlatTopTriangle(v2, v4, v3, t2, t4, t3, col);
+				DrawFlatBottomTriangle(v1, v2, v4, t1, t2, t4);
+				DrawFlatTopTriangle(v2, v4, v3, t2, t4, t3);
 			}
 		}
 	}
 	
 	private void DrawFlatTopTriangle(Vector3 v1, Vector3 v2, Vector3 v3, 
-									Vector2 t1, Vector2 t2, Vector2 t3, Color col)
-	{
+									Vector2 t1, Vector2 t2, Vector2 t3)
+	{	
 		float slope1 = (v3.x - v1.x) / (v3.y - v1.y);
 		float slope2 = (v3.x - v2.x) / (v3.y - v2.y);
 		
 		float wSlope1 = (v3.w - v1.w) / (v3.y - v1.y);
 		float wSlope2 = (v3.w - v2.w) / (v3.y - v2.y);
 		
-		float tSlope1 = (t3.x - t1.x) / (t3.y - t1.y);
-		float tSlope2 = (t3.x - t2.x) / (t3.y - t2.y);
-		
-		DrawFlatTriangle(v1, v2, v3, t1, t2, t3, slope1, slope2, wSlope1, wSlope2, tSlope1, tSlope2, v2, t2, col);
+		DrawFlatTriangle(v1, v3, v2, t1, t3, t2, t3, slope1, slope2, wSlope1, wSlope2);
 	}
 	
 	private void DrawFlatBottomTriangle(Vector3 v1, Vector3 v2, Vector3 v3, 
-										Vector2 t1, Vector2 t2, Vector2 t3, Color col)
+										Vector2 t1, Vector2 t2, Vector2 t3)
 	{
 		float slope1 = (v2.x - v1.x) / (v2.y - v1.y);
 		float slope2 = (v3.x - v1.x) / (v3.y - v1.y);
@@ -188,18 +204,14 @@ public final class Pipeline {
 		float wSlope1 = (v2.w - v1.w) / (v2.y - v1.y);
 		float wSlope2 = (v3.w - v1.w) / (v3.y - v1.y);
 		
-		float tSlope1 = (t2.x - t1.x) / (t2.y - t1.y);
-		float tSlope2 = (t3.x - t1.x) / (t3.y - t1.y);
-		
-		DrawFlatTriangle(v1, v2, v3, t1, t2, t3, slope1, slope2, wSlope1, wSlope2, tSlope1, tSlope2, v1, t1, col);
+		DrawFlatTriangle(v1, v3, v1, t1, t2, t1, t3, slope1, slope2, wSlope1, wSlope2);
 	}
 	
-	private void DrawFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3, 
-								  Vector2 t1, Vector2 t2, Vector2 t3,
+	private void DrawFlatTriangle(Vector3 v1, Vector3 v3, Vector3 startV, 
+								  Vector2 iLeftEdge1, Vector2 iLeftEdge2,
+								  Vector2 iRightEdge1, Vector2 iRightEdge2,
 								  float slope1, float slope2,
-								  float wSlope1, float wSlope2,
-								  float tSlope1, float tSlope2,
-								  Vector3 startV, Vector2 startT, Color col) 
+								  float wSlope1, float wSlope2) 
 	{
 		int startY = (int) Mathf.ceil(v1.y - 0.5f);
 		int endY = (int) Mathf.ceil(v3.y - 0.5f);
@@ -212,28 +224,23 @@ public final class Pipeline {
 			float pw1 = wSlope1 * ((float)y + 0.5f - v1.y) + v1.w;
 			float pw2 = wSlope2 * ((float)y + 0.5f - startV.y) + startV.w;
 			
-			float py = Mathf.InverseLerp(startY, endY, y);
-			float pt1 = tSlope1 * ((float)py - t1.y) + t1.x;
-			float pt2 = tSlope2 * ((float)py - startT.y) + startT.x;
+			float yi = Mathf.Clamp01(Mathf.InverseLerp(startY, endY, y));
 			
-			int startX = (int) Mathf.floor(px1 - 0.5f);
+			int startX = (int) (px1 - 0.5f);
 			int endX = (int) Mathf.ceil(px2 - 0.5f);
 			
 			for (int x = startX; x < endX; x++) {
-				float t = Mathf.InverseLerp(startX, endX, x);
-				float w = Mathf.Lerp(pw1, pw2, t);
+				float xi = Mathf.Clamp01(Mathf.InverseLerp(startX, endX, x));
+				float w = Mathf.Lerp(pw1, pw2, xi);
+				
+				Vector2 line1 = Vector2.Lerp(iLeftEdge1, iLeftEdge2, yi);
+				Vector2 line2 = Vector2.Lerp(iRightEdge1, iRightEdge2, yi);
+				Vector2 texcoord = Vector2.Lerp(line1, line2, xi);
 				
 				if (w < ReadDepth(x, y)) {
 					WriteDepth(x, y, w);
-			
-					float u = Mathf.Lerp(pt1, pt2, t);
-					u = Mathf.Clamp(u, 0, 1);
-					float v = 1-py;
 					
-					//Color c = new Color(u, v, 0);
-					Color c = spr.SampleColor(u, v);
-					
-					Draw2D.SetPixel(x, y, c);
+					Draw2D.SetPixel(x, y, spr.SampleColor(texcoord.x, texcoord.y));
 				}
 			}
 		}

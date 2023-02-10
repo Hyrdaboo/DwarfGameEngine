@@ -15,6 +15,9 @@ public final class Mathf {
 		else if (value < min) return min;
 		else return value;
 	}
+	public static float Clamp01(float value) {
+		return Clamp(value, 0, 1);
+	}
 	public static float abs(float a) {
 		return (float) Math.abs(a);
 	}
