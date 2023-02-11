@@ -29,7 +29,7 @@ class Tile {
 	
 	public void DrawTile () {
 		if (sprite == null) {
-			Debug.println("Sprite is null");
+			Debug.log("Sprite is null");
 			return;
 		}
 		Draw2D.DrawSprite(sprite, new Vector2(x*sprite.getWidth(), y*sprite.getHeight()));
@@ -191,7 +191,7 @@ class Tetris extends Application {
 					}
 				}
 				destroy = false;
-				Debug.println(score);
+				Debug.log(score);
 			}
 		}
 	}
@@ -302,7 +302,7 @@ class Tetris extends Application {
 	private void gameOver(boolean end) {
 		gameIsOver = end;
 		fallenBlocks.clear();
-		if (end) Debug.println("GAME OVER! SCORE: " + score);
+		if (end) Debug.log("GAME OVER! SCORE: " + score);
 	}
 }
 

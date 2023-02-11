@@ -33,7 +33,7 @@ public final class ObjLoader {
 	
 	public Mesh Load() {
 		if (loadedMesh != null) {
-			Debug.println("Loaded already initialized mesh!");
+			Debug.log("Loaded already initialized mesh!");
 			return loadedMesh;
 		}
 		
@@ -73,7 +73,7 @@ public final class ObjLoader {
 		loadedMesh = new Mesh();
 		loadedMesh.setVertices((Vector3[]) vertices.toArray(new Vector3[vertices.size()]));
 		loadedMesh.setTriangles(indices.stream().mapToInt(Integer::intValue).toArray());
-		Debug.println("Finished loading mesh! Loaded "+loadedMesh.vertexCount()+" vertices, "+loadedMesh.triangleCount()+" triangles");
+		Debug.log("Finished loading mesh! Loaded "+loadedMesh.vertexCount()+" vertices, "+loadedMesh.triangleCount()+" triangles");
 		return loadedMesh;
 	}	
 	

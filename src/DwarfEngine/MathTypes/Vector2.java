@@ -12,16 +12,16 @@ public final class Vector2 {
 	public static Vector2 one() {
 		return new Vector2(1, 1);
 	}
-	public Vector2 up() {
+	public static Vector2 up() {
 		return new Vector2(0, 1);
 	}
-	public Vector2 down() {
+	public static Vector2 down() {
 		return new Vector2(0, -1);
 	}
-	public Vector2 right() {
+	public static Vector2 right() {
 		return new Vector2(1, 0);
 	}
-	public Vector2 left() {
+	public static Vector2 left() {
 		return new Vector2(-1, 0);
 	}
 	
@@ -46,6 +46,12 @@ public final class Vector2 {
 	@Override
 	public int hashCode() {
 		return Objects.hash(x, y);
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return x + ", " + y;
 	}
 	
 	public Vector2(float x, float y) {

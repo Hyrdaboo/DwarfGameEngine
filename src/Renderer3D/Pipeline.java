@@ -50,7 +50,7 @@ public final class Pipeline {
 	
 	public void DrawMesh(RenderObject renderObject) {
 		if (renderObject == null) {
-			Debug.println("WARNING: RenderObject is null!!!");
+			Debug.log("WARNING: RenderObject is null!!!");
 			return;
 		}
 		

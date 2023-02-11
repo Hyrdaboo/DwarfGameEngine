@@ -85,7 +85,7 @@ public abstract class Application extends Canvas implements Runnable {
     		GameWindow.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(imagepath)));
     	}
     	catch (Exception e) {
-    		Debug.println("failed to load icon");
+    		Debug.log("failed to load icon");
 			return;
 		}
     }
@@ -98,13 +98,16 @@ public abstract class Application extends Canvas implements Runnable {
     	}
     	try {
 			ImageIO.write(image, "png", outputFile);
-			Debug.println("Image " + imageName + ".png" + " saved to " + directory);
+			Debug.log("Image " + imageName + ".png" + " saved to " + directory);
 		} catch (IOException e) {
-			Debug.println("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
+			Debug.log("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
 			e.printStackTrace();
 		}
     }
     
+    public void log(Object o) {
+    	Debug.log(o);
+    }
     
     public abstract void OnStart(); 
     public abstract void OnUpdate();

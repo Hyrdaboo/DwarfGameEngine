@@ -2,7 +2,7 @@ package DwarfEngine.MathTypes;
 
 import java.util.Objects;
 
-public final class Vector3 {
+public final class Vector3{
 	public float x = 0;
 	public float y = 0;
 	public float z = 0;
@@ -58,6 +58,11 @@ public final class Vector3 {
 	@Override
 	public int hashCode() {
 		return Objects.hash(x, y, z);
+	}
+	
+	@Override
+	public String toString() {
+		return x + ", " + y + ", " + z;
 	}
 	
 	public Vector3(float x, float y, float z) {

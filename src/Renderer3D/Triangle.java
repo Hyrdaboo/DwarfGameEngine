@@ -57,7 +57,7 @@ final class Triangle {
 	}
 	
 	public void print() {
-		Debug.println("("+points[0].x+", "+points[0].y+", "+points[0].z+") "+ 
+		Debug.log("("+points[0].x+", "+points[0].y+", "+points[0].z+") "+ 
 					  "("+points[1].x+", "+points[1].y+", "+points[1].z+") "+
 					  "("+points[2].x+", "+points[2].y+", "+points[2].z+") ");
 	}
