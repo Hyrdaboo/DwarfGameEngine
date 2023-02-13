@@ -81,11 +81,11 @@ public final class Pipeline {
 			for (Triangle clipped : clippedTris) {
 				if (clipped == null) continue;
 				
-				// convert to screen coordinates
 				for (int i = 0; i < 3; i++) {
 					clipped.points[i] = projectionMatrix.MultiplyByVector(clipped.points[i]);
-					
-					clipped.points[i].divideBy(clipped.points[i].w);
+					clipped.points[i].w = 1.0f / clipped.points[i].w;
+					clipped.points[i].multiplyBy(clipped.points[i].w);	
+					clipped.texcoord[i] = Vector2.mulVecFloat(clipped.texcoord[i], clipped.points[i].w);
 					
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
@@ -241,17 +241,18 @@ public final class Pipeline {
 			for (int x = startX; x < endX; x++) {
 				float xi = Mathf.Clamp01(Mathf.InverseLerp(startX, endX, x));
 				float w = Mathf.Lerp(pw1, pw2, xi);
+				w = 1.0f / w;
 				
 				Vector2 line1 = Vector2.Lerp(iLeftEdge1, iLeftEdge2, yi);
 				Vector2 line2 = Vector2.Lerp(iRightEdge1, iRightEdge2, yi);
 				Vector2 texcoord = Vector2.Lerp(line1, line2, xi);
+				texcoord.multiplyBy(w);
 				
 				if (w < ReadDepth(x, y)) {
 					WriteDepth(x, y, w);
 					
-					Color img = spr.SampleColor(texcoord.x, texcoord.y);
-					Color c = new Color(texcoord.x, texcoord.y, 0);
-					Draw2D.SetPixel(x, y, img);
+					Color c = spr.SampleColor(texcoord.x, texcoord.y);
+					Draw2D.SetPixel(x, y, c);
 				}
 			}
 		}

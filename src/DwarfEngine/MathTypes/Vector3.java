@@ -105,7 +105,7 @@ public final class Vector3{
 	public static Vector3 mulVecFloat(Vector3 vec, float num) {
 		return new Vector3(vec.x*num, vec.y*num, vec.z*num);
 	}
-	public static Vector3 div2Vecs(Vector3 vec1, Vector3 vec2) {
+	public static Vector3 divide2Vecs(Vector3 vec1, Vector3 vec2) {
 		return new Vector3(vec1.x/vec2.x, vec1.y/vec2.y, vec1.z/vec2.z);
 	}
 	public static Vector3 subtract2Vecs(Vector3 vec1, Vector3 vec2) {

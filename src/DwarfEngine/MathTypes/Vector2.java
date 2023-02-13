@@ -84,7 +84,7 @@ public final class Vector2 {
 		y /= a;
 	}
 	
-	public static Vector2 mulVecFloat(Vector3 vec, float num) {
+	public static Vector2 mulVecFloat(Vector2 vec, float num) {
 		return new Vector2(vec.x*num, vec.y*num);
 	}
 	public static Vector2 divide2Vecs(Vector2 a, Vector2 b) {

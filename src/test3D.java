@@ -37,17 +37,17 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 		
-		Mesh cubeMesh = Mesh.MakeQuad();
+		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
 		//cube.transform.rotation.y = 45;
-		//cube.transform.scale = new Vector3(0.15f, 0.15f, 0.15f);
+		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
 		
-		cam.transform.position.z = -1.0f;
+		cam.transform.position.z = -3.0f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -90,6 +90,7 @@ class demo3D extends Application {
 		GetInput();
 		//pipeline.DrawMesh(cube2);
 		pipeline.DrawMesh(cube);
+		//pipeline.drawDepth();
 		//cube.transform.rotation.x += deltaTime * 30;
 		//cube.transform.rotation.y += deltaTime * 30;
 		//cube.transform.rotation.z += deltaTime * 30;
