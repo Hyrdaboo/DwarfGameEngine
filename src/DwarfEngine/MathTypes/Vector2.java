@@ -119,12 +119,6 @@ public final class Vector2 {
 		return v.magnitude();
 	}
 	
-	public static float InverseLerp(Vector2 a, Vector2 b, Vector2 value)
-    {
-        Vector2 AB = Vector2.subtract2Vecs(b, a);
-        Vector2 AV = Vector2.subtract2Vecs(value, a);
-        return Vector2.Dot(AV, AB) / Vector2.Dot(AB, AB);
-    }
 	public static Vector2 Lerp(Vector2 a, Vector2 b, float t) {
 		Vector2 v = Vector2.zero(); 
 		v.x = Mathf.Lerp(a.x, b.x, t);

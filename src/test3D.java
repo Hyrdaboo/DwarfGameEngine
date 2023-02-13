@@ -41,7 +41,7 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
 		//cube.transform.rotation.y = 45;
-		//cube.transform.scale = new Vector3(3f, 0.5f, 0.5f);
+		//cube.transform.scale = new Vector3(0.15f, 0.15f, 0.15f);
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
@@ -52,7 +52,7 @@ class demo3D extends Application {
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
 		
-		spr = new Sprite("/Textures/uvtest.png");
+		//spr = new Sprite("/Textures/uvtest.png");
 	}
 	Sprite spr;
 	
@@ -86,11 +86,13 @@ class demo3D extends Application {
 	public void OnUpdate() {
 		clear(Color.black);
 		
-		
 		pipeline.clearDepth();
 		GetInput();
+		//pipeline.DrawMesh(cube2);
 		pipeline.DrawMesh(cube);
-		
+		//cube.transform.rotation.x += deltaTime * 30;
+		//cube.transform.rotation.y += deltaTime * 30;
+		//cube.transform.rotation.z += deltaTime * 30;
 		
 		if (Input.OnKeyHeld(Keycode.A)) {
 			A.x -= deltaTime * 200;

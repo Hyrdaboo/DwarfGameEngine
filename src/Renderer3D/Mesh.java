@@ -109,6 +109,49 @@ public final class Mesh {
 	        	30, 31, 32, 
 	        	33, 34, 35
 		};
+		cube.uv = new Vector2[] {
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+				
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+				
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+				
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+				
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 0),
+				new Vector2(1, 1),	
+				new Vector2(0, 1),
+		};
 		return cube;
 	}
 	
@@ -126,11 +169,11 @@ public final class Mesh {
 				3, 1, 0
 		};
 		quad.uv = new Vector2[] {
-				new Vector2(0.2f, 0.5f),
-				new Vector2(0.6f, 0.4f),
-				new Vector2(0.3f, 0.2f),
-				new Vector2(0.7f, 0)
-			};
+				new Vector2(0, 1),
+				new Vector2(1, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0)
+		};
 
 		
 		return quad;

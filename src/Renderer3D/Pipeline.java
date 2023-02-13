@@ -69,6 +69,7 @@ public final class Pipeline {
 			for (int i = 0; i < 3; i++) {
 				transformed.points[i] = transformMatrix.MultiplyByVector(t.points[i]);
 				fullyTransformed.points[i] = cameraObjectCombined.MultiplyByVector(t.points[i]);
+				fullyTransformed.texcoord[i] = t.texcoord[i];
 			}
 			
 			Vector3 faceNormal = surfaceNormalFromIndices(transformed.points[0], transformed.points[1], transformed.points[2]);
@@ -83,10 +84,10 @@ public final class Pipeline {
 				// convert to screen coordinates
 				for (int i = 0; i < 3; i++) {
 					clipped.points[i] = projectionMatrix.MultiplyByVector(clipped.points[i]);
+					
 					clipped.points[i].divideBy(clipped.points[i].w);
 					
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
-					clipped.texcoord[i] = t.texcoord[i];
 				}
 
 				DwarfShader shader = renderObject.shader == null ? errorShader : renderObject.shader;
@@ -163,14 +164,9 @@ public final class Pipeline {
 			Vector3 v4 = new Vector3(0, v2.y, 0);
 			v4.x = (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x));
 			
-			Vector2 t4 = new Vector2(0, t2.y);
-			t4.x = (int)(t1.x + ((float)(t2.y - t1.y) / (float)(t3.y - t1.y)) * (t3.x - t1.x));
-			
-			Vector2 sv1 = new Vector2(v1.x, v1.y);
-			Vector2 sv3 = new Vector2(v3.x, v3.y);
-			Vector2 sv4 = new Vector2(v4.x, v4.y);		
-			float t = Vector2.InverseLerp(sv1, sv3, sv4);
+			float t = Mathf.InverseLerp(v1.y, v3.y, v2.y);
 			v4.w = Mathf.Lerp(v1.w, v3.w, t);
+			Vector2 t4 = Vector2.Lerp(t1, t3, t);
 			
 			if (v4.x < v2.x) {
 				DrawFlatBottomTriangle(v1, v4, v2, t1, t4, t2);
@@ -180,6 +176,19 @@ public final class Pipeline {
 				DrawFlatBottomTriangle(v1, v2, v4, t1, t2, t4);
 				DrawFlatTopTriangle(v2, v4, v3, t2, t4, t3);
 			}
+			
+			/*
+			Vector2 _v1 = new Vector2(v1.x, v1.y), _v2 = new Vector2(v2.x, v2.y);
+			Vector2 _v3 = new Vector2(v3.x, v3.y), _v4 = new Vector2(v4.x, v4.y);
+			
+			Draw2D.FillCircle(_v1, 10, Color.red);
+			Draw2D.FillCircle(_v2, 10, Color.green);
+			Draw2D.FillCircle(_v3, 10, Color.blue);
+			Draw2D.FillCircle(_v4, 10, Color.magenta);
+			Draw2D.DrawTriangle(_v1, _v2, _v3, Color.cyan);
+			Debug.log(t4);
+			Draw2D.LineTo(new Vector2(v2.x, v2.y), new Vector2(v4.x, v4.y), Color.white);
+			*/
 		}
 	}
 	
@@ -240,7 +249,9 @@ public final class Pipeline {
 				if (w < ReadDepth(x, y)) {
 					WriteDepth(x, y, w);
 					
-					Draw2D.SetPixel(x, y, spr.SampleColor(texcoord.x, texcoord.y));
+					Color img = spr.SampleColor(texcoord.x, texcoord.y);
+					Color c = new Color(texcoord.x, texcoord.y, 0);
+					Draw2D.SetPixel(x, y, img);
 				}
 			}
 		}
@@ -262,7 +273,17 @@ public final class Pipeline {
 		return Vector3.Cross(sideAB, sideAC).normalized();
 	}
 	
-	private Vector3 lineIntersectPlane(Vector3 planePoint, Vector3 planeNormal, Vector3 lineStart, Vector3 lineEnd) {
+	class Intersection {
+		public final Vector3 point;
+		public final float t; // a value between 0-1 indicating where the intersection happened
+		
+		public Intersection(Vector3 hitPoint, float lineRatio) {
+			this.point = hitPoint;
+			this.t = lineRatio;
+		}
+	}
+	
+	private Intersection lineIntersectPlane(Vector3 planePoint, Vector3 planeNormal, Vector3 lineStart, Vector3 lineEnd) {
 		planeNormal.Normalize();
 		float planeD = -Vector3.Dot(planeNormal, planePoint);
 		float ad = Vector3.Dot(lineStart, planeNormal);
@@ -270,7 +291,8 @@ public final class Pipeline {
 		float t = (-planeD-ad) / (bd-ad);
 		Vector3 lineStartToEnd = Vector3.subtract2Vecs(lineEnd, lineStart);
 		Vector3 lineToIntersect = Vector3.mulVecFloat(lineStartToEnd, t);
-		return Vector3.add2Vecs(lineStart, lineToIntersect);
+		Intersection hit = new Intersection(Vector3.add2Vecs(lineStart, lineToIntersect), t);
+		return hit;
 	}
 	
 	private Triangle[] triangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Triangle inTri) {
@@ -283,38 +305,80 @@ public final class Pipeline {
 		
 		Vector3[] insidePoints = new Vector3[3]; int insidePointCount = 0;
 		Vector3[] outsidePoints = new Vector3[3]; int outsidePointCount = 0;
+		Vector2[] insideUv = new Vector2[3]; Vector2[] outsideUv = new Vector2[3];
 		
 		float d0 = dist.apply(inTri.points[0]);
 		float d1 = dist.apply(inTri.points[1]);
 		float d2 = dist.apply(inTri.points[2]);
 		
-		if (d0 >= 0) insidePoints[insidePointCount++] = inTri.points[0];
-		else outsidePoints[outsidePointCount++] = inTri.points[0];
-		if (d1 >= 0) insidePoints[insidePointCount++] = inTri.points[1];
-		else outsidePoints[outsidePointCount++] = inTri.points[1];
-		if (d2 >= 0) insidePoints[insidePointCount++] = inTri.points[2];
-		else outsidePoints[outsidePointCount++] = inTri.points[2];
+		if (d0 >= 0) {
+			insidePoints[insidePointCount] = inTri.points[0];
+			insideUv[insidePointCount] = inTri.texcoord[0];
+			insidePointCount++;
+		}
+		else {
+			outsidePoints[outsidePointCount] = inTri.points[0];
+			outsideUv[outsidePointCount] = inTri.texcoord[0];
+			outsidePointCount++;
+		}
+		if (d1 >= 0) {
+			insidePoints[insidePointCount] = inTri.points[1];
+			insideUv[insidePointCount] = inTri.texcoord[1];
+			insidePointCount++;
+		}
+		else {
+			outsidePoints[outsidePointCount] = inTri.points[1];
+			outsideUv[outsidePointCount] = inTri.texcoord[1];
+			outsidePointCount++;
+		}
+		if (d2 >= 0) {
+			insidePoints[insidePointCount] = inTri.points[2];
+			insideUv[insidePointCount] = inTri.texcoord[2];
+			insidePointCount++;
+		}
+		else {
+			outsidePoints[outsidePointCount] = inTri.points[2];
+			outsideUv[outsidePointCount] = inTri.texcoord[2];
+			outsidePointCount++;
+		}
 		
 		if (insidePointCount == 3) outTris[0] = inTri;
 		if (insidePointCount == 1 && outsidePointCount == 2) {
 			outTris[0] = new Triangle();
 			
 			outTris[0].points[0] = insidePoints[0];
+			outTris[0].texcoord[0] = insideUv[0];
 			
-			outTris[0].points[1] = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[0]);
-			outTris[0].points[2] = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[1]);
+			Intersection intersection1 = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[0]);
+			Intersection intersection2 = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[1]);
+			
+			outTris[0].points[1] = intersection1.point;
+			outTris[0].texcoord[1] = Vector2.Lerp(insideUv[0], outsideUv[0], intersection1.t);
+			outTris[0].points[2] = intersection2.point;
+			outTris[0].texcoord[2] = Vector2.Lerp(insideUv[0], outsideUv[1], intersection2.t);
 		}
 		if (insidePointCount == 2 && outsidePointCount == 1) {
 			outTris[0] = new Triangle();
 			outTris[1] = new Triangle();
 			
+			Intersection intersection1 = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[0]);
+			Intersection intersection2 = lineIntersectPlane(planePoint, planeNormal, insidePoints[1], outsidePoints[0]);
+			
 			outTris[0].points[0] = insidePoints[0];
 			outTris[0].points[1] = insidePoints[1];
-			outTris[0].points[2] = lineIntersectPlane(planePoint, planeNormal, insidePoints[0], outsidePoints[0]);
+			outTris[0].points[2] = intersection1.point;
+			
+			outTris[0].texcoord[0] = insideUv[0];
+			outTris[0].texcoord[1] = insideUv[1];
+			outTris[0].texcoord[2] = Vector2.Lerp(insideUv[0], outsideUv[0], intersection1.t);
 			
 			outTris[1].points[0] = insidePoints[1];
 			outTris[1].points[1] = outTris[0].points[2];
-			outTris[1].points[2] = lineIntersectPlane(planePoint, planeNormal, insidePoints[1], outsidePoints[0]);
+			outTris[1].points[2] = intersection2.point;
+			
+			outTris[1].texcoord[0] = insideUv[1];
+			outTris[1].texcoord[1] = outTris[0].texcoord[2];
+			outTris[1].texcoord[2] = Vector2.Lerp(insideUv[1], outsideUv[0], intersection2.t);
 		}
 		
 		return outTris;
