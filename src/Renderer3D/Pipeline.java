@@ -44,7 +44,7 @@ public final class Pipeline {
 		frameSize = application.getFrameSize();
 		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
 		
-		spr = new Sprite("/Textures/uvtest.png");
+		spr = new Sprite("/Textures/saul.jpg");
 	}
 	Sprite spr;
 	
@@ -176,19 +176,6 @@ public final class Pipeline {
 				DrawFlatBottomTriangle(v1, v2, v4, t1, t2, t4);
 				DrawFlatTopTriangle(v2, v4, v3, t2, t4, t3);
 			}
-			
-			/*
-			Vector2 _v1 = new Vector2(v1.x, v1.y), _v2 = new Vector2(v2.x, v2.y);
-			Vector2 _v3 = new Vector2(v3.x, v3.y), _v4 = new Vector2(v4.x, v4.y);
-			
-			Draw2D.FillCircle(_v1, 10, Color.red);
-			Draw2D.FillCircle(_v2, 10, Color.green);
-			Draw2D.FillCircle(_v3, 10, Color.blue);
-			Draw2D.FillCircle(_v4, 10, Color.magenta);
-			Draw2D.DrawTriangle(_v1, _v2, _v3, Color.cyan);
-			Debug.log(t4);
-			Draw2D.LineTo(new Vector2(v2.x, v2.y), new Vector2(v4.x, v4.y), Color.white);
-			*/
 		}
 	}
 	
@@ -248,15 +235,20 @@ public final class Pipeline {
 				Vector2 texcoord = Vector2.Lerp(line1, line2, xi);
 				texcoord.multiplyBy(w);
 				
+				Color c = spr.SampleColor(texcoord.x, texcoord.y);
+				
 				if (w < ReadDepth(x, y)) {
 					WriteDepth(x, y, w);
 					
-					Color c = spr.SampleColor(texcoord.x, texcoord.y);
 					Draw2D.SetPixel(x, y, c);
 				}
 			}
 		}
 	}
+	
+	private static int getAlpha(int rgb) {
+    	return (rgb >> 24) & 0xFF;
+    }
 	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {
 		float x = Mathf.InverseLerp(-1, 1, point.x);

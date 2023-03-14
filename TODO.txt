@@ -1,7 +1,9 @@
-*Texture Glitch
-*Shaders
+*Huge Refactoring. Change the Application, Screen, Input and Draw2D classes
+*Sampling and Wrap modes
+*Obj-Loader should account for textures too
 *Scene functionality
+*Shaders
+*Some built-in shaders
+*Far clipping and screen space clipping for triangles
 #Push to master
-*Screen space clipping for triangles
-*Fix screen clamping for LineTo and DrawTriangle in Draw2D
-*Refactor camera class with get/setters
+*Actually good triangle rasterizer

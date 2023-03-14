@@ -59,6 +59,12 @@ public final class Sprite {
 		int x = (int)Mathf.Lerp(0, width, u);
 		int y = (int)Mathf.Lerp(0, height, v);
 		
-		return new Color(GetPixel(x, y));
+		int rgb = GetPixel(x, y);
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = (rgb >> 0) & 0xFF;
+		int a = (rgb >> 24) & 0xFF;
+		Color c = new Color(r, g, b, a);
+		return c;
 	}
 }

@@ -36,7 +36,7 @@ class demo3D extends Application {
 	@Override
 	public void OnStart() {
 		cam = new Camera();
-		
+
 		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
 		cube.shader = new myShader();
@@ -51,10 +51,7 @@ class demo3D extends Application {
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
-		
-		//spr = new Sprite("/Textures/uvtest.png");
 	}
-	Sprite spr;
 	
 	Mesh monke() {
 		Mesh mesh = null;
@@ -68,20 +65,6 @@ class demo3D extends Application {
 		return mesh;
 	}
 	
-	Vector3 A = new Vector3(200, 0, 0);
-	Vector3 B = new Vector3(200,720,0);
-	Vector3 C = new Vector3(1080,720,0);
-	
-	/*
-	Vector3 A = new Vector3(144/2, 0, 0);
-	Vector3 B = new Vector3(20,81,0);
-	Vector3 C = new Vector3(124,81,0);
-	*/
-	
-	Vector2 a = new Vector2(0.7f, 0.1f);
-	Vector2 b = new Vector2(0.1f, 0.1f);
-	Vector2 c = new Vector2(0.7f, 0.5f);
-	
 	@Override
 	public void OnUpdate() {
 		clear(Color.black);
@@ -89,59 +72,13 @@ class demo3D extends Application {
 		pipeline.clearDepth();
 		GetInput();
 		//pipeline.DrawMesh(cube2);
+		cube2.transform.position.z = 3;
 		pipeline.DrawMesh(cube);
-		//pipeline.drawDepth();
 		//cube.transform.rotation.x += deltaTime * 30;
 		//cube.transform.rotation.y += deltaTime * 30;
 		//cube.transform.rotation.z += deltaTime * 30;
 		
-		if (Input.OnKeyHeld(Keycode.A)) {
-			A.x -= deltaTime * 200;
-		}
-		if (Input.OnKeyHeld(Keycode.D)) {
-			A.x += deltaTime * 200;
-		}
-		if (Input.OnKeyHeld(Keycode.W)) {
-			A.y -= deltaTime * 200;
-		}
-		if (Input.OnKeyHeld(Keycode.S)) {
-			A.y += deltaTime * 200;
-		}
-		
 		//DrawFlatBottomTriangle(A, B, C, a, b, c);
-	}
-	
-	private void DrawFlatBottomTriangle(Vector3 v1, Vector3 v2, Vector3 v3,
-										Vector2 t1, Vector2 t2, Vector2 t3) 
-	{
-		float slope1 = (v2.x - v1.x) / (v2.y - v1.y);
-		float slope2 = (v3.x - v1.x) / (v3.y - v1.y);
-		
-		int startY = (int) Mathf.ceil(v1.y - 0.5f);
-		int endY = (int) Mathf.ceil(v3.y - 0.5f);
-		
-		for (int y = startY; y < endY; y++) {
-			
-			float px1 = slope1 * ((float)y + 0.5f - v1.y) + v1.x;
-			float px2 = slope2 * ((float)y + 0.5f - v1.y) + v1.x;
-	
-			float yi = Mathf.Clamp01(Mathf.InverseLerp(startY, endY, y));
-			
-			int startX = (int) (px1 - 0.5f);
-			int endX = (int) Mathf.ceil(px2 - 0.5f);
-			
-			for (int x = startX; x < endX; x++) {
-				float xi = Mathf.Clamp01(Mathf.InverseLerp(startX, endX, x));
-				
-				Vector2 line1 = Vector2.Lerp(t1, t2, yi);
-				Vector2 line2 = Vector2.Lerp(t1, t3, yi);
-				Vector2 scanline = Vector2.Lerp(line1, line2, xi);
-				//tc = Vector2.Lerp(t1, tc, yi);
-				Color c = spr.SampleColor(scanline.x, scanline.y);
-				
-				Draw2D.SetPixel(x, y, c);
-			}
-		}
 	}
 	
 	void GetInput() {

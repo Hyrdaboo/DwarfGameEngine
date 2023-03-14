@@ -125,10 +125,6 @@ public final class Draw2D {
     }
     
     public static void LineTo(Vector2 from, Vector2 to, Color color) {
-    	from.x = Mathf.Clamp(from.x, 0, Application.windowSize.x);
-    	from.y = Mathf.Clamp(from.y, 0, Application.windowSize.y);
-    	to.x = Mathf.Clamp(to.x, 0, Application.windowSize.x);
-    	to.y = Mathf.Clamp(to.y, 0, Application.windowSize.y);
     	if (Math.abs(to.y-from.y) < Math.abs(to.x - from.x)) {
     		if (from.x > to.x) {
     			LineToLow(to, from, color);

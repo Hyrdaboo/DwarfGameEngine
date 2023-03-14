@@ -110,6 +110,7 @@ public final class Mesh {
 	        	33, 34, 35
 		};
 		cube.uv = new Vector2[] {
+				//front
 				new Vector2(0, 1),
 				new Vector2(0, 0),
 				new Vector2(1, 0),
@@ -117,6 +118,15 @@ public final class Mesh {
 				new Vector2(1, 1),	
 				new Vector2(0, 1),
 
+				//back
+				new Vector2(1, 1),
+				new Vector2(1, 0),
+				new Vector2(0, 0),
+				new Vector2(0, 0),
+				new Vector2(0, 1),	
+				new Vector2(1, 1),
+				
+				//right
 				new Vector2(0, 1),
 				new Vector2(0, 0),
 				new Vector2(1, 0),
@@ -124,27 +134,23 @@ public final class Mesh {
 				new Vector2(1, 1),	
 				new Vector2(0, 1),
 				
-				new Vector2(0, 1),
+				//left
+				new Vector2(1, 1),
+				new Vector2(1, 0),
 				new Vector2(0, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 1),	
-				new Vector2(0, 1),
-				
-				new Vector2(0, 1),
 				new Vector2(0, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 1),	
-				new Vector2(0, 1),
+				new Vector2(0, 1),	
+				new Vector2(1, 1),
 				
-				new Vector2(0, 1),
+				//bottom
+				new Vector2(1, 1),
+				new Vector2(1, 0),
 				new Vector2(0, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 0),
-				new Vector2(1, 1),	
-				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(0, 1),	
+				new Vector2(1, 1),
 				
+				//top
 				new Vector2(0, 1),
 				new Vector2(0, 0),
 				new Vector2(1, 0),
