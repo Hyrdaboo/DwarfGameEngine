@@ -5,15 +5,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Function;
 
-
-import DwarfEngine.Application;
-import DwarfEngine.Debug;
+import DwarfEngine.Sprite;
+import DwarfEngine.Core.Application;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import DwarfEngine.SimpleGraphics2D.Draw2D;
-import DwarfEngine.SimpleGraphics2D.Sprite;
+import static DwarfEngine.Core.DisplayRenderer.*;
 
 class ErrorShader implements DwarfShader {
 	public Color Fragment() {
@@ -44,7 +43,8 @@ public final class Pipeline {
 		frameSize = application.getFrameSize();
 		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
 		
-		spr = new Sprite("/Textures/saul.jpg");
+		spr = new Sprite();
+		spr.LoadFromFile("/Textures/saul.jpg");
 	}
 	Sprite spr;
 	
@@ -54,7 +54,7 @@ public final class Pipeline {
 			return;
 		}
 		
-		Vector2 windowSize = new Vector2(application.getWidth()/application.scaleX, application.getHeight()/application.scaleY);
+		Vector2 windowSize = new Vector2(application.getWidth()/application.getPixelScale(), application.getHeight()/application.getPixelScale());
 		float aspectRatio = windowSize.y / windowSize.x;
 		
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
@@ -98,10 +98,10 @@ public final class Pipeline {
 	
 	private void DrawProjectedTriangle(Triangle projected, DwarfShader shader) {
 		if (drawFlag != DrawFlag.wireframe) {
-			DrawTriangle(projected.points, projected.texcoord, shader.Fragment());
+			RasterizeTriangle(projected.points, projected.texcoord, shader.Fragment());
 			return;
 		}
-		Draw2D.DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
+		DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
 				new Vector2(projected.points[1].x, projected.points[1].y),
 				new Vector2(projected.points[2].x, projected.points[2].y), Color.gray);
 	}
@@ -131,7 +131,7 @@ public final class Pipeline {
 		return c;
 	}
 	
-	private void DrawTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
+	private void RasterizeTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
 		class Vertex {
 			Vector3 vert;
 			Vector2 uv;
@@ -240,22 +240,17 @@ public final class Pipeline {
 				if (w < ReadDepth(x, y)) {
 					WriteDepth(x, y, w);
 					
-					Draw2D.SetPixel(x, y, c);
+					SetPixel(x, y, c);
 				}
 			}
 		}
 	}
 	
-	private static int getAlpha(int rgb) {
-    	return (rgb >> 24) & 0xFF;
-    }
-	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {
 		float x = Mathf.InverseLerp(-1, 1, point.x);
 		float y = Mathf.InverseLerp(1, -1, point.y);
 		
-		Vector2 windowSize = application.getFrameSize();
-		point.x = x*windowSize.x; point.y = y*windowSize.y;
+		point.x = x*frameSize.x; point.y = y*frameSize.y;
 		return point;
 	}
 	

@@ -1,16 +1,18 @@
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Random;
 
-import DwarfEngine.Application;
-import DwarfEngine.Debug;
-import DwarfEngine.Input;
-import DwarfEngine.Keycode;
+import DwarfEngine.Sprite;
+import DwarfEngine.Core.Application;
+import DwarfEngine.Core.Debug;
+import DwarfEngine.Core.Input;
+import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import DwarfEngine.SimpleGraphics2D.Draw2D;
-import DwarfEngine.SimpleGraphics2D.Sprite;
+import static DwarfEngine.Core.DisplayRenderer.*;
 import Renderer3D.Camera;
 import Renderer3D.DwarfShader;
 import Renderer3D.Mesh;
@@ -50,7 +52,7 @@ class demo3D extends Application {
 		cam.transform.position.z = -3.0f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
-		//pipeline.drawFlag = DrawFlag.wireframe;
+		//pipeline.drawFlag = DrawFlag.wireframe;	
 	}
 	
 	Mesh monke() {
@@ -72,16 +74,20 @@ class demo3D extends Application {
 		pipeline.clearDepth();
 		GetInput();
 		//pipeline.DrawMesh(cube2);
-		cube2.transform.position.z = 3;
 		pipeline.DrawMesh(cube);
-		//cube.transform.rotation.x += deltaTime * 30;
-		//cube.transform.rotation.y += deltaTime * 30;
-		//cube.transform.rotation.z += deltaTime * 30;
-		
-		//DrawFlatBottomTriangle(A, B, C, a, b, c);
 	}
 	
+	boolean confined = false;
+	void switchCursor() {
+		if (confined) {
+			SetCursorImage(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+		}
+		else {
+			SetCursorImage(null);
+		}
+	}
 	void GetInput() {
+		float deltaTime = (float) getDeltaTime();
 		float mul = 0.1f;
 		if (Input.OnKeyHeld(Keycode.LeftShift)) {
 			mul = 5;
@@ -89,6 +95,7 @@ class demo3D extends Application {
 		float speed = 15 * mul;
 		float lookSpeed = 100;
 		Transform camTransform = cam.transform;
+		
 		if (Input.OnKeyHeld(Keycode.W)) {
 			Vector3 forward = Vector3.mulVecFloat(camTransform.forward, speed*(float)deltaTime);
 			camTransform.position = Vector3.add2Vecs(camTransform.position, forward);
@@ -100,14 +107,10 @@ class demo3D extends Application {
 		if (Input.OnKeyHeld(Keycode.A)) {
 			Vector3 right = Vector3.mulVecFloat(camTransform.right, -speed*(float)deltaTime);
 			camTransform.position = Vector3.add2Vecs(camTransform.position, right);
-			
-			//camPos.x -= speed * deltaTime; 
 		}
 		if (Input.OnKeyHeld(Keycode.D)) {
 			Vector3 right = Vector3.mulVecFloat(camTransform.right, speed*(float)deltaTime);
 			camTransform.position = Vector3.add2Vecs(camTransform.position, right);
-			
-			//camPos.x += speed * deltaTime;
 		}
 		
 		if (Input.OnKeyHeld(Keycode.Q)) {
@@ -116,6 +119,17 @@ class demo3D extends Application {
 		if (Input.OnKeyHeld(Keycode.E)) {
 			camTransform.position.y -= deltaTime * speed;
 		}
+		
+		if (Input.OnKeyPressed(Keycode.Escape)) {
+			confined = !confined;
+			Input.setMouseConfined(confined);
+			switchCursor();
+		}
+		if (Input.isMouseConfined()) {
+			camTransform.rotation.y += Input.GetMouseDelta().x*50;
+			camTransform.rotation.x += Input.GetMouseDelta().y*50;
+		}
+		
 		// rotate camera
 		if (Input.OnKeyHeld(Keycode.I)) {
 			camTransform.rotation.x -= deltaTime * lookSpeed;
@@ -142,8 +156,7 @@ class demo3D extends Application {
 public class test3D {
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
-		d.SetResizable(true);
 		//d.Construct(144, 81, 6);
-		d.Construct(1280, 720, 1);
+		d.Initialize(1280, 720, 1);
 	}
 }

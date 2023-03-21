@@ -1,6 +1,6 @@
 package Renderer3D;
 
-import DwarfEngine.Debug;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 

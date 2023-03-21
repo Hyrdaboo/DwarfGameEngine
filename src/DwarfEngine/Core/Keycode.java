@@ -1,4 +1,4 @@
-package DwarfEngine;
+package DwarfEngine.Core;
 
 public enum Keycode {
 	 Q(81),W(87),E(69),R(82),T(84),Y(89),U(85),I(73),O(79),P(80),
@@ -12,7 +12,8 @@ public enum Keycode {
 	 F1(112),
 	 F3(114),
 	 F11(122),
-	 Escape(27);
+	 Escape(27),
+	 AnyKey(-100);
 	 
 	private final int num;
 	Keycode (int num) {

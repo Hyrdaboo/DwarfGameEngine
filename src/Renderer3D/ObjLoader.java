@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import DwarfEngine.Debug;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Vector3;
 
 public final class ObjLoader {

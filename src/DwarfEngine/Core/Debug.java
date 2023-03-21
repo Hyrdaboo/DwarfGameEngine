@@ -1,4 +1,4 @@
-package DwarfEngine;
+package DwarfEngine.Core;
 
 public class Debug {
 	public static void log(Object o) {
