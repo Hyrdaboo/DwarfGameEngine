@@ -122,15 +122,6 @@ public final class Pipeline {
 		depthBuffer[(int)(x + y*frameSize.x)] = val;
 	}
 	
-	private Color LerpColor(Color c1, Color c2, float t) {
-		float r = Mathf.Lerp(c1.getRed(), c2.getRed(), t) / 255.0f;
-		float g = Mathf.Lerp(c1.getGreen(), c2.getGreen(), t) / 255.0f;
-		float b = Mathf.Lerp(c1.getBlue(), c2.getBlue(), t) / 255.0f;
-		Color c = new Color(r, g, b);
-		
-		return c;
-	}
-	
 	private void RasterizeTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
 		class Vertex {
 			Vector3 vert;

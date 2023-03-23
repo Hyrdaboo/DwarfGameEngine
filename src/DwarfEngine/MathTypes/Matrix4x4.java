@@ -6,6 +6,14 @@ public final class Matrix4x4 {
 	public Matrix4x4() {
 		matrix = new float[4][4];
 	}
+	@Override
+	public String toString() {
+		String s = "";
+		s += matrix[0][0] + ", " + matrix[1][0] + ", " + matrix[2][0] + "\n";
+		s += matrix[0][1] + ", " + matrix[1][1] + ", " + matrix[2][1] + "\n";
+		s += matrix[0][2] + ", " + matrix[1][2] + ", " + matrix[2][2] + "\n";
+		return s;
+	}
 	
 	public void setElement(int x, int y, float element) {
 		matrix[x][y] = element;

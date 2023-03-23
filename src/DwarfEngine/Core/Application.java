@@ -1,6 +1,7 @@
 package DwarfEngine.Core;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -104,6 +105,7 @@ public abstract class Application extends Canvas implements Runnable {
 		isRunning = false;
 		
 		try {
+			applicationWindow.dispatchEvent(new WindowEvent(applicationWindow, WindowEvent.WINDOW_CLOSING));
 			mainThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

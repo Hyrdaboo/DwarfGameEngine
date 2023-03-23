@@ -1,6 +1,6 @@
+*Triangle rasterization pipeline that actually works
 *Image drawing routine
 *Text rendering
-*Triangle rasterization pipeline that actually works
 *Interpolators for the triangle
 *Far clipping
 *Sampling and Wrap modes

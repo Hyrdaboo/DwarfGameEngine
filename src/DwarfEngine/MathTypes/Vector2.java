@@ -5,6 +5,11 @@ import java.util.Objects;
 public final class Vector2 {
 	public float x = 0;
 	public float y = 0;
+	/**
+	 * Need a third term for matrix operations
+	 * Do not directly edit this value!
+	 **/
+	public float z = 1;
 	
 	public static Vector2 zero() {
 		return new Vector2(0, 0);

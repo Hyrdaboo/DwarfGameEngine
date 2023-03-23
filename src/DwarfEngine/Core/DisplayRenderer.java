@@ -3,7 +3,6 @@ package DwarfEngine.Core;
 import java.awt.Color;
 import java.util.Arrays;
 
-import DwarfEngine.Sprite;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
@@ -136,20 +135,5 @@ public final class DisplayRenderer {
     	DrawLine(p1, p2, color);
     	DrawLine(p2, p3, color);
     	DrawLine(p3, p1, color);
-    }
-    
-    public static void DrawSprite(Sprite s, Vector2 pos) {
-    	if (s == null) return;
-    	int w = (int) (s.getWidth());
-    	int h = (int) (s.getHeight());
-    	
-    	for (int y = 0; y < h; y++) {
-    		for (int x = 0; x < w; x++) {
-    			int px = (int)(x+pos.x);
-    			int py = (int)(y+pos.y);
-    			
-    			SetPixel(px, py, s.GetPixel(x, y));
-    		}
-    	}
     }
 }

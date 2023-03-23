@@ -7,8 +7,8 @@ public final class Vector3{
 	public float y = 0;
 	public float z = 0;
 	/**
-	 * Need a fourth term for doing perspective operations.
-	 * Do not directly edit this value
+	 * Need a fourth term for matrix operations
+	 * Do not directly edit this value!
 	 **/
 	public float w = 1;
 	
