@@ -1,8 +1,10 @@
 package Renderer3D;
 
+import java.awt.Color;
+
 public final class RenderObject {
 	public final Transform transform;
-	public DwarfShader shader;
+	public Color color = Color.white;
 	
 	Triangle[] triangles;
 	

@@ -1,31 +1,18 @@
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
 
-import DwarfEngine.Sprite;
 import DwarfEngine.Core.Application;
-import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
-import DwarfEngine.MathTypes.Mathf;
-import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import static DwarfEngine.Core.DisplayRenderer.*;
 import Renderer3D.Camera;
-import Renderer3D.DwarfShader;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
 import Renderer3D.RenderObject;
 import Renderer3D.Transform;
 
-class myShader implements DwarfShader {
-	public Color Fragment() {
-		return Color.gray;
-	}
-}
 
 @SuppressWarnings("serial")
 class demo3D extends Application {
@@ -41,7 +28,6 @@ class demo3D extends Application {
 
 		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
-		cube.shader = new myShader();
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
 		

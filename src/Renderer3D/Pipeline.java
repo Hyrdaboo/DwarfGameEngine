@@ -14,11 +14,6 @@ import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import static DwarfEngine.Core.DisplayRenderer.*;
 
-class ErrorShader implements DwarfShader {
-	public Color Fragment() {
-		return Color.magenta;
-	}
-}
 
 public final class Pipeline {
 
@@ -31,14 +26,12 @@ public final class Pipeline {
 	
 	private float[] depthBuffer;
 	private Vector2 frameSize;
-	private ErrorShader errorShader;
 	
 	public Pipeline(Application application, Camera camera) {
 		this.application = application;
 		this.camera = camera;
 		
 		projectionMatrix = new Matrix4x4();
-		errorShader = new ErrorShader();
 		
 		frameSize = application.getFrameSize();
 		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
@@ -90,15 +83,14 @@ public final class Pipeline {
 					clipped.points[i] = viewportPointToScreenPoint(clipped.points[i]);
 				}
 
-				DwarfShader shader = renderObject.shader == null ? errorShader : renderObject.shader;
-				DrawProjectedTriangle(clipped, shader);
+				DrawProjectedTriangle(clipped);
 			}
 		}
 	}
 	
-	private void DrawProjectedTriangle(Triangle projected, DwarfShader shader) {
+	private void DrawProjectedTriangle(Triangle projected) {
 		if (drawFlag != DrawFlag.wireframe) {
-			RasterizeTriangle(projected.points, projected.texcoord, shader.Fragment());
+			RasterizeTriangle(projected.points, projected.texcoord);
 			return;
 		}
 		DrawTriangle(new Vector2(projected.points[0].x, projected.points[0].y),
@@ -122,7 +114,7 @@ public final class Pipeline {
 		depthBuffer[(int)(x + y*frameSize.x)] = val;
 	}
 	
-	private void RasterizeTriangle(Vector3[] verts, Vector2[] texcoord, Color col) {
+	public void RasterizeTriangle(Vector3[] verts, Vector2[] texcoord) {
 		class Vertex {
 			Vector3 vert;
 			Vector2 uv;
@@ -152,10 +144,9 @@ public final class Pipeline {
 			DrawFlatTopTriangle(v1, v2, v3, t1, t2, t3);
 		}
 		else {
-			Vector3 v4 = new Vector3(0, v2.y, 0);
-			v4.x = (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x));
-			
 			float t = Mathf.InverseLerp(v1.y, v3.y, v2.y);
+			Vector3 v4 = Vector3.Lerp(v1, v3, t);
+			
 			v4.w = Mathf.Lerp(v1.w, v3.w, t);
 			Vector2 t4 = Vector2.Lerp(t1, t3, t);
 			
@@ -213,7 +204,7 @@ public final class Pipeline {
 			
 			float yi = Mathf.Clamp01(Mathf.InverseLerp(startY, endY, y));
 			
-			int startX = (int) (px1 - 0.5f);
+			int startX = (int) Mathf.ceil(px1 - 0.5f);
 			int endX = (int) Mathf.ceil(px2 - 0.5f);
 			
 			for (int x = startX; x < endX; x++) {

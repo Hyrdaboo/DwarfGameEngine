@@ -7,7 +7,7 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 public final class DisplayRenderer {
-	private static int[] frameBuffer;
+	private static int[] pixelBuffer;
 	private static int bufferWidth;
 	private static int bufferHeight;
 	
@@ -15,17 +15,21 @@ public final class DisplayRenderer {
 	static void Initialize(int width, int height, int[] buffer) {
 		bufferWidth = width;
 		bufferHeight = height;
-		frameBuffer = buffer;
+		pixelBuffer = buffer;
 	}
 	
 	public static void clear(Color color) {
-		Arrays.fill(frameBuffer, color.getRGB());
+		Arrays.fill(pixelBuffer, color.getRGB());
 	}
 	
 	public static void SetPixel(int x, int y, Color color) {
 		if (y >= bufferHeight || y < 0) return;
 		if (x >= bufferWidth || x < 0) return;
-		frameBuffer[x+y*bufferWidth] = color.getRGB();
+		pixelBuffer[x+y*bufferWidth] = color.getRGB();
+	}
+	
+	public static int[] GetPixels() {
+		return pixelBuffer;
 	}
 	
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {
