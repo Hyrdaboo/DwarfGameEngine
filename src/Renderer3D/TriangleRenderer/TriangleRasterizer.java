@@ -22,6 +22,10 @@ public final class TriangleRasterizer {
 		if (x < 0 || x >= colorBuffer.getWidth() || y < 0 || y >= colorBuffer.getHeight()) {
 			return;
 		}
+		if (colorBuffer == null) {
+			throw new NullPointerException("No color buffer binding or current binding is invalid");
+		}
+		
 		colorBuffer.write(x, y, color);
 	}
 	
@@ -32,12 +36,14 @@ public final class TriangleRasterizer {
 		if (v2.y == v3.y) {
 			if (v2.x > v3.x) {
 				flatBottom(v1, v3, v2, rgb);
+				return;
 			}
 			flatBottom(v1, v2, v3, rgb);
 		}
 		else if (v1.y == v2.y) {
-			if (v1.x < v2.x) {
+			if (v1.x > v2.x) {
 				flatTop(v2, v1, v3, rgb);
+				return;
 			}
 			flatTop(v1, v2, v3, rgb);
 		}
@@ -77,6 +83,7 @@ public final class TriangleRasterizer {
 			int xStart = (int) Mathf.ceil(px1-0.5f);
 			int xEnd = (int) Mathf.ceil(px2-0.5f);
 			
+			float yi = Mathf.InverseLerp(yStart, yEnd, y);
 			for (int x = xStart; x < xEnd; x++) {
 				SetPixel(x, y, rgb);
 			}

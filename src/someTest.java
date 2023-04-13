@@ -43,7 +43,7 @@ class app extends Application {
 	
 	
 	Vector2 p = Vector2.zero();
-	float angle = -30;
+	float angle = 0;
 	public void OnUpdate() {
 		clear(Color.black);
 		Vector3[] t1 = new Vector3[] {
@@ -57,14 +57,15 @@ class app extends Application {
 				new Vector3(0, 0, 0)
 		};
 		
+		float s = 300;
 		Matrix3x3 matFinal = Matrix3x3.identityMatrix();
-		Matrix3x3 scale = Matrix3x3.scaleMatrix(new Vector2(300, 300));
+		Matrix3x3 scale = Matrix3x3.scaleMatrix(new Vector2(s, s));
 		Matrix3x3 rotation = Matrix3x3.rotationMatrix(angle);
 		Matrix3x3 translation = Matrix3x3.translationMatrix(new Vector2(1280/2, 720/2));
 		if (Input.OnKeyHeld(Keycode.Space)) angle += getDeltaTime()*50;
 		
 		matFinal = Matrix3x3.matrixMultiplyMatrix(scale, matFinal);
-		matFinal = Matrix3x3.matrixMultiplyMatrix(Matrix3x3.translationMatrix(new Vector2(-150, -150)), matFinal);
+		matFinal = Matrix3x3.matrixMultiplyMatrix(Matrix3x3.translationMatrix(new Vector2(-s/2, -s/2)), matFinal);
 		matFinal = Matrix3x3.matrixMultiplyMatrix(rotation, matFinal);
 		matFinal = Matrix3x3.matrixMultiplyMatrix(translation, matFinal);
 		
