@@ -25,6 +25,10 @@ public enum Keycode {
 	 Escape(27),
 	 Backquote(192),
 	 Slash(47),
+	 Shift(16),
+	 Ctrl(17),
+	 Alt(18),
+	 Tab(9),
 	 AnyKey(-100);
 	 
 	private final int num;

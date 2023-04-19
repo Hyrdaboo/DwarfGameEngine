@@ -13,13 +13,17 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.lang.module.ModuleDescriptor.Exports.Modifier;
 import java.util.*;
 
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 public final class Input implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+	class KeyEvt {
+		Integer keycode;
+		
+	}
+	
 	private static List<Integer> heldKeys = new ArrayList<Integer>();
 	private static Input instance = null;
 	

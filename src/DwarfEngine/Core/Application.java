@@ -47,6 +47,7 @@ public abstract class Application extends Canvas implements Runnable {
 		addMouseListener(Input.GetInstance());
 		addMouseMotionListener(Input.GetInstance());
 		addMouseWheelListener(Input.GetInstance());
+		setFocusTraversalKeysEnabled(false);
 		
 		Start();
 	}

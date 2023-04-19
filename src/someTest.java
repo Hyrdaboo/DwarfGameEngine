@@ -94,8 +94,6 @@ class app extends Application {
 		if (Input.OnKeyHeld(Keycode.D)) angle -= getDeltaTime()*40;
 		s += -Input.getMouseWheel()*1000*getDeltaTime();
 		
-		if (Input.OnKeyHeld(Keycode.Insert)) Debug.log("pressing");
-		
 		if (Input.MouseButtonHeld(1)) {
 			offset.addTo(Vector2.mulVecFloat(Input.GetMouseDelta(), 200));
 		}
