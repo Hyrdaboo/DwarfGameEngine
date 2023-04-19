@@ -28,6 +28,9 @@ public final class DisplayRenderer {
 		pixelBuffer[x+y*bufferWidth] = color.getRGB();
 	}
 	
+	/**
+	 * Use this method to assign a custom pixel buffer
+	 */
 	public static int[] GetPixels() {
 		return pixelBuffer;
 	}

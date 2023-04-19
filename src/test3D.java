@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.image.BufferedImage;
 
 import DwarfEngine.Core.Application;
@@ -64,18 +65,10 @@ class demo3D extends Application {
 	}
 	
 	boolean confined = false;
-	void switchCursor() {
-		if (confined) {
-			SetCursorImage(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
-		}
-		else {
-			SetCursorImage(null);
-		}
-	}
 	void GetInput() {
 		float deltaTime = (float) getDeltaTime();
 		float mul = 0.1f;
-		if (Input.OnKeyHeld(Keycode.LeftShift)) {
+		if (Input.OnKeyHeld(Keycode.Space)) {
 			mul = 5;
 		}
 		float speed = 15 * mul;
@@ -109,7 +102,6 @@ class demo3D extends Application {
 		if (Input.OnKeyPressed(Keycode.Escape)) {
 			confined = !confined;
 			Input.setMouseConfined(confined);
-			switchCursor();
 		}
 		if (Input.isMouseConfined()) {
 			camTransform.rotation.y += Input.GetMouseDelta().x*50;

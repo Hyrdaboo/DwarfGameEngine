@@ -1,7 +1,6 @@
 package DwarfEngine.Core;
 
 import java.awt.AWTException;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -14,10 +13,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
+import java.lang.module.ModuleDescriptor.Exports.Modifier;
 import java.util.*;
-
-import javax.swing.JFrame;
 
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
@@ -55,8 +52,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	
 	public static boolean OnKeyHeld(Keycode e) {
 		for (int i = 0; i < heldKeys.size(); i++) {
-			if (heldKeys.get(i) == e.GetKeyCode()) {
-				return true;
+			try {
+				if (heldKeys.get(i) == e.GetKeyCode()) {
+					return true;
+				}
+			} catch (Exception e2) {
+				return false;
 			}
 		}
 		

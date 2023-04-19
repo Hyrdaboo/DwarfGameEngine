@@ -148,7 +148,7 @@ public abstract class Application extends Canvas implements Runnable {
 		return deltaTime;
 	}
 	public Vector2 getFrameSize() {
-		return frameSize;
+		return new Vector2(frameSize.x, frameSize.y);
 	}
 	public int getPixelScale() {
 		return pixelScale;
@@ -184,10 +184,7 @@ public abstract class Application extends Canvas implements Runnable {
 			return;
 		}
     }
-	public void SetCursorImage(BufferedImage image) {
-		Cursor cursor = image != null ? Toolkit.getDefaultToolkit().createCustomCursor(image, new Point(), null) : null;
-		applicationWindow.setCursor(cursor);
-	}
+	
     public void saveImage(String directory, String imageName) {
     	File outputFile = new File(directory + "/" + imageName + ".png");
     	int i = 1;
