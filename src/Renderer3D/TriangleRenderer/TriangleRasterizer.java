@@ -9,19 +9,20 @@ import DwarfEngine.MathTypes.Vector3;
 
 public final class TriangleRasterizer {
 	private ColorBuffer colorBuffer;
+	private DepthBuffer depthBuffer;
 	
 	public <T> void bindBuffer(Buffer<T> buffer) {
 		if (buffer instanceof ColorBuffer) {
 			colorBuffer = (ColorBuffer) buffer;
+		}
+		else if (buffer instanceof DepthBuffer) {
+			depthBuffer = (DepthBuffer) buffer;
 		}
 	}
 	
 	private void SetPixel(int x, int y, int color) {
 		if (x < 0 || x >= colorBuffer.getWidth() || y < 0 || y >= colorBuffer.getHeight()) {
 			return;
-		}
-		if (colorBuffer == null) {
-			throw new NullPointerException("No color buffer binding or current binding is invalid");
 		}
 		
 		colorBuffer.write(x, y, color);
@@ -88,8 +89,19 @@ public final class TriangleRasterizer {
 			for (int x = xStart; x < xEnd; x++) {
 				float xi = Mathf.InverseLerp(xStart, xEnd, x);	
 				
-				Color finalCol = shader.Fragment(startVertex, endVertex, xi);
-				SetPixel(x, y, finalCol.getRGB());
+				if (depthBuffer != null) {
+					float w = Mathf.Lerp(startVertex.depth, endVertex.depth, xi);
+					w = 1.0f / w;
+					
+					if (w < depthBuffer.read(x, y)) {
+						Color finalCol = shader.Fragment(startVertex, endVertex, xi);
+						SetPixel(x, y, finalCol.getRGB());
+					}
+				}
+				else {
+					Color finalCol = shader.Fragment(startVertex, endVertex, xi);
+					SetPixel(x, y, finalCol.getRGB());
+				}
 			}
 		}
 	}
