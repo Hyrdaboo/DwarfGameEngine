@@ -5,9 +5,10 @@ import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.Vertex;
 import Renderer3D.TriangleRenderer.ColorBuffer;
+import Renderer3D.TriangleRenderer.Shader;
 import Renderer3D.TriangleRenderer.TriangleRasterizer;
+import Renderer3D.TriangleRenderer.Vertex;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 
@@ -27,9 +28,10 @@ class app extends Application {
 		colorBuffer = new ColorBuffer(GetPixels(), (int)getFrameSize().x, (int)getFrameSize().y);
 		tr.bindBuffer(colorBuffer);
 		
-		tr.spr = new Sprite();
-		tr.spr.LoadFromFile("/Textures/uvtest.png");
+		spr = new Sprite();
+		spr.LoadFromFile("/Textures/uvtest.png");
 	}
+	static Sprite spr;
 	
 	void printBuffer() {
 		int[] buffer = GetPixels();
@@ -126,12 +128,20 @@ class app extends Application {
 			verts2[i].color = c2[i];
 		}
 		
-		tr.DrawTriangle(verts1);
-		tr.DrawTriangle(verts2);
+		tr.DrawTriangle(verts1, f);
+		//tr.DrawTriangle(verts2);
 		
 		if (Input.OnKeyPressed(Keycode.P)) {
 			printBuffer();
 		}
+	}
+	frag f = new frag();
+}
+
+class frag implements Shader {
+	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
+		Vector3 coord = Vector3.Lerp(scanStart.color, scanEnd.color, xi);
+		return app.spr.SampleColor(coord.x, coord.y);
 	}
 }
 

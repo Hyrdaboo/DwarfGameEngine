@@ -1,5 +1,6 @@
 *Make a fully functional triangle rasterizer
 *Shaders
+*Color class
 *Image drawing routine
 *Text rendering
 *Far clipping

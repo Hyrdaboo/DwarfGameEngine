@@ -3,17 +3,12 @@ package Renderer3D.TriangleRenderer;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Random;
 
-import DwarfEngine.Sprite;
-import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.Vertex;
 
 public final class TriangleRasterizer {
 	private ColorBuffer colorBuffer;
-	public Sprite spr;
 	
 	public <T> void bindBuffer(Buffer<T> buffer) {
 		if (buffer instanceof ColorBuffer) {
@@ -32,47 +27,47 @@ public final class TriangleRasterizer {
 		colorBuffer.write(x, y, color);
 	}
 	
-	public void DrawTriangle(Vertex[] vertices) {
+	public void DrawTriangle(Vertex[] vertices, Shader shader) {
 		Arrays.sort(vertices, Comparator.comparingDouble((v) -> v.position.y));
 		Vertex v1 = vertices[0], v2 = vertices[1], v3 = vertices[2];	
 		
 		if (v2.position.y == v3.position.y) {
 			if (v2.position.x > v3.position.x) {
-				flatBottom(v1, v3, v2);
+				flatBottom(v1, v3, v2, shader);
 				return;
 			}
-			flatBottom(v1, v2, v3);
+			flatBottom(v1, v2, v3, shader);
 		}
 		else if (v1.position.y == v2.position.y) {
 			if (v1.position.x > v2.position.x) {
-				flatTop(v2, v1, v3);
+				flatTop(v2, v1, v3, shader);
 				return;
 			}
-			flatTop(v1, v2, v3);
+			flatTop(v1, v2, v3, shader);
 		}
 		else {
 			float t = Mathf.InverseLerp(v1.position.y, v3.position.y, v2.position.y);
 			Vertex v4 = Vertex.Lerp(v1, v3, t);
 			
 			if (v4.position.x > v2.position.x) {
-				flatBottom(v1, v2, v4);
-				flatTop(v2, v4, v3);
+				flatBottom(v1, v2, v4, shader);
+				flatTop(v2, v4, v3, shader);
 				return;
 			}
-			flatBottom(v1, v4, v2);
-			flatTop(v4, v2, v3);
+			flatBottom(v1, v4, v2, shader);
+			flatTop(v4, v2, v3, shader);
 		}
 	}
 	
-	private void flatBottom(Vertex v1, Vertex v2, Vertex v3) {
-		flatTriangle(v1, v2, v1, v3);
+	private void flatBottom(Vertex v1, Vertex v2, Vertex v3, Shader shader) {
+		flatTriangle(v1, v2, v1, v3, shader);
 	}
 	
-	private void flatTop(Vertex v1, Vertex v2, Vertex v3) {
-		flatTriangle(v1, v3, v2, v3);
+	private void flatTop(Vertex v1, Vertex v2, Vertex v3, Shader shader) {
+		flatTriangle(v1, v3, v2, v3, shader);
 	}
 	
-	private void flatTriangle(Vertex leftSlope1, Vertex leftSlope2, Vertex rightSlope1, Vertex rightSlope2) {
+	private void flatTriangle(Vertex leftSlope1, Vertex leftSlope2, Vertex rightSlope1, Vertex rightSlope2, Shader shader) {
 		int yStart = (int) Mathf.ceil(leftSlope1.position.y-0.5f);
 		int yEnd = (int) Mathf.ceil(rightSlope2.position.y-0.5f);
 		
@@ -88,13 +83,12 @@ public final class TriangleRasterizer {
 			
 			float si = InverseLerp(leftSlope1.position, leftSlope2.position, new Vector3(xStart, y, 0));
 			float ei = InverseLerp(rightSlope1.position, rightSlope2.position, new Vector3(xEnd, y, 0));
+			Vertex startVertex = Vertex.Lerp(leftSlope1, leftSlope2, si);
+			Vertex endVertex = Vertex.Lerp(rightSlope1, rightSlope2, ei);
 			for (int x = xStart; x < xEnd; x++) {
 				float xi = Mathf.InverseLerp(xStart, xEnd, x);	
-				Vector3 startColor = Vector3.Lerp(leftSlope1.color, leftSlope2.color, si);
-				Vector3 endColor = Vector3.Lerp(rightSlope1.color, rightSlope2.color, ei);
-				Vector3 col = Vector3.Lerp(startColor, endColor, xi);
 				
-				Color finalCol = spr.SampleColor(col.x, col.y);
+				Color finalCol = shader.Fragment(startVertex, endVertex, xi);
 				SetPixel(x, y, finalCol.getRGB());
 			}
 		}
