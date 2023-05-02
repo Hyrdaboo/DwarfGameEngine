@@ -1,7 +1,9 @@
 import DwarfEngine.Sprite;
 import DwarfEngine.Core.Application;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
+import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
@@ -69,20 +71,20 @@ class app extends Application {
 				new Vector3(0, 1, 0),
 				new Vector3(1, 1, 0)
 		};
-		Vector3[] c1 = new Vector3[] {
-				new Vector3(0, 0, 0),
-				new Vector3(0, 1, 0),
-				new Vector3(1, 1, 0)
+		Vector2[] c1 = new Vector2[] {
+				new Vector2(0.0f, 0.0f),
+				new Vector2(0.0f, 1.0f),
+				new Vector2(1.0f, 1.0f),
 		};
 		Vector3[] t2 = new Vector3[] {
 				new Vector3(1, 1, 0),
 				new Vector3(1, 0, 0),
 				new Vector3(0, 0, 0)
 		};
-		Vector3[] c2 = new Vector3[] {
-				new Vector3(1, 1, 0),
-				new Vector3(1, 0, 0),
-				new Vector3(0, 0, 0)
+		Color[] c2 = new Color[] {
+				new Color(1.0f, 1.0f, 0.0f),
+				new Color(1.0f, 0.0f, 0.0f),
+				new Color(0.0f, 0.0f, 0.0f)
 		};
 		
 		Matrix3x3 matFinal = Matrix3x3.identityMatrix();
@@ -121,7 +123,7 @@ class app extends Application {
 		for (int i = 0; i < 3; i++) {
 			verts1[i] = new Vertex();
 			verts1[i].position = t1[i];
-			verts1[i].color = c1[i];
+			verts1[i].texcoord = c1[i];
 			
 			verts2[i] = new Vertex();
 			verts2[i].position = t2[i];
@@ -140,7 +142,7 @@ class app extends Application {
 
 class frag implements Shader {
 	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
-		Vector3 coord = Vector3.Lerp(scanStart.color, scanEnd.color, xi);
+		Vector2 coord = Vector2.Lerp(scanStart.texcoord, scanEnd.texcoord, xi);
 		return app.spr.SampleColor(coord.x, coord.y);
 	}
 }
