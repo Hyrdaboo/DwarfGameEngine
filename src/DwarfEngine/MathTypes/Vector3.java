@@ -144,6 +144,7 @@ public final class Vector3{
 		v.x = Mathf.Lerp(a.x, b.x, t);
 		v.y = Mathf.Lerp(a.y, b.y, t);
 		v.z = Mathf.Lerp(a.z, b.z, t);
+		v.w = Mathf.Lerp(a.w, b.w, t);
 		return v;
 	}
 }

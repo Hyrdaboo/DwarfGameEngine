@@ -69,4 +69,11 @@ public final class Sprite {
 		
 		return GetPixel(x, y);
 	}
+	
+	public Color SampleColorPerspective(float u, float v, float w) {
+		w = 1.0f / w;
+		u *= w;
+		v *= w;
+		return SampleColor(u, v);
+	}
 }

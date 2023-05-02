@@ -90,12 +90,13 @@ public final class TriangleRasterizer {
 				float xi = Mathf.InverseLerp(xStart, xEnd, x);	
 				
 				if (depthBuffer != null) {
-					float w = Mathf.Lerp(startVertex.depth, endVertex.depth, xi);
+					float w = Mathf.Lerp(startVertex.position.w, endVertex.position.w, xi);
 					w = 1.0f / w;
 					
 					if (w < depthBuffer.read(x, y)) {
 						Color finalCol = shader.Fragment(startVertex, endVertex, xi);
 						SetPixel(x, y, finalCol.getRGB());
+						depthBuffer.write(x, y, w);
 					}
 				}
 				else {
