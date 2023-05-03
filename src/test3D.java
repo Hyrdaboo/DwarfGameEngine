@@ -76,7 +76,7 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
-		cube.shader = new saul();
+		cube.shader = new frag();
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);

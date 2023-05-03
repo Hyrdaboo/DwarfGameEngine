@@ -1,5 +1,7 @@
 package Renderer3D;
 
+import java.awt.Color;
+
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.TriangleRenderer.Vertex;
@@ -25,6 +27,7 @@ final class Triangle {
 		Triangle[] triangles = new Triangle[mesh.triangleCount()/3];
 		Vector3[] vertices = mesh.getVetices();
 		Vector2[] uv = mesh.getUV();
+		Color[] colors = mesh.getColors();
 		int[] tris = mesh.getTriangles();
 		
 		for (int i = 0; i < triangles.length; i++) {
@@ -37,6 +40,11 @@ final class Triangle {
 				t.verts[0].texcoord = uv[tris[0+i*3]];
 				t.verts[1].texcoord = uv[tris[1+i*3]];
 				t.verts[2].texcoord = uv[tris[2+i*3]];
+			}
+			if (colors != null) {
+				t.verts[0].color = colors[tris[0+i*3]];
+				t.verts[1].color = colors[tris[1+i*3]];
+				t.verts[2].color = colors[tris[2+i*3]];
 			}
 			
 			triangles[i] = t;

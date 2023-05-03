@@ -1,11 +1,14 @@
 package Renderer3D;
 
+import java.awt.Color;
+
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 public final class Mesh {
 	private Vector3[] vertices;
 	private Vector2[] uv;
+	private Color[] colors;
 	private int[] triangles;
 	
 	public void setVertices(Vector3[] vertices) {
@@ -42,6 +45,15 @@ public final class Mesh {
 	}
 	public int getUVCount() {
 		return uv.length;
+	}
+	public void setColors(Color[] colors) {
+		if (colors.length != vertices.length) {
+			throw new IllegalArgumentException("Colors must be the same size as vertices");
+		}
+		this.colors = colors;
+	}
+	public Color[] getColors() {
+		return colors;
 	}
 	
 	public static Mesh MakeCube() {
@@ -157,6 +169,49 @@ public final class Mesh {
 				new Vector2(1, 0),
 				new Vector2(1, 1),	
 				new Vector2(0, 1),
+		};
+		cube.colors = new Color[] {
+			Color.cyan,	
+			Color.cyan,	
+			Color.cyan,	
+			Color.cyan,
+			Color.cyan,
+			Color.cyan,
+			
+			Color.blue,
+			Color.blue,
+			Color.blue,
+			Color.blue,
+			Color.blue,
+			Color.blue,
+			
+			Color.red,
+			Color.red,
+			Color.red,
+			Color.red,
+			Color.red,
+			Color.red,
+			
+			Color.magenta,
+			Color.magenta,
+			Color.magenta,
+			Color.magenta,
+			Color.magenta,
+			Color.magenta,
+			
+			Color.yellow,
+			Color.yellow,
+			Color.yellow,
+			Color.yellow,
+			Color.yellow,
+			Color.yellow,
+			
+			Color.green,
+			Color.green,
+			Color.green,
+			Color.green,
+			Color.green,
+			Color.green
 		};
 		
 		return cube;
