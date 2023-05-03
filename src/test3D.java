@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.image.BufferedImage;
 
+import javax.swing.plaf.basic.BasicPanelUI;
+
 import DwarfEngine.Sprite;
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Input;
@@ -9,6 +11,9 @@ import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.Sprite.SamplingMode;
+import DwarfEngine.Sprite.WrapMode;
+
 import static DwarfEngine.Core.DisplayRenderer.*;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
@@ -20,17 +25,23 @@ import Renderer3D.TriangleRenderer.Shader;
 import Renderer3D.TriangleRenderer.Vertex;
 
 class saul implements Shader {
-	Sprite spr = new Sprite();
+	static Sprite spr = new Sprite();
 	
 	public saul() {
-		spr.LoadFromFile("/Textures/uvtest.png");
+		spr.LoadFromFile("/Textures/grass-side.png");
+		spr.wrapMode = WrapMode.RepeatMirrored;
+		spr.samplingMode = SamplingMode.Bilinear;
+		spr.tiling.x = 2;
+		spr.tiling.y = 2;
 	}
 	
 	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
 		Vector2 coord = Vector2.Lerp(scanStart.texcoord, scanEnd.texcoord, xi);
 		float w = Mathf.Lerp(scanStart.position.w, scanEnd.position.w, xi);
 		
-		return spr.SampleColorPerspective(coord.x, coord.y, w);
+		Color col = spr.SampleColorPerspective(coord.x, coord.y, w);
+		//Color col = new Color(coord.x*(1.0f/w), coord.y*(1.0f/w), 0);
+		return col;
 	}
 }
 
@@ -72,7 +83,7 @@ class demo3D extends Application {
 		//cube2.transform.position.z = 5;
 		cube2.shader = new depth();
 		
-		cam.transform.position.z = -3.0f;
+		cam.transform.position.z = -1.5f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;	
@@ -92,13 +103,13 @@ class demo3D extends Application {
 	
 	@Override
 	public void OnUpdate() {
-		//clear(Color.black);
+		//clear(Color.red);
 		
 		pipeline.clear();
 		GetInput();
-		cube.transform.rotation.x += getDeltaTime()*50;
 		pipeline.DrawMesh(cube);
-		pipeline.DrawMesh(cube2);
+		//pipeline.DrawMesh(cube2);
+		
 	}
 	
 	boolean confined = false;
@@ -171,8 +182,8 @@ class demo3D extends Application {
 public class test3D {
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
-		//d.Construct(144, 81, 6);
+		d.Initialize(144, 81, 6);
 		//d.Initialize(1280, 720, 1);
-		d.Initialize(720, 405, 1);
+		//d.Initialize(720, 405, 1);
 	}
 }

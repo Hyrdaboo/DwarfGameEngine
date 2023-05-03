@@ -130,8 +130,8 @@ class app extends Application {
 			verts2[i].color = c2[i];
 		}
 		
-		tr.DrawTriangle(verts1, f);
-		//tr.DrawTriangle(verts2);
+		//tr.DrawTriangle(verts1, f);
+		tr.DrawTriangle(verts2, f);
 		
 		if (Input.OnKeyPressed(Keycode.P)) {
 			printBuffer();
@@ -142,8 +142,8 @@ class app extends Application {
 
 class frag implements Shader {
 	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
-		Vector2 coord = Vector2.Lerp(scanStart.texcoord, scanEnd.texcoord, xi);
-		return app.spr.SampleColor(coord.x, coord.y);
+		Color c = Mathf.LerpColor(scanStart.color, scanEnd.color, xi);
+		return c;
 	}
 }
 

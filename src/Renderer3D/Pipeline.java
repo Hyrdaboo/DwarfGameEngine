@@ -102,6 +102,11 @@ public final class Pipeline {
 	
 	private void DrawProjectedTriangle(Triangle projected, Shader shader) {
 		if (drawFlag != DrawFlag.wireframe) {
+			/*
+			DrawTriangle(new Vector2(projected.verts[0].position.x, projected.verts[0].position.y),
+					new Vector2(projected.verts[1].position.x, projected.verts[1].position.y),
+					new Vector2(projected.verts[2].position.x, projected.verts[2].position.y), Color.gray);
+			*/
 			tr.DrawTriangle(projected.verts, shader);
 			return;
 		}
