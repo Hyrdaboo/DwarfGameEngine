@@ -127,11 +127,4 @@ public final class Sprite {
 			return Mathf.LerpColor(top, bottom, ty);
 		}
 	}
-	
-	public Color SampleColorPerspective(float u, float v, float w) {
-		w = 1.0f / w;
-		u *= w;
-		v *= w;
-		return SampleColor(u, v);
-	}
 }

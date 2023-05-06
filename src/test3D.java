@@ -6,6 +6,7 @@ import javax.swing.plaf.basic.BasicPanelUI;
 
 import DwarfEngine.Sprite;
 import DwarfEngine.Core.Application;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
@@ -35,12 +36,9 @@ class saul implements Shader {
 		spr.tiling.y = 2;
 	}
 	
-	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
-		Vector2 coord = Vector2.Lerp(scanStart.texcoord, scanEnd.texcoord, xi);
-		float w = Mathf.Lerp(scanStart.position.w, scanEnd.position.w, xi);
-		
-		Color col = spr.SampleColorPerspective(coord.x, coord.y, w);
-		//Color col = new Color(coord.x*(1.0f/w), coord.y*(1.0f/w), 0);
+	public Color Fragment(Vertex in) {
+		Vector2 coord = in.texcoord;
+		Color col = spr.SampleColor(coord.x, coord.y);
 		return col;
 	}
 }
@@ -48,16 +46,21 @@ class saul implements Shader {
 class depth implements Shader {
 
 	@Override
-	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
-		float w = Mathf.Lerp(scanStart.position.w, scanEnd.position.w, xi);
-		w = 1.0f / w;
-		float x = w / 10.0f;
+	public Color Fragment(Vertex in) {
+		float x = in.position.w / 10.0f;
 		x = Mathf.Clamp01(x);
 		x = 1-x;
 		Color c = new Color(x,x,x);
 		return c;
 	}
 	
+}
+
+class frag implements Shader {
+	@Override
+	public Color Fragment(Vertex in) {
+		return in.color;
+	}
 }
 
 @SuppressWarnings("serial")
@@ -76,7 +79,7 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
-		cube.shader = new frag();
+		cube.shader = new saul();
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
@@ -86,7 +89,8 @@ class demo3D extends Application {
 		cam.transform.position.z = -1.5f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
-		//pipeline.drawFlag = DrawFlag.wireframe;	
+		//pipeline.drawFlag = DrawFlag.wireframe;
+		
 	}
 	
 	Mesh monke() {
@@ -109,7 +113,6 @@ class demo3D extends Application {
 		GetInput();
 		pipeline.DrawMesh(cube);
 		//pipeline.DrawMesh(cube2);
-		
 	}
 	
 	boolean confined = false;
@@ -182,8 +185,8 @@ class demo3D extends Application {
 public class test3D {
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
-		d.Initialize(144, 81, 6);
+		//d.Initialize(144, 81, 6);
 		//d.Initialize(1280, 720, 1);
-		//d.Initialize(720, 405, 1);
+		d.Initialize(720, 405, 1);
 	}
 }

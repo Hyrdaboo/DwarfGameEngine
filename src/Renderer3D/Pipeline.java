@@ -1,11 +1,8 @@
 package Renderer3D;
 
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.function.Function;
 
-import DwarfEngine.Sprite;
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.DisplayRenderer;
@@ -74,9 +71,8 @@ public final class Pipeline {
 			
 			for (int i = 0; i < 3; i++) {
 				transformed.verts[i].position = transformMatrix.MultiplyByVector(t.verts[i].position);
+				fullyTransformed.verts[i] = t.verts[i].clone();
 				fullyTransformed.verts[i].position = cameraObjectCombined.MultiplyByVector(t.verts[i].position);
-				fullyTransformed.verts[i].texcoord = t.verts[i].texcoord;
-				fullyTransformed.verts[i].color = t.verts[i].color;
 			}
 			
 			Vector3 faceNormal = surfaceNormalFromIndices(transformed.verts[0].position, transformed.verts[1].position, transformed.verts[2].position);

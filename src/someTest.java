@@ -140,13 +140,6 @@ class app extends Application {
 	frag f = new frag();
 }
 
-class frag implements Shader {
-	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
-		Color c = Mathf.LerpColor(scanStart.color, scanEnd.color, xi);
-		return c;
-	}
-}
-
 public class someTest {
 	
 	public static void main(String[] args) {

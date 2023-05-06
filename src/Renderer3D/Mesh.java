@@ -237,10 +237,10 @@ public final class Mesh {
 				new Vector2(1, 0)
 		};
 		quad.colors = new Color[] {
-			Color.red,
-			Color.yellow,
 			Color.green,
-			Color.cyan
+			Color.yellow,
+			Color.black,
+			Color.red,
 		};
 
 		

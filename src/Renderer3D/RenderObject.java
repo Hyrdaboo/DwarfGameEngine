@@ -8,10 +8,10 @@ import Renderer3D.TriangleRenderer.Vertex;
 class ErrorShader implements Shader {
 
 	@Override
-	public Color Fragment(Vertex scanStart, Vertex scanEnd, float xi) {
+	public Color Fragment(Vertex in) {
 		return Color.magenta;
 	}
-
+	
 }
 
 public final class RenderObject {

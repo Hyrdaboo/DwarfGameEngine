@@ -65,6 +65,7 @@ public abstract class Application extends Canvas implements Runnable {
 		OnStart();
 		mainThread.start();
 		
+		
 		startTime = System.currentTimeMillis();
 	}
 	
