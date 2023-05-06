@@ -65,6 +65,7 @@ public abstract class Application extends Canvas implements Runnable {
 		OnStart();
 		mainThread.start();
 		
+		
 		startTime = System.currentTimeMillis();
 	}
 	
@@ -195,7 +196,7 @@ public abstract class Application extends Canvas implements Runnable {
     	}
     	try {
 			ImageIO.write(frame, "png", outputFile);
-			Debug.log("Image " + imageName + ".png" + " saved to " + directory);
+			Debug.log("Image " + outputFile.getName() + " saved to " + directory);
 		} catch (IOException e) {
 			Debug.log("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
 			e.printStackTrace();

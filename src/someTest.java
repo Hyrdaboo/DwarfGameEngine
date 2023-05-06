@@ -5,21 +5,19 @@ import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix3x3;
-import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.Pipeline;
 import Renderer3D.TriangleRenderer.ColorBuffer;
+import Renderer3D.TriangleRenderer.Shader;
 import Renderer3D.TriangleRenderer.TriangleRasterizer;
+import Renderer3D.TriangleRenderer.Vertex;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Taskbar.State;
-import java.util.Arrays;
-import java.util.Comparator;
 
+@SuppressWarnings("serial")
 class app extends Application {
 
 	TriangleRasterizer tr;
@@ -30,8 +28,12 @@ class app extends Application {
 		
 		tr = new TriangleRasterizer();
 		colorBuffer = new ColorBuffer(GetPixels(), (int)getFrameSize().x, (int)getFrameSize().y);
-		tr.bindBuffer(colorBuffer);	
+		tr.bindBuffer(colorBuffer);
+		
+		spr = new Sprite();
+		spr.LoadFromFile("/Textures/uvtest.png");
 	}
+	static Sprite spr;
 	
 	void printBuffer() {
 		int[] buffer = GetPixels();
@@ -59,7 +61,7 @@ class app extends Application {
 	
 	
 	Vector2 p = Vector2.zero();
-	float angle = 88;
+	float angle = 0;
 	float s = 500;
 	Vector2 offset = Vector2.zero();
 	public void OnUpdate() {
@@ -69,20 +71,20 @@ class app extends Application {
 				new Vector3(0, 1, 0),
 				new Vector3(1, 1, 0)
 		};
-		Vector3[] c1 = new Vector3[] {
-				new Vector3(0, 0, 0),
-				new Vector3(0, 1, 0),
-				new Vector3(1, 1, 0)
+		Vector2[] c1 = new Vector2[] {
+				new Vector2(0.0f, 0.0f),
+				new Vector2(0.0f, 1.0f),
+				new Vector2(1.0f, 1.0f),
 		};
 		Vector3[] t2 = new Vector3[] {
 				new Vector3(1, 1, 0),
 				new Vector3(1, 0, 0),
 				new Vector3(0, 0, 0)
 		};
-		Vector3[] c2 = new Vector3[] {
-				new Vector3(1, 1, 0),
-				new Vector3(1, 0, 0),
-				new Vector3(0, 0, 0)
+		Color[] c2 = new Color[] {
+				new Color(1.0f, 1.0f, 0.0f),
+				new Color(1.0f, 0.0f, 0.0f),
+				new Color(0.0f, 0.0f, 0.0f)
 		};
 		
 		Matrix3x3 matFinal = Matrix3x3.identityMatrix();
@@ -115,35 +117,35 @@ class app extends Application {
 		transformVerts(t1, matFinal);
 		transformVerts(t2, matFinal);
 		
-		tr.DrawTriangle(t1, 0xff0000);
-		tr.DrawTriangle(t2, 0xff00ff);
+		Vertex[] verts1 = new Vertex[3];
+		Vertex[] verts2 = new Vertex[3];
 		
-		/*
-		Vector3[] verts = new Vector3[] {
-				new Vector3(0, -0.4f, 0),
-				new Vector3(0, 1, 0),
-				new Vector3(3, 1, 0),
-		};
-		Vector3[] colors = new Vector3[] {
-				new Vector3(1, 0, 0),
-				new Vector3(0, 1, 0),
-				new Vector3(0, 0, 1),
-		};
-		tr.DrawTriangle(verts, colors, 0);
-		*/
+		for (int i = 0; i < 3; i++) {
+			verts1[i] = new Vertex();
+			verts1[i].position = t1[i];
+			verts1[i].texcoord = c1[i];
+			
+			verts2[i] = new Vertex();
+			verts2[i].position = t2[i];
+			verts2[i].color = c2[i];
+		}
+		
+		//tr.DrawTriangle(verts1, f);
+		tr.DrawTriangle(verts2, f);
 		
 		if (Input.OnKeyPressed(Keycode.P)) {
 			printBuffer();
 		}
 	}
+	frag f = new frag();
 }
 
 public class someTest {
 	
 	public static void main(String[] args) {
 		app a = new app();
-		//a.Initialize(1280, 720, 1);		
-		a.Initialize(144, 81, 7);
+		a.Initialize(1280, 720, 1);		
+		//a.Initialize(144, 81, 7);
 		//a.Initialize(10, 10, 40);
 	}
 	

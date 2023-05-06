@@ -1,14 +1,25 @@
 package DwarfEngine.MathTypes;
 
+import java.awt.Color;
+
 public final class Mathf {
 	public static final float Deg2Rad = 0.01745329251994329576923690768489f;
 	public static final float Rad2Deg = 57.295779513082320876798154814105f;
 	public static final float epsilon = (float) 2.2204460492503130808472633361816E-16;
 	public static float Lerp(float a, float b, float t) {
+		t = Mathf.Clamp01(t);
 		return a + t * (b - a);
 	}
-	public static float InverseLerp(float a, float b, float value) {
-		return (value - a) / (b - a);
+	public static float InverseLerp(float a, float b, float t) {
+		return (t - a) / (b - a);
+	}
+	public static Color LerpColor(Color a, Color b, float t) {
+		t = Mathf.Clamp01(t);
+		int r = (int)Mathf.Lerp(a.getRed(), b.getRed(), t);
+		int g = (int)Mathf.Lerp(a.getGreen(), b.getGreen(), t);
+		int _b = (int)Mathf.Lerp(a.getBlue(), b.getBlue(), t);
+		Color c = new Color(r, g, _b);
+		return c;
 	}
 	public static float Clamp(float value, float min, float max) {
 		if (value > max) return max;
@@ -44,6 +55,9 @@ public final class Mathf {
 	}
 	public static float floor(float a) {
 		return (float) Math.floor(a);
+	}
+	public static float round(float a) {
+		return Math.round(a);
 	}
 	public static float sqrt(float a) {
 		return (float) Math.sqrt(a);

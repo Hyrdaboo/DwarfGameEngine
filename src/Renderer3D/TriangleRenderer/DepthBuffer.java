@@ -2,13 +2,13 @@ package Renderer3D.TriangleRenderer;
 
 import java.util.Arrays;
 
-public final class ColorBuffer implements Buffer<Integer> {
+public final class DepthBuffer implements Buffer<Float> {
 
-	private final int[] buffer;
+	private final float[] buffer;
 	private final int width;
 	private final int height;
 	
-	public ColorBuffer(int[] buffer, int width, int height) {
+	public DepthBuffer(float[] buffer, int width, int height) {
 		this.buffer = buffer;
 		this.width = width;
 		this.height = height;
@@ -26,11 +26,11 @@ public final class ColorBuffer implements Buffer<Integer> {
 
 	@Override
 	public void clear() {
-		Arrays.fill(buffer, 0);
+		Arrays.fill(buffer, Float.MAX_VALUE);
 	}
-	
+
 	@Override
-	public void write(int x, int y, Integer value) {
+	public void write(int x, int y, Float value) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
 			throw new IndexOutOfBoundsException("Invalid write index. Cannot read at " + x + ", " + y);
 		}
@@ -38,10 +38,11 @@ public final class ColorBuffer implements Buffer<Integer> {
 	}
 
 	@Override
-	public Integer read(int x, int y) {
+	public Float read(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
 			throw new IndexOutOfBoundsException("Invalid read index. Cannot read at " + x + ", " + y);
 		}
 		return buffer[x + y*width];
 	}
+
 }

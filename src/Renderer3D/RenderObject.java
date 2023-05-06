@@ -2,9 +2,21 @@ package Renderer3D;
 
 import java.awt.Color;
 
+import Renderer3D.TriangleRenderer.Shader;
+import Renderer3D.TriangleRenderer.Vertex;
+
+class ErrorShader implements Shader {
+
+	@Override
+	public Color Fragment(Vertex in) {
+		return Color.magenta;
+	}
+	
+}
+
 public final class RenderObject {
 	public final Transform transform;
-	public Color color = Color.white;
+	public Shader shader = new ErrorShader();
 	
 	Triangle[] triangles;
 	
