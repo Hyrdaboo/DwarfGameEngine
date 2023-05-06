@@ -37,9 +37,21 @@ class saul implements Shader {
 	}
 	
 	public Color Fragment(Vertex in) {
+		float w = 1.0f / in.position.w;
+		float x = w / 5.0f;
+		Color fog = Mathf.LerpColor(Color.white, Color.black, x);
+		
 		Vector2 coord = in.texcoord;
 		Color col = spr.SampleColor(coord.x, coord.y);
-		return col;
+		
+		return MultiplyColor(fog, col);
+	}
+	
+	Color MultiplyColor(Color a, Color b) {
+		float red = (a.getRed() / 255.0f) * (b.getRed() / 255.0f);
+		float green = (a.getGreen() / 255.0f) * (b.getGreen() / 255.0f);
+		float blue = (a.getBlue() / 255.0f) * (b.getBlue() / 255.0f);
+		return new Color(red, green, blue);
 	}
 }
 
@@ -47,10 +59,9 @@ class depth implements Shader {
 
 	@Override
 	public Color Fragment(Vertex in) {
-		float x = in.position.w / 10.0f;
-		x = Mathf.Clamp01(x);
-		x = 1-x;
-		Color c = new Color(x,x,x);
+		float w = 1.0f / in.position.w;
+		float x = w / 5.0f;
+		Color c = Mathf.LerpColor(Color.white, Color.black, x);
 		return c;
 	}
 	
@@ -86,7 +97,7 @@ class demo3D extends Application {
 		//cube2.transform.position.z = 5;
 		cube2.shader = new depth();
 		
-		cam.transform.position.z = -1.5f;
+		cam.transform.position.z = -3.5f;
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -112,14 +123,14 @@ class demo3D extends Application {
 		pipeline.clear();
 		GetInput();
 		pipeline.DrawMesh(cube);
-		//pipeline.DrawMesh(cube2);
+		pipeline.DrawMesh(cube2);
 	}
 	
 	boolean confined = false;
 	void GetInput() {
 		float deltaTime = (float) getDeltaTime();
 		float mul = 0.1f;
-		if (Input.OnKeyHeld(Keycode.Space)) {
+		if (Input.OnKeyHeld(Keycode.Shift)) {
 			mul = 5;
 		}
 		float speed = 15 * mul;
@@ -178,6 +189,10 @@ class demo3D extends Application {
 		if (Input.OnKeyHeld(Keycode.O)) {
 			camTransform.rotation.z -= deltaTime * lookSpeed;
 		}
+		
+		if (Input.OnKeyPressed(Keycode.F)) {
+			switchFullscreen();
+		}
 	}
 	
 }
@@ -186,7 +201,7 @@ public class test3D {
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
 		//d.Initialize(144, 81, 6);
-		//d.Initialize(1280, 720, 1);
-		d.Initialize(720, 405, 1);
+		d.Initialize(1280, 720, 1);
+		//d.Initialize(720, 405, 1);
 	}
 }

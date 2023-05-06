@@ -93,25 +93,23 @@ public final class TriangleRasterizer {
 				Vertex in = Vertex.Lerp(startVertex, endVertex, xi);
 				float w = in.position.w;
 				w = 1.0f / w;
-				in.texcoord.multiplyBy(w);
-				Color finalCol = shader.Fragment(in);
-				SetPixel(x, y, finalCol.getRGB());
-				/*
+				
+				
 				if (depthBuffer != null) {
-					float w = Mathf.Lerp(startVertex.position.w, endVertex.position.w, xi);
-					w = 1.0f / w;
 					
 					if (w < depthBuffer.read(x, y)) {
-						Color finalCol = shader.Fragment(startVertex, endVertex, xi);
+						in.texcoord.multiplyBy(w);
+						Color finalCol = shader.Fragment(in);
 						SetPixel(x, y, finalCol.getRGB());
 						depthBuffer.write(x, y, w);
 					}
 				}
 				else {
-					Color finalCol = shader.Fragment(startVertex, endVertex, xi);
+					in.texcoord.multiplyBy(w);
+					Color finalCol = shader.Fragment(in);
 					SetPixel(x, y, finalCol.getRGB());
 				}
-				*/
+				
 			}
 		}
 	}
