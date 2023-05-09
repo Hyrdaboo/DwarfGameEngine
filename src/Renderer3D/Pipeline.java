@@ -1,6 +1,9 @@
 package Renderer3D;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import DwarfEngine.Core.Application;
@@ -80,10 +83,38 @@ public final class Pipeline {
 			
 			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f) continue;
 			
-			Triangle[] clippedTris = triangleClipAgainstPlane(new Vector3(0, 0, camera.near), Vector3.forward(), fullyTransformed);
-			for (Triangle clipped : clippedTris) {
-				if (clipped == null) continue;
+			class Plane {
+				Vector3 point = Vector3.zero();
+				Vector3 dir = Vector3.forward();
 				
+				public Plane(Vector3 point, Vector3 dir) {
+					this.point = point;
+					this.dir = dir;
+				}
+			}
+			
+			Plane[] clippingPlanes = new Plane[] {
+				new Plane(new Vector3(0, 0, camera.near), Vector3.forward()),
+				new Plane(new Vector3(0, 0, camera.far), Vector3.back()),
+			};
+			
+			List<Triangle> finalResult = new ArrayList<Triangle>();
+			finalResult.add(fullyTransformed);
+			
+			for (Plane p : clippingPlanes) {
+				List<Triangle> copyBuff = new ArrayList<Triangle>(finalResult);				
+				finalResult.clear();
+				for (Triangle tri : copyBuff) {
+					Triangle[] clippedTris = triangleClipAgainstPlane(p.point, p.dir, tri);
+					for (Triangle clipped : clippedTris) {
+						
+						if (clipped == null) continue;
+						finalResult.add(clipped);
+					}
+				}
+			}
+			
+			for (Triangle clipped : finalResult) {
 				for (int i = 0; i < 3; i++) {
 					clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
 					clipped.verts[i].position.w = 1.0f / clipped.verts[i].position.w;

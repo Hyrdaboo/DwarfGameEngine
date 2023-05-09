@@ -30,28 +30,13 @@ class saul implements Shader {
 	
 	public saul() {
 		spr.LoadFromFile("/Textures/grass-side.png");
-		spr.wrapMode = WrapMode.RepeatMirrored;
-		spr.samplingMode = SamplingMode.Bilinear;
-		spr.tiling.x = 2;
-		spr.tiling.y = 2;
 	}
 	
 	public Color Fragment(Vertex in) {
-		float w = 1.0f / in.position.w;
-		float x = w / 5.0f;
-		Color fog = Mathf.LerpColor(Color.white, Color.black, x);
-		
 		Vector2 coord = in.texcoord;
 		Color col = spr.SampleColor(coord.x, coord.y);
 		
-		return MultiplyColor(fog, col);
-	}
-	
-	Color MultiplyColor(Color a, Color b) {
-		float red = (a.getRed() / 255.0f) * (b.getRed() / 255.0f);
-		float green = (a.getGreen() / 255.0f) * (b.getGreen() / 255.0f);
-		float blue = (a.getBlue() / 255.0f) * (b.getBlue() / 255.0f);
-		return new Color(red, green, blue);
+		return col;
 	}
 }
 
@@ -86,7 +71,7 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 
-		Mesh cubeMesh = Mesh.MakeCube();
+		Mesh cubeMesh = Mesh.MakeQuad();
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
@@ -98,6 +83,8 @@ class demo3D extends Application {
 		cube2.shader = new depth();
 		
 		cam.transform.position.z = -3.5f;
+		cam.SetFar(5);
+		cam.SetNear(1.5f);
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -123,7 +110,7 @@ class demo3D extends Application {
 		pipeline.clear();
 		GetInput();
 		pipeline.DrawMesh(cube);
-		pipeline.DrawMesh(cube2);
+		//pipeline.DrawMesh(cube2);
 	}
 	
 	boolean confined = false;

@@ -94,7 +94,6 @@ public final class TriangleRasterizer {
 				float w = in.position.w;
 				w = 1.0f / w;
 				
-				
 				if (depthBuffer != null) {
 					
 					if (w < depthBuffer.read(x, y)) {
@@ -109,7 +108,6 @@ public final class TriangleRasterizer {
 					Color finalCol = shader.Fragment(in);
 					SetPixel(x, y, finalCol.getRGB());
 				}
-				
 			}
 		}
 	}
