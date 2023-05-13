@@ -7,25 +7,41 @@ import java.util.Comparator;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 
+import static DwarfEngine.Core.DisplayRenderer.*;
+
 public final class TriangleRasterizer {
-	private ColorBuffer colorBuffer;
-	private DepthBuffer depthBuffer;
 	
-	public <T> void bindBuffer(Buffer<T> buffer) {
-		if (buffer instanceof ColorBuffer) {
-			colorBuffer = (ColorBuffer) buffer;
-		}
-		else if (buffer instanceof DepthBuffer) {
-			depthBuffer = (DepthBuffer) buffer;
-		}
+	private static float[] depthBuffer;
+	private int width, height;
+	public TriangleRasterizer() {
+		width = getBufferWidth();
+		height = getBufferHeight();
 	}
 	
-	private void SetPixel(int x, int y, int color) {
-		if (x < 0 || x >= colorBuffer.getWidth() || y < 0 || y >= colorBuffer.getHeight()) {
-			return;
+	public void bindDepth(float[] buffer) {
+		if (buffer.length != width*height) {
+			throw new IllegalArgumentException("Depth buffer should be same size as screen");
 		}
-		
-		colorBuffer.write(x, y, color);
+		depthBuffer = buffer;
+	}
+	
+	public void clearAll() {
+		clear(Color.black);
+		Arrays.fill(depthBuffer, Float.MAX_VALUE);
+	}
+
+	public void writeDepth(int x, int y, Float value) {
+		if (x < 0 || x >= width || y < 0 || y >= height) {
+			throw new IndexOutOfBoundsException("Invalid write index. Cannot read at " + x + ", " + y);
+		}
+		depthBuffer[x + y*width] = value;
+	}
+	
+	public Float readDepth(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height) {
+			throw new IndexOutOfBoundsException("Invalid read index. Cannot read at " + x + ", " + y);
+		}
+		return depthBuffer[x + y*width];
 	}
 	
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
@@ -89,30 +105,27 @@ public final class TriangleRasterizer {
 			for (int x = xStart; x < xEnd; x++) {
 				float xi = Mathf.InverseLerp(xStart, xEnd, x);	
 				
-				
 				Vertex in = Vertex.Lerp(startVertex, endVertex, xi);
 				float w = in.position.w;
 				w = 1.0f / w;
 				
+				boolean depthTestPassed = true;
 				if (depthBuffer != null) {
-					
-					if (w < depthBuffer.read(x, y)) {
-						in.texcoord.multiplyBy(w);
-						Color finalCol = shader.Fragment(in);
-						SetPixel(x, y, finalCol.getRGB());
-						depthBuffer.write(x, y, w);
-					}
+					depthTestPassed = w < readDepth(x, y);
 				}
-				else {
+				
+				if (depthTestPassed) {
 					in.texcoord.multiplyBy(w);
 					Color finalCol = shader.Fragment(in);
-					SetPixel(x, y, finalCol.getRGB());
+					SetPixel(x, y, finalCol);
+					
+					if (depthBuffer != null) {
+						writeDepth(x, y, w);
+					}
 				}
 			}
 		}
 	}
-	
-	
 	
 	public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value)
     {

@@ -2,19 +2,15 @@ package Renderer3D;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Debug;
-import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.ColorBuffer;
-import Renderer3D.TriangleRenderer.DepthBuffer;
 import Renderer3D.TriangleRenderer.Shader;
 import Renderer3D.TriangleRenderer.TriangleRasterizer;
 import Renderer3D.TriangleRenderer.Vertex;
@@ -31,12 +27,10 @@ public final class Pipeline {
 	private Camera camera;
 	private Matrix4x4 projectionMatrix;
 	
-	private float[] depthBufferArr;
+	private float[] depthBuffer;
 	private Vector2 frameSize;
 	
 	private TriangleRasterizer tr;
-	private ColorBuffer colorBuffer;
-	private DepthBuffer depthBuffer;
 	
 	public Pipeline(Application application, Camera camera) {
 		this.application = application;
@@ -45,13 +39,10 @@ public final class Pipeline {
 		projectionMatrix = new Matrix4x4();
 		
 		frameSize = application.getFrameSize();
-		depthBufferArr = new float[(int)(frameSize.x*frameSize.y)];
+		depthBuffer = new float[(int)(frameSize.x*frameSize.y)];
 		
 		tr = new TriangleRasterizer();
-		colorBuffer = new ColorBuffer(DisplayRenderer.GetPixels(), (int)frameSize.x, (int)frameSize.y);
-		depthBuffer = new DepthBuffer(depthBufferArr, (int)frameSize.x, (int)frameSize.y);
-		tr.bindBuffer(colorBuffer);
-		tr.bindBuffer(depthBuffer);
+		tr.bindDepth(depthBuffer);
 	}
 	
 	public void DrawMesh(RenderObject renderObject) {
@@ -142,8 +133,7 @@ public final class Pipeline {
 	//REGION Utility Functions
 	
 	public void clear() {
-		depthBuffer.clear();
-		colorBuffer.clear();
+		tr.clearAll();
 	}
 	
 	public Vector3 viewportPointToScreenPoint(Vector3 point) {

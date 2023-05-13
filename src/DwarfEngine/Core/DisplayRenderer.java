@@ -22,17 +22,17 @@ public final class DisplayRenderer {
 		Arrays.fill(pixelBuffer, color.getRGB());
 	}
 	
+	public static int getBufferWidth() {
+		return bufferWidth;
+	}
+	public static int getBufferHeight() {
+		return bufferHeight;
+	}
+	
 	public static void SetPixel(int x, int y, Color color) {
 		if (y >= bufferHeight || y < 0) return;
 		if (x >= bufferWidth || x < 0) return;
 		pixelBuffer[x+y*bufferWidth] = color.getRGB();
-	}
-	
-	/**
-	 * Use this method to assign a custom pixel buffer
-	 */
-	public static int[] GetPixels() {
-		return pixelBuffer;
 	}
 	
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {

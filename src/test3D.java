@@ -45,7 +45,7 @@ class depth implements Shader {
 	@Override
 	public Color Fragment(Vertex in) {
 		float w = 1.0f / in.position.w;
-		float x = w / 5.0f;
+		float x = w / 10.0f;
 		Color c = Mathf.LerpColor(Color.white, Color.black, x);
 		return c;
 	}
@@ -71,7 +71,7 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 
-		Mesh cubeMesh = Mesh.MakeQuad();
+		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);

@@ -7,7 +7,6 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.ColorBuffer;
 import Renderer3D.TriangleRenderer.Shader;
 import Renderer3D.TriangleRenderer.TriangleRasterizer;
 import Renderer3D.TriangleRenderer.Vertex;
@@ -21,29 +20,17 @@ import java.awt.Cursor;
 class app extends Application {
 
 	TriangleRasterizer tr;
-	ColorBuffer colorBuffer;
 	@Override
 	public void OnStart() {
 		title = "Tests";
 		
 		tr = new TriangleRasterizer();
-		colorBuffer = new ColorBuffer(GetPixels(), (int)getFrameSize().x, (int)getFrameSize().y);
-		tr.bindBuffer(colorBuffer);
 		
 		spr = new Sprite();
 		spr.LoadFromFile("/Textures/uvtest.png");
 	}
 	static Sprite spr;
 	
-	void printBuffer() {
-		int[] buffer = GetPixels();
-		for (int y = 0; y < getFrameSize().y; y++) {
-			for (int x = 0; x < getFrameSize().x; x++) {
-				printCol(buffer[x + y*(int)getFrameSize().x], Color.gray);
-			}
-			log("\n");
-		}
-	}
 	void printCol(int rgb, Color bc) {
 		if (rgb == bc.getRGB()) return;
 		Color c = new Color(rgb);
@@ -132,10 +119,6 @@ class app extends Application {
 		
 		//tr.DrawTriangle(verts1, f);
 		tr.DrawTriangle(verts2, f);
-		
-		if (Input.OnKeyPressed(Keycode.P)) {
-			printBuffer();
-		}
 	}
 	frag f = new frag();
 }
