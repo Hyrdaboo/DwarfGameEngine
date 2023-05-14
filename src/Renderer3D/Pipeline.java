@@ -72,7 +72,6 @@ public final class Pipeline {
 			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f) continue;
 			
 			
-			
 			Plane[] clippingPlanes = new Plane[] {
 				new Plane(new Vector3(0, 0, camera.near), Vector3.forward()),
 				new Plane(new Vector3(0, 0, camera.far), Vector3.back()),
@@ -85,7 +84,7 @@ public final class Pipeline {
 				List<Triangle> copyBuff = new ArrayList<Triangle>(finalResult);				
 				finalResult.clear();
 				for (Triangle tri : copyBuff) {
-					Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.dir, tri);
+					Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, tri);
 					for (Triangle clipped : clippedTris) {
 						
 						if (clipped == null) continue;

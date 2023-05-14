@@ -6,11 +6,11 @@ import DwarfEngine.MathTypes.Vector3;
 
 class Plane {
 	Vector3 point = Vector3.zero();
-	Vector3 dir = Vector3.forward();
+	Vector3 normal = Vector3.forward();
 	
 	public Plane(Vector3 point, Vector3 dir) {
 		this.point = point;
-		this.dir = dir;
+		this.normal = dir;
 	}
 	
 	private static float lineIntersectPlane(Vector3 planePoint, Vector3 planeNormal, Vector3 lineStart, Vector3 lineEnd) {

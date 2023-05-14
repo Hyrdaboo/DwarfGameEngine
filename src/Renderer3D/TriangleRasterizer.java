@@ -1,10 +1,14 @@
 package Renderer3D;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
+import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
@@ -45,6 +49,37 @@ public final class TriangleRasterizer {
 	}
 	
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
+		
+		Plane[] clippingPlanes = new Plane[] {
+				new Plane(Vector3.zero(), Vector3.up()), //top
+				new Plane(Vector3.zero(), Vector3.right()), //left
+				new Plane(new Vector3(width, 0, 0), Vector3.left()), //right
+				new Plane(new Vector3(0, height, 0), Vector3.down()), //bottom
+		};
+		
+		Triangle in = new Triangle(vertices[0], vertices[1], vertices[2]);
+		List<Triangle> finalResult = new ArrayList<Triangle>();
+		finalResult.add(in);
+		
+		for (Plane p : clippingPlanes) {
+			List<Triangle> copyBuff = new ArrayList<Triangle>(finalResult);				
+			finalResult.clear();
+			for (Triangle tri : copyBuff) {
+				Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, tri);
+				for (Triangle clipped : clippedTris) {
+					
+					if (clipped == null) continue;
+					finalResult.add(clipped);
+				}
+			}
+		}
+		
+		for (Triangle clipped : finalResult) {
+			DrawTriangleClipped(clipped.verts, shader);
+		}
+	}
+	
+	private void DrawTriangleClipped(Vertex[] vertices, Shader shader) {
 		Arrays.sort(vertices, Comparator.comparingDouble((v) -> v.position.y));
 		Vertex v1 = vertices[0], v2 = vertices[1], v3 = vertices[2];	
 		
