@@ -63,6 +63,14 @@ public final class Vector2 {
 		this.x = x;
 		this.y = y;
 	}
+	public Vector2(Vector2 other) {
+		this.x = other.x;
+		this.y = other.y;
+	}
+	public Vector2(Vector3 other) {
+		this.x = other.x;
+		this.y = other.y;
+	}
 	
 	public void addTo(float a) {
 		x += a;

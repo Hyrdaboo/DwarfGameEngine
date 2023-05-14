@@ -21,9 +21,9 @@ import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
 import Renderer3D.RenderObject;
+import Renderer3D.Shader;
 import Renderer3D.Transform;
-import Renderer3D.TriangleRenderer.Shader;
-import Renderer3D.TriangleRenderer.Vertex;
+import Renderer3D.Vertex;
 
 class saul implements Shader {
 	static Sprite spr = new Sprite();
@@ -142,10 +142,10 @@ class demo3D extends Application {
 		}
 		
 		if (Input.OnKeyHeld(Keycode.Q)) {
-			camTransform.position.y += deltaTime * speed;
+			camTransform.position.y -= deltaTime * speed;
 		}
 		if (Input.OnKeyHeld(Keycode.E)) {
-			camTransform.position.y -= deltaTime * speed;
+			camTransform.position.y += deltaTime * speed;
 		}
 		
 		if (Input.OnKeyPressed(Keycode.Escape)) {

@@ -1,4 +1,4 @@
-package Renderer3D.TriangleRenderer;
+package Renderer3D;
 
 import java.awt.Color;
 
@@ -12,7 +12,7 @@ public final class Vertex implements Cloneable {
 	public Vector2 texcoord = Vector2.zero();
 	public Color color = Color.white;
 	
-	public static Vertex Lerp(Vertex a, Vertex b, float t) {
+	static Vertex Lerp(Vertex a, Vertex b, float t) {
 		Vertex v = new Vertex();
 		
 		v.position = Vector3.Lerp(a.position, b.position, t);

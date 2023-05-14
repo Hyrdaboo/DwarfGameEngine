@@ -1,4 +1,4 @@
-package Renderer3D.TriangleRenderer;
+package Renderer3D;
 
 import java.awt.Color;
 

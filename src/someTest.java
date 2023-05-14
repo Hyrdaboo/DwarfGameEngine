@@ -7,9 +7,9 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.Shader;
-import Renderer3D.TriangleRenderer.TriangleRasterizer;
-import Renderer3D.TriangleRenderer.Vertex;
+import Renderer3D.Shader;
+import Renderer3D.TriangleRasterizer;
+import Renderer3D.Vertex;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 

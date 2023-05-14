@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.Vertex;
 
 final class Triangle {
 	public final Vertex[] verts;
