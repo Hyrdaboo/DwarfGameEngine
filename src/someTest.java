@@ -49,8 +49,8 @@ class app extends Application {
 	
 	Vector2 p = Vector2.zero();
 	float angle = 0;
-	float s = 500;
-	Vector2 offset = Vector2.zero();
+	float s = 100;
+	Vector2 offset = new Vector2(-230, 180);
 	public void OnUpdate() {
 		clear(Color.gray);
 		Vector3[] t1 = new Vector3[] {
@@ -127,7 +127,8 @@ public class someTest {
 	
 	public static void main(String[] args) {
 		app a = new app();
-		a.Initialize(1280, 720, 1);		
+		//a.Initialize(1280, 720, 1);		
+		a.Initialize(720, 405, 1);		
 		//a.Initialize(144, 81, 7);
 		//a.Initialize(10, 10, 40);
 	}

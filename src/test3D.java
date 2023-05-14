@@ -83,8 +83,8 @@ class demo3D extends Application {
 		cube2.shader = new depth();
 		
 		cam.transform.position.z = -3.5f;
-		cam.SetFar(5);
-		cam.SetNear(1.5f);
+		cam.SetFar(10);
+		cam.SetNear(1);
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
@@ -94,7 +94,7 @@ class demo3D extends Application {
 	Mesh monke() {
 		Mesh mesh = null;
 		try {
-			mesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
+			mesh = new ObjLoader("./res/3D-Objects/teapot.obj").Load();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +110,7 @@ class demo3D extends Application {
 		pipeline.clear();
 		GetInput();
 		pipeline.DrawMesh(cube);
-		//pipeline.DrawMesh(cube2);
+		pipeline.DrawMesh(cube2);
 	}
 	
 	boolean confined = false;

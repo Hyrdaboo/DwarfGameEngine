@@ -81,10 +81,11 @@ public final class Pipeline {
 			finalResult.add(fullyTransformed);
 			
 			for (Plane p : clippingPlanes) {
-				List<Triangle> copyBuff = new ArrayList<Triangle>(finalResult);				
-				finalResult.clear();
-				for (Triangle tri : copyBuff) {
-					Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, tri);
+				int initialSize = finalResult.size();
+				for (int i = 0; i < initialSize; i++) {
+					Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, finalResult.get(0));
+					finalResult.remove(0);
+					
 					for (Triangle clipped : clippedTris) {
 						
 						if (clipped == null) continue;

@@ -1,4 +1,3 @@
-*Far clipping and screen clipping. Refactor pipeline
 *Obj-Loader update. Include uvs and normals and other data
 *Scene functionality
 *Some built-in shaders
