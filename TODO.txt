@@ -1,4 +1,4 @@
-*Obj-Loader update. Include uvs and normals and other data
+*Mesh normals support
 *Scene functionality
 *Some built-in shaders
 *Final refactoring of Application class.Screenshot not working

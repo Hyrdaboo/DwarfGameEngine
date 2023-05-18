@@ -29,7 +29,7 @@ class saul implements Shader {
 	static Sprite spr = new Sprite();
 	
 	public saul() {
-		spr.LoadFromFile("/Textures/grass-side.png");
+		spr.LoadFromFile("C:\\Users\\USER\\Downloads\\source\\1911tex_2.png");
 	}
 	
 	public Color Fragment(Vertex in) {
@@ -80,7 +80,7 @@ class demo3D extends Application {
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new depth();
+		cube2.shader = new saul();
 		
 		cam.transform.position.z = -3.5f;
 		cam.SetFar(10);
@@ -88,13 +88,13 @@ class demo3D extends Application {
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
-		
 	}
 	
 	Mesh monke() {
 		Mesh mesh = null;
 		try {
-			mesh = new ObjLoader("./res/3D-Objects/teapot.obj").Load();
+			//mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\source\\1911.obj");
+			mesh = ObjLoader.Load("C:\\Users\\USER\\OneDrive\\Desktop\\testcube.obj");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,7 +109,7 @@ class demo3D extends Application {
 		
 		pipeline.clear();
 		GetInput();
-		pipeline.DrawMesh(cube);
+		//pipeline.DrawMesh(cube);
 		pipeline.DrawMesh(cube2);
 	}
 	

@@ -2,6 +2,7 @@ package DwarfEngine;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.text.BreakIterator;
@@ -35,7 +36,7 @@ public final class Sprite {
 	
 	public void LoadFromFile(String path) {
 		try {
-			BufferedImage image = ImageIO.read(Sprite.class.getResource(path));
+			BufferedImage image = ImageIO.read(new File(path));
 			int w = image.getWidth();
 			int h = image.getHeight();
 			width = w;
