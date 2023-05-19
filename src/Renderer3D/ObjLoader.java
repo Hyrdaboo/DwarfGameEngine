@@ -28,8 +28,10 @@ public final class ObjLoader {
 			}
 			
 			objFile = new File(path);
-			if (!objFile.exists()) throw new FileNotFoundException("Specified file does not exist!");
-		} catch (Exception e) {}
+			if (!objFile.exists()) throw new Exception("Specified file does not exist!");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		
 		
 		List<Vector3> tempVertices = new ArrayList<Vector3>();

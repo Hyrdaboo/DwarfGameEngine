@@ -34,7 +34,7 @@ public final class TriangleRasterizer {
 
 	public void writeDepth(int x, int y, Float value) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
-			throw new IndexOutOfBoundsException("Invalid write index. Cannot read at " + x + ", " + y);
+			throw new IndexOutOfBoundsException("Invalid write index. Cannot write at " + x + ", " + y);
 		}
 		depthBuffer[x + y*width] = value;
 	}

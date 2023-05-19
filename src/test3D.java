@@ -93,10 +93,8 @@ class demo3D extends Application {
 	Mesh monke() {
 		Mesh mesh = null;
 		try {
-			//mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\source\\1911.obj");
-			mesh = ObjLoader.Load("C:\\Users\\USER\\OneDrive\\Desktop\\testcube.obj");
+			mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\source\\1911.obj");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

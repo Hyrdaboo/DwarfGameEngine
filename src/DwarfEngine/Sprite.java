@@ -44,10 +44,9 @@ public final class Sprite {
 			pixels = new int[width*height];
 			pixels = image.getRGB(0, 0, width, height, pixels, 0, width);
 		} catch (IOException | IllegalArgumentException e) {
-			if (e instanceof IllegalArgumentException) {
-				throw new IllegalArgumentException("Invalid image path");
+			if (e instanceof IOException) {
+				throw new RuntimeException("Invalid image path");
 			}
-			e.printStackTrace();
 		}
 	}
 	
