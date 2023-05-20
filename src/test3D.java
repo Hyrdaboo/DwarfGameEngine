@@ -21,37 +21,25 @@ import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
 import Renderer3D.Pipeline;
 import Renderer3D.RenderObject;
+import Renderer3D.Shader;
 import Renderer3D.Transform;
-import Renderer3D.TriangleRenderer.Shader;
-import Renderer3D.TriangleRenderer.Vertex;
+import Renderer3D.Vertex;
 
-class saul implements Shader {
+class Tex implements Shader {
 	static Sprite spr = new Sprite();
 	
-	public saul() {
-		spr.LoadFromFile("/Textures/grass-side.png");
-		spr.wrapMode = WrapMode.RepeatMirrored;
+	public Tex() {
+		spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
 		spr.samplingMode = SamplingMode.Bilinear;
-		spr.tiling.x = 2;
-		spr.tiling.y = 2;
+		
+		//spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
 	
 	public Color Fragment(Vertex in) {
-		float w = 1.0f / in.position.w;
-		float x = w / 5.0f;
-		Color fog = Mathf.LerpColor(Color.white, Color.black, x);
-		
 		Vector2 coord = in.texcoord;
 		Color col = spr.SampleColor(coord.x, coord.y);
 		
-		return MultiplyColor(fog, col);
-	}
-	
-	Color MultiplyColor(Color a, Color b) {
-		float red = (a.getRed() / 255.0f) * (b.getRed() / 255.0f);
-		float green = (a.getGreen() / 255.0f) * (b.getGreen() / 255.0f);
-		float blue = (a.getBlue() / 255.0f) * (b.getBlue() / 255.0f);
-		return new Color(red, green, blue);
+		return col;
 	}
 }
 
@@ -60,7 +48,7 @@ class depth implements Shader {
 	@Override
 	public Color Fragment(Vertex in) {
 		float w = 1.0f / in.position.w;
-		float x = w / 5.0f;
+		float x = w / 10.0f;
 		Color c = Mathf.LerpColor(Color.white, Color.black, x);
 		return c;
 	}
@@ -90,26 +78,26 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
-		cube.shader = new saul();
+		cube.shader = new Tex();
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new depth();
+		cube2.shader = new Tex();
 		
 		cam.transform.position.z = -3.5f;
+		cam.SetFar(10);
+		cam.SetNear(1);
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;
-		
 	}
 	
 	Mesh monke() {
 		Mesh mesh = null;
 		try {
-			mesh = new ObjLoader("./res/3D-Objects/monke.obj").Load();
+			mesh = ObjLoader.Load("./res/3D-Objects/rat/rat.obj");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -122,8 +110,9 @@ class demo3D extends Application {
 		
 		pipeline.clear();
 		GetInput();
-		pipeline.DrawMesh(cube);
+		//pipeline.DrawMesh(cube);
 		pipeline.DrawMesh(cube2);
+		cube2.transform.rotation.y += getDeltaTime() * 80;
 	}
 	
 	boolean confined = false;
@@ -155,10 +144,10 @@ class demo3D extends Application {
 		}
 		
 		if (Input.OnKeyHeld(Keycode.Q)) {
-			camTransform.position.y += deltaTime * speed;
+			camTransform.position.y -= deltaTime * speed;
 		}
 		if (Input.OnKeyHeld(Keycode.E)) {
-			camTransform.position.y -= deltaTime * speed;
+			camTransform.position.y += deltaTime * speed;
 		}
 		
 		if (Input.OnKeyPressed(Keycode.Escape)) {

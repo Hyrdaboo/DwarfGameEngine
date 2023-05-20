@@ -56,12 +56,20 @@ public final class Vector2 {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return x + ", " + y;
+		return "(" + x + ", " + y + ")";
 	}
 	
 	public Vector2(float x, float y) {
 		this.x = x;
 		this.y = y;
+	}
+	public Vector2(Vector2 other) {
+		this.x = other.x;
+		this.y = other.y;
+	}
+	public Vector2(Vector3 other) {
+		this.x = other.x;
+		this.y = other.y;
 	}
 	
 	public void addTo(float a) {

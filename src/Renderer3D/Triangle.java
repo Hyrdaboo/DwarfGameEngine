@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.Vertex;
 
 final class Triangle {
 	public final Vertex[] verts;
@@ -25,7 +24,7 @@ final class Triangle {
 	
 	public static Triangle[] CreateIndexedTriangleStream(Mesh mesh) {
 		Triangle[] triangles = new Triangle[mesh.triangleCount()/3];
-		Vector3[] vertices = mesh.getVetices();
+		Vector3[] vertices = mesh.getVertices();
 		Vector2[] uv = mesh.getUV();
 		Color[] colors = mesh.getColors();
 		int[] tris = mesh.getTriangles();

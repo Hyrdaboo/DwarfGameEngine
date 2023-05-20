@@ -62,14 +62,23 @@ public final class Vector3{
 	
 	@Override
 	public String toString() {
-		return x + ", " + y + ", " + z;
+		return "(" + x + ", " + y + ", " + z + ")";
 	}
 	
 	public Vector3(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		
+	}
+	public Vector3(Vector3 other) {
+		this.x = other.x;
+		this.y = other.y;
+		this.z = other.z;
+		this.w = other.w;
+	}
+	public Vector3(Vector2 other) {
+		this.x = other.x;
+		this.y = other.y;
 	}
 	
 	public void addTo(Vector3 vec) {

@@ -14,7 +14,7 @@ public final class Mesh {
 	public void setVertices(Vector3[] vertices) {
 		this.vertices = vertices;
 	}
-	public Vector3[] getVetices() {
+	public Vector3[] getVertices() {
 		return vertices;
 	}
 	public int vertexCount() {
@@ -43,7 +43,7 @@ public final class Mesh {
 	public Vector2[] getUV() {
 		return uv;
 	}
-	public int getUVCount() {
+	public int uvCount() {
 		return uv.length;
 	}
 	public void setColors(Color[] colors) {

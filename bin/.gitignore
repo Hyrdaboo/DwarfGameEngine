@@ -1,9 +1,3 @@
-/DwarfEngine/
 /Renderer3D/
-/app.class
-/demo3D.class
-/depth.class
-/frag.class
-/saul.class
-/someTest.class
-/test3D.class
+/DwarfEngine/
+/Tex.class

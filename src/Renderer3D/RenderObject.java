@@ -2,9 +2,6 @@ package Renderer3D;
 
 import java.awt.Color;
 
-import Renderer3D.TriangleRenderer.Shader;
-import Renderer3D.TriangleRenderer.Vertex;
-
 class ErrorShader implements Shader {
 
 	@Override

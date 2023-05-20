@@ -7,10 +7,9 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix3x3;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.TriangleRenderer.ColorBuffer;
-import Renderer3D.TriangleRenderer.Shader;
-import Renderer3D.TriangleRenderer.TriangleRasterizer;
-import Renderer3D.TriangleRenderer.Vertex;
+import Renderer3D.Shader;
+import Renderer3D.TriangleRasterizer;
+import Renderer3D.Vertex;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 
@@ -21,29 +20,17 @@ import java.awt.Cursor;
 class app extends Application {
 
 	TriangleRasterizer tr;
-	ColorBuffer colorBuffer;
 	@Override
 	public void OnStart() {
 		title = "Tests";
 		
 		tr = new TriangleRasterizer();
-		colorBuffer = new ColorBuffer(GetPixels(), (int)getFrameSize().x, (int)getFrameSize().y);
-		tr.bindBuffer(colorBuffer);
 		
 		spr = new Sprite();
-		spr.LoadFromFile("/Textures/uvtest.png");
+		spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
 	static Sprite spr;
 	
-	void printBuffer() {
-		int[] buffer = GetPixels();
-		for (int y = 0; y < getFrameSize().y; y++) {
-			for (int x = 0; x < getFrameSize().x; x++) {
-				printCol(buffer[x + y*(int)getFrameSize().x], Color.gray);
-			}
-			log("\n");
-		}
-	}
 	void printCol(int rgb, Color bc) {
 		if (rgb == bc.getRGB()) return;
 		Color c = new Color(rgb);
@@ -69,12 +56,12 @@ class app extends Application {
 		Vector3[] t1 = new Vector3[] {
 				new Vector3(0, 0, 0),
 				new Vector3(0, 1, 0),
-				new Vector3(1, 1, 0)
+				new Vector3(1, 1, 0),
 		};
 		Vector2[] c1 = new Vector2[] {
-				new Vector2(0.0f, 0.0f),
-				new Vector2(0.0f, 1.0f),
-				new Vector2(1.0f, 1.0f),
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
 		};
 		Vector3[] t2 = new Vector3[] {
 				new Vector3(1, 1, 0),
@@ -130,21 +117,19 @@ class app extends Application {
 			verts2[i].color = c2[i];
 		}
 		
-		//tr.DrawTriangle(verts1, f);
-		tr.DrawTriangle(verts2, f);
-		
-		if (Input.OnKeyPressed(Keycode.P)) {
-			printBuffer();
-		}
+		tr.DrawTriangle(verts1, tex);
+		//tr.DrawTriangle(verts2, f);
 	}
 	frag f = new frag();
+	Tex tex = new Tex();
 }
 
 public class someTest {
 	
 	public static void main(String[] args) {
 		app a = new app();
-		a.Initialize(1280, 720, 1);		
+		//a.Initialize(1280, 720, 1);		
+		a.Initialize(720, 405, 1);		
 		//a.Initialize(144, 81, 7);
 		//a.Initialize(10, 10, 40);
 	}
