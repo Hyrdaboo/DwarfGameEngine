@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,6 +111,14 @@ public final class ObjLoader {
 			vertices.add(tempVertices.get(i));
 		}
 		
+		List<Color> colors = null;
+		if (tempColors.size() > 0) {
+			colors = new ArrayList<Color>();
+			for (int i : vertexIndices) {
+				colors.add(tempColors.get(i));
+			}
+		}
+		
 		List<Vector2> uvs = null;
 		if (tempUvs.size() > 0) {
 			uvs = new ArrayList<Vector2>();
@@ -128,13 +137,15 @@ public final class ObjLoader {
 		
 		int indexCount = vertexIndices.size();
 		vertexIndices.clear();
-		
 		for (int i = 0; i < indexCount; i++) {
 			vertexIndices.add(i);
 		}
-		
+
 		Mesh mesh = new Mesh();
 		mesh.setVertices(vertices.toArray(new Vector3[vertices.size()]));
+		if (colors != null) {
+			mesh.setColors(colors.toArray(new Color[colors.size()]));
+		}
 		if (uvs != null) {
 			mesh.setUV(uvs.toArray(new Vector2[uvs.size()]));
 		}

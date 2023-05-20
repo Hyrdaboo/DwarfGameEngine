@@ -79,7 +79,7 @@ public final class Sprite {
 	}
 	
 	public Color SampleColor(float u, float v) {
-		
+		v = 1 - v;
 		u *= tiling.x + Mathf.epsilon;
 		v *= tiling.y + Mathf.epsilon;
 		

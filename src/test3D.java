@@ -25,11 +25,14 @@ import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
 
-class saul implements Shader {
+class Tex implements Shader {
 	static Sprite spr = new Sprite();
 	
-	public saul() {
-		spr.LoadFromFile("C:\\Users\\USER\\Downloads\\source\\1911tex_2.png");
+	public Tex() {
+		spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
+		spr.samplingMode = SamplingMode.Bilinear;
+		
+		//spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
 	
 	public Color Fragment(Vertex in) {
@@ -75,12 +78,12 @@ class demo3D extends Application {
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
-		cube.shader = new saul();
+		cube.shader = new Tex();
 		
 		Mesh cube2Mesh = monke();
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new saul();
+		cube2.shader = new Tex();
 		
 		cam.transform.position.z = -3.5f;
 		cam.SetFar(10);
@@ -93,7 +96,7 @@ class demo3D extends Application {
 	Mesh monke() {
 		Mesh mesh = null;
 		try {
-			mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\source\\1911.obj");
+			mesh = ObjLoader.Load("./res/3D-Objects/rat/rat.obj");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,6 +112,7 @@ class demo3D extends Application {
 		GetInput();
 		//pipeline.DrawMesh(cube);
 		pipeline.DrawMesh(cube2);
+		cube2.transform.rotation.y += getDeltaTime() * 80;
 	}
 	
 	boolean confined = false;

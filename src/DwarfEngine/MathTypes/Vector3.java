@@ -62,7 +62,7 @@ public final class Vector3{
 	
 	@Override
 	public String toString() {
-		return x + ", " + y + ", " + z;
+		return "(" + x + ", " + y + ", " + z + ")";
 	}
 	
 	public Vector3(float x, float y, float z) {

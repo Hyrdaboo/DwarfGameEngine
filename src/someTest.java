@@ -27,7 +27,7 @@ class app extends Application {
 		tr = new TriangleRasterizer();
 		
 		spr = new Sprite();
-		spr.LoadFromFile("/Textures/uvtest.png");
+		spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
 	static Sprite spr;
 	
@@ -49,19 +49,19 @@ class app extends Application {
 	
 	Vector2 p = Vector2.zero();
 	float angle = 0;
-	float s = 100;
-	Vector2 offset = new Vector2(-230, 180);
+	float s = 500;
+	Vector2 offset = Vector2.zero();
 	public void OnUpdate() {
 		clear(Color.gray);
 		Vector3[] t1 = new Vector3[] {
 				new Vector3(0, 0, 0),
 				new Vector3(0, 1, 0),
-				new Vector3(1, 1, 0)
+				new Vector3(1, 1, 0),
 		};
 		Vector2[] c1 = new Vector2[] {
-				new Vector2(0.0f, 0.0f),
-				new Vector2(0.0f, 1.0f),
-				new Vector2(1.0f, 1.0f),
+				new Vector2(0, 1),
+				new Vector2(0, 0),
+				new Vector2(1, 0),
 		};
 		Vector3[] t2 = new Vector3[] {
 				new Vector3(1, 1, 0),
@@ -117,10 +117,11 @@ class app extends Application {
 			verts2[i].color = c2[i];
 		}
 		
-		//tr.DrawTriangle(verts1, f);
-		tr.DrawTriangle(verts2, f);
+		tr.DrawTriangle(verts1, tex);
+		//tr.DrawTriangle(verts2, f);
 	}
 	frag f = new frag();
+	Tex tex = new Tex();
 }
 
 public class someTest {

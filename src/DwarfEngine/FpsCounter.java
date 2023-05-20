@@ -1,7 +1,5 @@
 package DwarfEngine;
 
-import DwarfEngine.Core.Debug;
-
 public final class FpsCounter {
 	public int bufferLength = 25;
 	

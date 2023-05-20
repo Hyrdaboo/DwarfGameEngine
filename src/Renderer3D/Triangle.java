@@ -24,7 +24,7 @@ final class Triangle {
 	
 	public static Triangle[] CreateIndexedTriangleStream(Mesh mesh) {
 		Triangle[] triangles = new Triangle[mesh.triangleCount()/3];
-		Vector3[] vertices = mesh.getVetices();
+		Vector3[] vertices = mesh.getVertices();
 		Vector2[] uv = mesh.getUV();
 		Color[] colors = mesh.getColors();
 		int[] tris = mesh.getTriangles();
