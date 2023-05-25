@@ -1,4 +1,4 @@
-import DwarfEngine.Sprite;
+import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
@@ -26,10 +26,10 @@ class app extends Application {
 		
 		tr = new TriangleRasterizer();
 		
-		spr = new Sprite();
+		spr = new Texture();
 		spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
-	static Sprite spr;
+	static Texture spr;
 	
 	void printCol(int rgb, Color bc) {
 		if (rgb == bc.getRGB()) return;
@@ -128,8 +128,8 @@ public class someTest {
 	
 	public static void main(String[] args) {
 		app a = new app();
-		//a.Initialize(1280, 720, 1);		
-		a.Initialize(720, 405, 1);		
+		a.Initialize(1280, 720, 1);		
+		//a.Initialize(720, 405, 1);		
 		//a.Initialize(144, 81, 7);
 		//a.Initialize(10, 10, 40);
 	}

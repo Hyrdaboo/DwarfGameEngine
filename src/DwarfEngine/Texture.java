@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.text.BreakIterator;
 import java.util.Arrays;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -16,19 +17,19 @@ import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
-public final class Sprite {
+public final class Texture {
 	private int[] pixels;
 	int width, height;
 	
 	public enum WrapMode {Repeat, Clamp, RepeatMirrored}
-	public WrapMode wrapMode = WrapMode.Repeat;
+	public WrapMode wrapMode = WrapMode.Clamp;
 	public enum SamplingMode {Point, Bilinear}
 	public SamplingMode samplingMode = SamplingMode.Point;
 	public Vector2 tiling = Vector2.one();
 	public Vector2 offset = Vector2.zero();
 	
-	public Sprite() {}
-	public Sprite(int width, int height) {
+	public Texture() {}
+	public Texture(int width, int height) {
 		this.width = width;
 		this.height = height;
 		pixels = new int[width*height];
@@ -78,51 +79,97 @@ public final class Sprite {
 		pixels[x + y*width] = c.getRGB();
 	}
 	
-	public Color SampleColor(float u, float v) {
-		v = 1 - v;
-		u *= tiling.x + Mathf.epsilon;
-		v *= tiling.y + Mathf.epsilon;
-		
+	
+	private Color GetPixelUv(int x, int y) {
+		y = height-1-y;
+		return GetPixel(x, y);
+	}
+	public Color Sample(float u, float v) {
+		u *= tiling.x;
+		v *= tiling.y;
 		u += offset.x;
 		v += offset.y;
 		
+		int precision = 1000;
+		int x = (int) (u * width * precision);
+		int y = (int) (v * height * precision);
+		
 		switch (wrapMode) {
-		case Repeat:
-			u = Mathf.abs(Mathf.frac(u));
-			v = Mathf.abs(Mathf.frac(v));
+		case Clamp: {
+			x = (int) Mathf.Clamp(x, 0, ((width-1)*precision));
+			y = (int) Mathf.Clamp(y, 0, ((height-1)*precision));
 			break;
-		case Clamp:
-			u = Mathf.Clamp01(u);
-			v = Mathf.Clamp01(v);
+		}
+		case Repeat:
+			int w = width * precision;
+			int h = height * precision;
+			x = ((x % w) + w) % w;
+			y = ((y % h) + h) % h;
 			break;
 		case RepeatMirrored:
-			u = (int)u % 2 == 0 ? Mathf.abs(Mathf.frac(u)) :  1-Mathf.abs(Mathf.frac(u));
-			v = (int)v % 2 == 0 ? Mathf.abs(Mathf.frac(v)) :  1-Mathf.abs(Mathf.frac(v));
+			w = width * precision;
+			h = height * precision;
+			
+			boolean xEven = (x / w) % 2 == 0;
+			boolean yEven = (y / h) % 2 == 0;
+			
+			x = ((x % w) + w) % w;
+			y = ((y % h) + h) % h;
+			
+			if (!xEven) {
+				x = w-1-x;
+			}
+			if (!yEven) {
+				y = h-1-y;
+			}
 			break;
 		default:
 			break;
 		}
 		
 		if (samplingMode == SamplingMode.Point) {
-			int x = (int)(((float)width-1)*u + 0.5f);
-			int y = (int)(((float)height-1)*v + 0.5f);
-			
-			return GetPixel(x, y);
+			x /= precision;
+			y /= precision;
+			return GetPixelUv(x, y);
 		}
 		else {
-			float x = ((float)width-1) * u;
-			float y = ((float)height-1) * v;
+			float xf = x / (float)precision;
+			float yf = y / (float)precision;
+			xf = Mathf.Clamp(xf, 0, width-1);
+			yf = Mathf.Clamp(yf, 0, height-1);
+			Vector2 tl = new Vector2((int)xf, (int)yf);
+			Vector2 tr = new Vector2(Mathf.ceil(xf), (int)yf);
+			Vector2 bl = new Vector2((int)xf, Mathf.ceil(yf));
+			Vector2 br = new Vector2(Mathf.ceil(xf), Mathf.ceil(yf));
 			
+			float tx = xf-tl.x;
+			float ty = yf-tl.y;
+			
+			Color top = Mathf.LerpColor(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Color bottom = Mathf.LerpColor(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
+			
+			return Mathf.LerpColor(top, bottom, ty);
+		}
+	}
+	
+	public Color SampleFast(float u, float v) {
+		float x = Mathf.Clamp(u * width, 0, width-1);
+		float y = Mathf.Clamp(v * height, 0, height-1);
+		
+		if (samplingMode == SamplingMode.Point) {
+			return GetPixelUv((int)x, (int)y);
+		}
+		else {
 			Vector2 tl = new Vector2((int)x, (int)y);
-			Vector2 tr = new Vector2((int)(Mathf.ceil(x)), (int)y);
-			Vector2 bl = new Vector2((int)x, (int)(Mathf.ceil(y)));
-			Vector2 br = new Vector2((int)(Mathf.ceil(x)), (int)(Mathf.ceil(y)));
+			Vector2 tr = new Vector2(Mathf.ceil(x), (int)y);
+			Vector2 bl = new Vector2((int)x, Mathf.ceil(y));
+			Vector2 br = new Vector2(Mathf.ceil(x), Mathf.ceil(y));
 			
 			float tx = x-tl.x;
 			float ty = y-tl.y;
 			
-			Color top = Mathf.LerpColor(GetPixel((int)tl.x, (int)tl.y), GetPixel((int)tr.x, (int)tr.y), tx);
-			Color bottom = Mathf.LerpColor(GetPixel((int)bl.x, (int)bl.y), GetPixel((int)br.x, (int)br.y), tx);
+			Color top = Mathf.LerpColor(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Color bottom = Mathf.LerpColor(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
 			
 			return Mathf.LerpColor(top, bottom, ty);
 		}

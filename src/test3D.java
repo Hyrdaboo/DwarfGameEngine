@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.plaf.basic.BasicPanelUI;
 
-import DwarfEngine.Sprite;
+import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
@@ -12,8 +12,8 @@ import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
-import DwarfEngine.Sprite.SamplingMode;
-import DwarfEngine.Sprite.WrapMode;
+import DwarfEngine.Texture.SamplingMode;
+import DwarfEngine.Texture.WrapMode;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 import Renderer3D.Camera;
@@ -26,18 +26,18 @@ import Renderer3D.Transform;
 import Renderer3D.Vertex;
 
 class Tex implements Shader {
-	static Sprite spr = new Sprite();
+	static Texture spr = new Texture();
 	
 	public Tex() {
 		spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
-		spr.samplingMode = SamplingMode.Bilinear;
+		//spr.samplingMode = SamplingMode.Bilinear;
 		
 		//spr.LoadFromFile("./res/Textures/uvtest.png");
 	}
 	
 	public Color Fragment(Vertex in) {
 		Vector2 coord = in.texcoord;
-		Color col = spr.SampleColor(coord.x, coord.y);
+		Color col = spr.SampleFast(coord.x, coord.y);
 		
 		return col;
 	}
@@ -74,7 +74,7 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 
-		Mesh cubeMesh = Mesh.MakeCube();
+		Mesh cubeMesh = Mesh.MakeQuad();
 		cube = new RenderObject(cubeMesh);
 		//cube.transform.rotation.y = 45;
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
@@ -87,7 +87,7 @@ class demo3D extends Application {
 		
 		cam.transform.position.z = -3.5f;
 		cam.SetFar(10);
-		cam.SetNear(1);
+		//cam.SetNear(1);
 		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
 		//pipeline.drawFlag = DrawFlag.wireframe;

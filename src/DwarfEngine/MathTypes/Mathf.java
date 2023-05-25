@@ -14,7 +14,6 @@ public final class Mathf {
 		return (t - a) / (b - a);
 	}
 	public static Color LerpColor(Color a, Color b, float t) {
-		t = Mathf.Clamp01(t);
 		int r = (int)Mathf.Lerp(a.getRed(), b.getRed(), t);
 		int g = (int)Mathf.Lerp(a.getGreen(), b.getGreen(), t);
 		int _b = (int)Mathf.Lerp(a.getBlue(), b.getBlue(), t);
@@ -61,8 +60,5 @@ public final class Mathf {
 	}
 	public static float sqrt(float a) {
 		return (float) Math.sqrt(a);
-	}
-	public static float frac(float a) {
-		return a - (int)a;
 	}
 }
