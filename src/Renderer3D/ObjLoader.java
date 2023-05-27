@@ -36,7 +36,7 @@ public final class ObjLoader {
 		
 		
 		List<Vector3> tempVertices = new ArrayList<Vector3>();
-		List<Color> tempColors = new ArrayList<Color>();
+		List<Vector3> tempColors = new ArrayList<Vector3>();
 		List<Vector2> tempUvs = new ArrayList<Vector2>();
 		List<Vector3> tempNormals = new ArrayList<Vector3>();
 		
@@ -64,7 +64,7 @@ public final class ObjLoader {
 						float r = Float.parseFloat(components[4]);
 						float g = Float.parseFloat(components[5]);
 						float b = Float.parseFloat(components[6]);
-						tempColors.add(new Color(r, g, b));
+						tempColors.add(new Vector3(r, g, b));
 					}
 					break;
 				case "vt":
@@ -111,9 +111,9 @@ public final class ObjLoader {
 			vertices.add(tempVertices.get(i));
 		}
 		
-		List<Color> colors = null;
+		List<Vector3> colors = null;
 		if (tempColors.size() > 0) {
-			colors = new ArrayList<Color>();
+			colors = new ArrayList<Vector3>();
 			for (int i : vertexIndices) {
 				colors.add(tempColors.get(i));
 			}
@@ -144,7 +144,7 @@ public final class ObjLoader {
 		Mesh mesh = new Mesh();
 		mesh.setVertices(vertices.toArray(new Vector3[vertices.size()]));
 		if (colors != null) {
-			mesh.setColors(colors.toArray(new Color[colors.size()]));
+			mesh.setColors(colors.toArray(new Vector3[colors.size()]));
 		}
 		if (uvs != null) {
 			mesh.setUV(uvs.toArray(new Vector2[uvs.size()]));

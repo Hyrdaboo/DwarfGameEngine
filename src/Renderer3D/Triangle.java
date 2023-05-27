@@ -26,7 +26,7 @@ final class Triangle {
 		Triangle[] triangles = new Triangle[mesh.triangleCount()/3];
 		Vector3[] vertices = mesh.getVertices();
 		Vector2[] uv = mesh.getUV();
-		Color[] colors = mesh.getColors();
+		Vector3[] colors = mesh.getColors();
 		int[] tris = mesh.getTriangles();
 		
 		for (int i = 0; i < triangles.length; i++) {

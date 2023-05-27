@@ -16,6 +16,7 @@ import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
+import DwarfEngine.MathTypes.Vector3;
 
 public final class Texture {
 	private int[] pixels;
@@ -80,11 +81,15 @@ public final class Texture {
 	}
 	
 	
-	private Color GetPixelUv(int x, int y) {
+	private Vector3 GetPixelUv(int x, int y) {
 		y = height-1-y;
-		return GetPixel(x, y);
+		int rgb = pixels[x + y*width];
+		float r = ((rgb >> 16) & 0xFF) / 255.0f;
+		float g = ((rgb >> 8) & 0xFF) / 255.0f;
+		float b = ((rgb >> 0) & 0xFF) / 255.0f;
+		return new Vector3(r, g, b);
 	}
-	public Color Sample(float u, float v) {
+	public Vector3 Sample(float u, float v) {
 		u *= tiling.x;
 		v *= tiling.y;
 		u += offset.x;
@@ -145,14 +150,14 @@ public final class Texture {
 			float tx = xf-tl.x;
 			float ty = yf-tl.y;
 			
-			Color top = Mathf.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
-			Color bottom = Mathf.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
+			Vector3 top = Vector3.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Vector3 bottom = Vector3.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
 			
-			return Mathf.Lerp(top, bottom, ty);
+			return Vector3.Lerp(top, bottom, ty);
 		}
 	}
 	
-	public Color SampleFast(float u, float v) {
+	public Vector3 SampleFast(float u, float v) {
 		float x = Mathf.Clamp(u * width, 0, width-1);
 		float y = Mathf.Clamp(v * height, 0, height-1);
 		
@@ -168,10 +173,10 @@ public final class Texture {
 			float tx = x-tl.x;
 			float ty = y-tl.y;
 			
-			Color top = Mathf.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
-			Color bottom = Mathf.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
+			Vector3 top = Vector3.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Vector3 bottom = Vector3.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
 			
-			return Mathf.Lerp(top, bottom, ty);
+			return Vector3.Lerp(top, bottom, ty);
 		}
 	}
 }

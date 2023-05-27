@@ -147,7 +147,9 @@ public final class TriangleRasterizer {
 				in.position.w = startVertex.position.w;
 				in.texcoord.x = startVertex.texcoord.x;
 				in.texcoord.y = startVertex.texcoord.y;
-				//in.color = startVertex.color;
+				in.color.x = startVertex.color.x;
+				in.color.y = startVertex.color.y;
+				in.color.z = startVertex.color.z;
 				
 				float w = in.position.w;
 				w = 1.0f / w;
@@ -159,7 +161,7 @@ public final class TriangleRasterizer {
 				
 				if (depthTestPassed) {					
 					in.texcoord.multiplyBy(w);
-					Color finalCol = shader.Fragment(in);
+					int finalCol = toColor(shader.Fragment(in));
 					SetPixel(x, y, finalCol);
 					
 					if (depthBuffer != null) {
@@ -170,6 +172,18 @@ public final class TriangleRasterizer {
 				Vertex.add(startVertex, delta, startVertex);
 			}
 		}
+	}
+	
+	private int toColor(Vector3 v) {
+		v.x = Mathf.Clamp01(v.x);
+		v.y = Mathf.Clamp01(v.y);
+		v.z = Mathf.Clamp01(v.z);
+		
+		int r = (int) (v.x * 255);
+		int g = (int) (v.y * 255);
+		int b = (int) (v.z * 255);
+		int rgb = (r << 16) | (g << 8) | (b << 0);
+		return rgb;
 	}
 	
 	public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value)

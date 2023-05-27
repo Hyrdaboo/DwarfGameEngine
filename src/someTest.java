@@ -68,10 +68,10 @@ class app extends Application {
 				new Vector3(1, 0, 0),
 				new Vector3(0, 0, 0)
 		};
-		Color[] c2 = new Color[] {
-				new Color(1.0f, 1.0f, 0.0f),
-				new Color(1.0f, 0.0f, 0.0f),
-				new Color(0.0f, 0.0f, 0.0f)
+		Vector3[] c2 = new Vector3[] {
+				new Vector3(1.0f, 1.0f, 0.0f),
+				new Vector3(1.0f, 0.0f, 0.0f),
+				new Vector3(0.0f, 0.0f, 0.0f)
 		};
 		
 		Matrix3x3 matFinal = Matrix3x3.identityMatrix();

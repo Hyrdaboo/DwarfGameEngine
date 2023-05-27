@@ -8,7 +8,7 @@ import DwarfEngine.MathTypes.Vector3;
 public final class Mesh {
 	private Vector3[] vertices;
 	private Vector2[] uv;
-	private Color[] colors;
+	private Vector3[] colors;
 	private int[] triangles;
 	
 	public void setVertices(Vector3[] vertices) {
@@ -46,13 +46,13 @@ public final class Mesh {
 	public int uvCount() {
 		return uv.length;
 	}
-	public void setColors(Color[] colors) {
+	public void setColors(Vector3[] colors) {
 		if (colors.length != vertices.length) {
 			throw new IllegalArgumentException("Colors must be the same size as vertices");
 		}
 		this.colors = colors;
 	}
-	public Color[] getColors() {
+	public Vector3[] getColors() {
 		return colors;
 	}
 	
@@ -170,49 +170,6 @@ public final class Mesh {
 				new Vector2(1, 1),	
 				new Vector2(0, 1),
 		};
-		cube.colors = new Color[] {
-			Color.cyan,	
-			Color.cyan,	
-			Color.cyan,	
-			Color.cyan,
-			Color.cyan,
-			Color.cyan,
-			
-			Color.blue,
-			Color.blue,
-			Color.blue,
-			Color.blue,
-			Color.blue,
-			Color.blue,
-			
-			Color.red,
-			Color.red,
-			Color.red,
-			Color.red,
-			Color.red,
-			Color.red,
-			
-			Color.magenta,
-			Color.magenta,
-			Color.magenta,
-			Color.magenta,
-			Color.magenta,
-			Color.magenta,
-			
-			Color.yellow,
-			Color.yellow,
-			Color.yellow,
-			Color.yellow,
-			Color.yellow,
-			Color.yellow,
-			
-			Color.green,
-			Color.green,
-			Color.green,
-			Color.green,
-			Color.green,
-			Color.green
-		};
 		
 		return cube;
 	}
@@ -236,13 +193,6 @@ public final class Mesh {
 				new Vector2(0, 1),
 				new Vector2(1, 1)
 		};
-		quad.colors = new Color[] {
-			Color.green,
-			Color.yellow,
-			Color.black,
-			Color.red,
-		};
-
 		
 		return quad;
 	}

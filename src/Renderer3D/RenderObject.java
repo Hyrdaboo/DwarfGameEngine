@@ -2,11 +2,15 @@ package Renderer3D;
 
 import java.awt.Color;
 
+import DwarfEngine.MathTypes.Vector3;
+
 class ErrorShader extends Shader {
 
+	Vector3 magenta = new Vector3(1, 0, 1);
+	
 	@Override
-	public Color Fragment(Vertex in) {
-		return Color.magenta;
+	public Vector3 Fragment(Vertex in) {
+		return magenta;
 	}
 	
 }

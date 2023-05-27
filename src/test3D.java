@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 import javax.swing.plaf.basic.BasicPanelUI;
@@ -35,14 +34,14 @@ class Tex extends Shader {
 		//spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
 		
 		//spr.samplingMode = SamplingMode.Bilinear;
-		spr.LoadFromFile("./res/Textures/uvtest.png");
-		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\level\\High.png");
+		//spr.LoadFromFile("./res/Textures/uvtest.png");
+		spr.LoadFromFile("C:\\Users\\USER\\Downloads\\level\\High.png");
 		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\sky\\Sky.png");
 	}
 	
-	public Color Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in) {
 		Vector2 coord = in.texcoord;
-		Color col = spr.SampleFast(coord.x, coord.y);
+		Vector3 col = spr.SampleFast(coord.x, coord.y);
 		
 		return col;
 	}
@@ -51,10 +50,10 @@ class Tex extends Shader {
 class depth extends Shader {
 
 	@Override
-	public Color Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in) {
 		float w = 1.0f / in.position.w;
 		float x = w / 5.0f;
-		Color c = Mathf.Lerp(Color.white, Color.black, x);
+		Vector3 c = Vector3.Lerp(Vector3.one(), Vector3.zero(), x);
 		return c;
 	}
 	
@@ -62,7 +61,7 @@ class depth extends Shader {
 
 class frag extends Shader {
 	@Override
-	public Color Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in) {
 		return in.color;
 	}
 }
@@ -85,12 +84,13 @@ class demo3D extends Application {
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
 		cube.shader = new Tex();
 		
-		Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/book.obj");
-		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/book.obj");
+		Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
 		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj");
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new frag();
+		cube2.shader = new Tex();
+		//cube2.transform.scale = new Vector3(3, 3, 3);
 		
 		cam.transform.position.z = -3.5f;
 		pipeline = new Pipeline(this, cam);
@@ -102,8 +102,8 @@ class demo3D extends Application {
 		
 		pipeline.clear();
 		GetInput();
-		pipeline.DrawMesh(cube);
-		//pipeline.DrawMesh(cube2);
+		//pipeline.DrawMesh(cube);
+		pipeline.DrawMesh(cube2);
 		//cube2.transform.rotation.y += getDeltaTime() * 80;
 	}
 	
