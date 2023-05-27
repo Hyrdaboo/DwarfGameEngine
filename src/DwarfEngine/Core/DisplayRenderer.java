@@ -34,6 +34,22 @@ public final class DisplayRenderer {
 		if (x >= bufferWidth || x < 0) return;
 		pixelBuffer[x+y*bufferWidth] = color.getRGB();
 	}
+	public static void SetPixel(int x, int y, int rgb) {
+		if (y >= bufferHeight || y < 0) return;
+		if (x >= bufferWidth || x < 0) return;
+		rgb = (int)Mathf.Clamp(rgb, 0, 0xffffff);
+		pixelBuffer[x+y*bufferWidth] = rgb;
+	}
+	public static Color GetPixel(int x, int y) {
+		if (y >= bufferHeight || y < 0) return null;
+		if (x >= bufferWidth || x < 0) return null;
+		return new Color(pixelBuffer[x+y*bufferWidth]);
+	}
+	public static int GetPixelInt(int x, int y) {
+		if (y >= bufferHeight || y < 0) return 0;
+		if (x >= bufferWidth || x < 0) return 0;
+		return pixelBuffer[x+y*bufferWidth];
+	}
 	
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {
     	for (int y = 0; y < size.y; y++) {
