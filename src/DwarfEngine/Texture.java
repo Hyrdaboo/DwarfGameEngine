@@ -145,10 +145,10 @@ public final class Texture {
 			float tx = xf-tl.x;
 			float ty = yf-tl.y;
 			
-			Color top = Mathf.LerpColor(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
-			Color bottom = Mathf.LerpColor(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
+			Color top = Mathf.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Color bottom = Mathf.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
 			
-			return Mathf.LerpColor(top, bottom, ty);
+			return Mathf.Lerp(top, bottom, ty);
 		}
 	}
 	
@@ -168,10 +168,10 @@ public final class Texture {
 			float tx = x-tl.x;
 			float ty = y-tl.y;
 			
-			Color top = Mathf.LerpColor(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
-			Color bottom = Mathf.LerpColor(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
+			Color top = Mathf.Lerp(GetPixelUv((int)tl.x, (int)tl.y), GetPixelUv((int)tr.x, (int)tr.y), tx);
+			Color bottom = Mathf.Lerp(GetPixelUv((int)bl.x, (int)bl.y), GetPixelUv((int)br.x, (int)br.y), tx);
 			
-			return Mathf.LerpColor(top, bottom, ty);
+			return Mathf.Lerp(top, bottom, ty);
 		}
 	}
 }

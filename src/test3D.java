@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.MultipleGradientPaint.ColorSpaceType;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 import javax.swing.plaf.basic.BasicPanelUI;
@@ -24,15 +26,18 @@ import Renderer3D.RenderObject;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
+import Renderer3D.Pipeline.DrawFlag;
 
-class Tex implements Shader {
+class Tex extends Shader {
 	static Texture spr = new Texture();
 	
 	public Tex() {
-		spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
-		//spr.samplingMode = SamplingMode.Bilinear;
+		//spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
 		
-		//spr.LoadFromFile("./res/Textures/uvtest.png");
+		//spr.samplingMode = SamplingMode.Bilinear;
+		spr.LoadFromFile("./res/Textures/uvtest.png");
+		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\level\\High.png");
+		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\sky\\Sky.png");
 	}
 	
 	public Color Fragment(Vertex in) {
@@ -43,19 +48,19 @@ class Tex implements Shader {
 	}
 }
 
-class depth implements Shader {
+class depth extends Shader {
 
 	@Override
 	public Color Fragment(Vertex in) {
 		float w = 1.0f / in.position.w;
-		float x = w / 10.0f;
-		Color c = Mathf.LerpColor(Color.white, Color.black, x);
+		float x = w / 5.0f;
+		Color c = Mathf.Lerp(Color.white, Color.black, x);
 		return c;
 	}
 	
 }
 
-class frag implements Shader {
+class frag extends Shader {
 	@Override
 	public Color Fragment(Vertex in) {
 		return in.color;
@@ -80,28 +85,15 @@ class demo3D extends Application {
 		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
 		cube.shader = new Tex();
 		
-		Mesh cube2Mesh = monke();
+		Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/book.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj");
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new Tex();
+		cube2.shader = new frag();
 		
 		cam.transform.position.z = -3.5f;
-		cam.SetFar(10);
-		//cam.SetNear(1);
-		//cam.transform.position.y = 1;
 		pipeline = new Pipeline(this, cam);
-		//pipeline.drawFlag = DrawFlag.wireframe;
-	}
-	
-	Mesh monke() {
-		Mesh mesh = null;
-		try {
-			mesh = ObjLoader.Load("./res/3D-Objects/rat/rat.obj");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return mesh;
 	}
 	
 	@Override
@@ -110,9 +102,9 @@ class demo3D extends Application {
 		
 		pipeline.clear();
 		GetInput();
-		//pipeline.DrawMesh(cube);
-		pipeline.DrawMesh(cube2);
-		cube2.transform.rotation.y += getDeltaTime() * 80;
+		pipeline.DrawMesh(cube);
+		//pipeline.DrawMesh(cube2);
+		//cube2.transform.rotation.y += getDeltaTime() * 80;
 	}
 	
 	boolean confined = false;
@@ -120,7 +112,7 @@ class demo3D extends Application {
 		float deltaTime = (float) getDeltaTime();
 		float mul = 0.1f;
 		if (Input.OnKeyHeld(Keycode.Shift)) {
-			mul = 5;
+			mul = 2;
 		}
 		float speed = 15 * mul;
 		float lookSpeed = 100;
@@ -155,8 +147,8 @@ class demo3D extends Application {
 			Input.setMouseConfined(confined);
 		}
 		if (Input.isMouseConfined()) {
-			camTransform.rotation.y += Input.GetMouseDelta().x*50;
-			camTransform.rotation.x += Input.GetMouseDelta().y*50;
+			camTransform.rotation.y += Input.GetMouseDelta().x*100;
+			camTransform.rotation.x += Input.GetMouseDelta().y*100;
 		}
 		
 		// rotate camera
@@ -184,13 +176,25 @@ class demo3D extends Application {
 		}
 	}
 	
+	public static void printbuffer(float[] buffer, int w, int h, String separator) {
+		String s = "";
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				s += buffer[x + y*w] + separator;
+			}
+			s += "\n";
+		}
+		Debug.log(s);
+	}
 }
 
 public class test3D {
+	
 	public static void main(String[] args) {
 		demo3D d = new demo3D();
 		//d.Initialize(144, 81, 6);
 		d.Initialize(1280, 720, 1);
+		//d.Initialize(32, 32, 1);
 		//d.Initialize(720, 405, 1);
 	}
 }

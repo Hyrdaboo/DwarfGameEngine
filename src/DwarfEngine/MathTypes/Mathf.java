@@ -13,12 +13,11 @@ public final class Mathf {
 	public static float InverseLerp(float a, float b, float t) {
 		return (t - a) / (b - a);
 	}
-	public static Color LerpColor(Color a, Color b, float t) {
+	public static Color Lerp(Color a, Color b, float t) {
 		int r = (int)Mathf.Lerp(a.getRed(), b.getRed(), t);
 		int g = (int)Mathf.Lerp(a.getGreen(), b.getGreen(), t);
 		int _b = (int)Mathf.Lerp(a.getBlue(), b.getBlue(), t);
-		Color c = new Color(r, g, _b);
-		return c;
+		return new Color(r, g, _b);
 	}
 	public static float Clamp(float value, float min, float max) {
 		if (value > max) return max;

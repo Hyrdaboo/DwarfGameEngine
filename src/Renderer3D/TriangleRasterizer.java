@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
@@ -136,10 +138,17 @@ public final class TriangleRasterizer {
 			float ei = InverseLerp(rightSlope1.position, rightSlope2.position, new Vector3(xEnd, y, 0));
 			Vertex startVertex = Vertex.Lerp(leftSlope1, leftSlope2, si);
 			Vertex endVertex = Vertex.Lerp(rightSlope1, rightSlope2, ei);
+			
+			float mag = xEnd - xStart;
+			Vertex delta = Vertex.delta(startVertex, endVertex, mag);
+
+			Vertex in = new Vertex();
 			for (int x = xStart; x < xEnd; x++) {
-				float xi = Mathf.InverseLerp(xStart, xEnd, x);	
+				in.position.w = startVertex.position.w;
+				in.texcoord.x = startVertex.texcoord.x;
+				in.texcoord.y = startVertex.texcoord.y;
+				//in.color = startVertex.color;
 				
-				Vertex in = Vertex.Lerp(startVertex, endVertex, xi);
 				float w = in.position.w;
 				w = 1.0f / w;
 				
@@ -148,7 +157,7 @@ public final class TriangleRasterizer {
 					depthTestPassed = w < readDepth(x, y);
 				}
 				
-				if (depthTestPassed) {
+				if (depthTestPassed) {					
 					in.texcoord.multiplyBy(w);
 					Color finalCol = shader.Fragment(in);
 					SetPixel(x, y, finalCol);
@@ -157,6 +166,8 @@ public final class TriangleRasterizer {
 						writeDepth(x, y, w);
 					}
 				}
+				
+				Vertex.add(startVertex, delta, startVertex);
 			}
 		}
 	}

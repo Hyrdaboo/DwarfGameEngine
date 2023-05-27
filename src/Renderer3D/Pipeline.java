@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 import DwarfEngine.Core.Application;
 import DwarfEngine.Core.Debug;
+import DwarfEngine.Core.Input;
+import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
@@ -17,8 +19,8 @@ import static DwarfEngine.Core.DisplayRenderer.*;
 
 public final class Pipeline {
 
-	public enum DrawFlag { shaded, wireframe };
-	public DrawFlag drawFlag = DrawFlag.shaded;
+	public enum DrawFlag { Shaded, Wireframe, ShadedWireframe };
+	public DrawFlag drawFlag = DrawFlag.Shaded;
 	
 	private Application application;
 	private Camera camera;
@@ -69,7 +71,7 @@ public final class Pipeline {
 			Vector3 faceNormal = surfaceNormalFromIndices(transformed.verts[0].position, transformed.verts[1].position, transformed.verts[2].position);
 			Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position).normalized();
 			
-			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f) continue;
+			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f && renderObject.shader.cull) continue;
 			
 			
 			Plane[] clippingPlanes = new Plane[] {
@@ -110,11 +112,12 @@ public final class Pipeline {
 	}
 	
 	private void DrawProjectedTriangle(Triangle projected, Shader shader) {
-		if (drawFlag != DrawFlag.wireframe) {
+		if (drawFlag != DrawFlag.Wireframe) {
 			tr.DrawTriangle(projected.verts, shader);
-			return;
 		}
-		DrawTriangle(new Vector2(projected.verts[0].position),new Vector2(projected.verts[1].position),new Vector2(projected.verts[2].position), Color.gray);
+		if (drawFlag != DrawFlag.Shaded) {
+			DrawTriangle(new Vector2(projected.verts[0].position),new Vector2(projected.verts[1].position),new Vector2(projected.verts[2].position), Color.gray);
+		}
 	}
 	
 	public void clear() {

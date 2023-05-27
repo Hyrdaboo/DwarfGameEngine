@@ -2,7 +2,7 @@ package Renderer3D;
 
 import java.awt.Color;
 
-class ErrorShader implements Shader {
+class ErrorShader extends Shader {
 
 	@Override
 	public Color Fragment(Vertex in) {
