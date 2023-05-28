@@ -67,13 +67,13 @@ public final class Pipeline {
 				transformed.verts[i].position = transformMatrix.MultiplyByVector(t.verts[i].position);
 				fullyTransformed.verts[i] = t.verts[i].clone();
 				fullyTransformed.verts[i].position = cameraObjectCombined.MultiplyByVector(t.verts[i].position);
+				fullyTransformed.verts[i].worldPos = transformed.verts[i].position;
 			}
 			
 			Vector3 faceNormal = surfaceNormalFromIndices(transformed.verts[0].position, transformed.verts[1].position, transformed.verts[2].position);
 			Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position).normalized();
 			
 			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f && renderObject.shader.cull) continue;
-			
 			
 			Plane[] clippingPlanes = new Plane[] {
 				new Plane(new Vector3(0, 0, camera.near), Vector3.forward()),
@@ -101,8 +101,9 @@ public final class Pipeline {
 				for (int i = 0; i < 3; i++) {
 					clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
 					clipped.verts[i].position.w = 1.0f / clipped.verts[i].position.w;
-					clipped.verts[i].position.multiplyBy(clipped.verts[i].position.w);	
+					clipped.verts[i].position.multiplyBy(clipped.verts[i].position.w);
 					clipped.verts[i].texcoord = Vector2.mulVecFloat(clipped.verts[i].texcoord, clipped.verts[i].position.w);
+					clipped.verts[i].worldPos = Vector3.mulVecFloat(clipped.verts[i].worldPos, clipped.verts[i].position.w);
 					
 					clipped.verts[i].position = viewportPointToScreenPoint(clipped.verts[i].position);
 				}

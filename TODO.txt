@@ -1,5 +1,4 @@
 *Scene functionality
-*Some built-in shaders
 *Final refactoring of Application class.Screenshot not working
 *Image drawing routine
 *Text rendering (Optional)

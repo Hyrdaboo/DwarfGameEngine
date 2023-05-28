@@ -138,4 +138,8 @@ public final class Vector2 {
 		v.y = Mathf.Lerp(a.y, b.y, t);
 		return v;
 	}
+	public static void Clamp01(Vector2 v) {
+		v.x = Mathf.Clamp01(v.x);
+		v.y = Mathf.Clamp01(v.y);
+	}
 }

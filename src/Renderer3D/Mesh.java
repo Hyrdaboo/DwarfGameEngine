@@ -204,6 +204,12 @@ public final class Mesh {
 				new Vector2(0, 1),
 				new Vector2(1, 1)
 		};
+		quad.normals = new Vector3[] {
+			Vector3.back(),
+			Vector3.back(),
+			Vector3.back(),
+			Vector3.back()
+		};
 		
 		return quad;
 	}

@@ -61,9 +61,11 @@ class depth extends Shader {
 }
 
 class frag extends Shader {
+	
+	Vector3 white = Vector3.one();
 	@Override
 	public Vector3 Fragment(Vertex in) {
-		return in.color;
+		return white;
 	}
 }
 
@@ -71,15 +73,52 @@ class normal extends Shader {
 
 	Vector3 lightDir = Vector3.back();
 	
+	static Texture spr = new Texture();
+	
+	public normal() {
+		//spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
+		spr.LoadFromFile("./res/Textures/uvtest.png");
+	}
 	
 	@Override
 	public Vector3 Fragment(Vertex in) {
+		Vector2 coord = in.texcoord;
+		Vector3 col = spr.SampleFast(coord.x, coord.y);
 		Vector3 normal = objectTransform.getRotationMatrix().MultiplyByVector(in.normal);
 		
 		float nl = Vector3.Dot(lightDir, normal);
 		nl = Mathf.Clamp01(nl-0.3f);
 		nl += 0.3f;
-		return new Vector3(nl, nl, nl);
+		//nl = (nl < 0.6) ? 0.2f : 1;
+		col.multiplyBy(nl);
+		return col;
+	}
+	
+}
+
+class point extends Shader {
+
+	public Vector3 ldir = new Vector3(0.75f, 0.4f, 1);
+	public Vector3 point = Vector3.back();
+	float radius = 4.5f;
+	public Vector3 plightColor = new Vector3(0, 0, 0.8f);
+	private Vector3 dlCol = new Vector3(0.7f, 0, 0);
+	
+	@Override
+	public Vector3 Fragment(Vertex in) {
+		Vector3 normal = objectTransform.getRotationMatrix().MultiplyByVector(in.normal);
+		Vector3 sub = Vector3.subtract2Vecs(point, in.worldPos);
+		float nl = Vector3.Dot(sub.normalized(), normal);
+		nl *= Mathf.Clamp01((radius / sub.magnitude())-1);
+		float nldir = Vector3.Dot(ldir, normal);
+		
+		Vector3 plout = Vector3.mulVecFloat(plightColor, nl);
+		Vector3 dlout = Vector3.mulVecFloat(dlCol, nldir);
+		Vector3.Clamp01(plout);
+		Vector3.Clamp01(dlout);
+		Vector3 fCol = Vector3.add2Vecs(plout, dlout);
+		
+		return fCol;
 	}
 	
 }
@@ -96,20 +135,22 @@ class demo3D extends Application {
 	public void OnStart() {
 		cam = new Camera();
 
-		Mesh cubeMesh = Mesh.MakeQuad();
+		Mesh cubeMesh = Mesh.MakeCube();
 		cube = new RenderObject(cubeMesh);
+		//cube.transform.position.y = 1;
 		//cube.transform.rotation.y = 45;
-		//cube.transform.scale = new Vector3(10.15f, 3.15f, 3.15f);
-		cube.shader = new Tex();
+		cube.transform.scale = new Vector3(0.1f, 0.1f, 0.1f);
+		cube.shader = new frag();
 		
 		//Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/book.obj");
 		Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/monke.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/rat/rat.obj");
 		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\OneDrive\\Desktop\\ball.obj");
 		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
 		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj");
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new normal();
+		cube2.shader = new point();
 		//cube2.transform.scale = new Vector3(3, 3, 3);
 		
 		cam.transform.position.z = -3.5f;
@@ -117,15 +158,23 @@ class demo3D extends Application {
 		//pipeline.renderFlag = RenderFlag.Wireframe;
 	}
 	
+	float j = 0;
 	@Override
 	public void OnUpdate() {
 		//clear(Color.red);
 		
+		if (cube2.shader instanceof point) {
+			point p = (point) cube2.shader;
+			p.point.z = -Mathf.abs(Mathf.sin(j)) * 5;
+			cube.transform.position = p.point;
+		}
+		j += getDeltaTime()/5;
+		
 		pipeline.clear();
 		GetInput();
-		//pipeline.DrawMesh(cube);
+		pipeline.DrawMesh(cube);
 		pipeline.DrawMesh(cube2);
-		cube2.transform.rotation.y += getDeltaTime() * 80;
+		cube2.transform.rotation.y += getDeltaTime() * 20;	
 	}
 	
 	boolean confined = false;
@@ -194,6 +243,10 @@ class demo3D extends Application {
 		
 		if (Input.OnKeyPressed(Keycode.F)) {
 			switchFullscreen();
+		}
+		
+		if (Input.OnKeyPressed(Keycode.F3)) {
+			saveImage("./res", "Render");
 		}
 	}
 	

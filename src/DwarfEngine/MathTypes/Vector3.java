@@ -156,4 +156,9 @@ public final class Vector3{
 		v.w = Mathf.Lerp(a.w, b.w, t);
 		return v;
 	}
+	public static void Clamp01(Vector3 v) {
+		v.x = Mathf.Clamp01(v.x);
+		v.y = Mathf.Clamp01(v.y);
+		v.z = Mathf.Clamp01(v.z);
+	}
 }

@@ -153,6 +153,9 @@ public final class TriangleRasterizer {
 				in.normal.x = startVertex.normal.x;
 				in.normal.y = startVertex.normal.y;
 				in.normal.z = startVertex.normal.z;
+				in.worldPos.x = startVertex.worldPos.x;
+				in.worldPos.y = startVertex.worldPos.y;
+				in.worldPos.z = startVertex.worldPos.z;
 				
 				float w = in.position.w;
 				w = 1.0f / w;
@@ -164,6 +167,7 @@ public final class TriangleRasterizer {
 				
 				if (depthTestPassed) {					
 					in.texcoord.multiplyBy(w);
+					in.worldPos.multiplyBy(w);
 					int finalCol = toColor(shader.Fragment(in));
 					SetPixel(x, y, finalCol);
 					
