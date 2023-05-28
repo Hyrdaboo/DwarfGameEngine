@@ -150,6 +150,9 @@ public final class TriangleRasterizer {
 				in.color.x = startVertex.color.x;
 				in.color.y = startVertex.color.y;
 				in.color.z = startVertex.color.z;
+				in.normal.x = startVertex.normal.x;
+				in.normal.y = startVertex.normal.y;
+				in.normal.z = startVertex.normal.z;
 				
 				float w = in.position.w;
 				w = 1.0f / w;

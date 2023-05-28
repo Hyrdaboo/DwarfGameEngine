@@ -9,6 +9,7 @@ public final class Mesh {
 	private Vector3[] vertices;
 	private Vector2[] uv;
 	private Vector3[] colors;
+	private Vector3[] normals;
 	private int[] triangles;
 	
 	public void setVertices(Vector3[] vertices) {
@@ -54,6 +55,16 @@ public final class Mesh {
 	}
 	public Vector3[] getColors() {
 		return colors;
+	}
+	public void setNormals(Vector3[] normals) {
+		if (normals.length != vertices.length) {
+			throw new IllegalArgumentException("Normals must be the same size as vertices");
+		}
+		
+		this.normals = normals;
+	}
+	public Vector3[] getNormals() {
+		return normals;
 	}
 	
 	public static Mesh MakeCube() {

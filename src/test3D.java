@@ -11,6 +11,7 @@ import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import DwarfEngine.Texture.SamplingMode;
@@ -25,7 +26,7 @@ import Renderer3D.RenderObject;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
-import Renderer3D.Pipeline.DrawFlag;
+import Renderer3D.Pipeline.RenderFlag;
 
 class Tex extends Shader {
 	static Texture spr = new Texture();
@@ -34,8 +35,8 @@ class Tex extends Shader {
 		//spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
 		
 		//spr.samplingMode = SamplingMode.Bilinear;
-		//spr.LoadFromFile("./res/Textures/uvtest.png");
-		spr.LoadFromFile("C:\\Users\\USER\\Downloads\\level\\High.png");
+		spr.LoadFromFile("./res/Textures/uvtest.png");
+		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\level\\High.png");
 		//spr.LoadFromFile("C:\\Users\\USER\\Downloads\\sky\\Sky.png");
 	}
 	
@@ -66,6 +67,23 @@ class frag extends Shader {
 	}
 }
 
+class normal extends Shader {
+
+	Vector3 lightDir = Vector3.back();
+	
+	
+	@Override
+	public Vector3 Fragment(Vertex in) {
+		Vector3 normal = objectTransform.getRotationMatrix().MultiplyByVector(in.normal);
+		
+		float nl = Vector3.Dot(lightDir, normal);
+		nl = Mathf.Clamp01(nl-0.3f);
+		nl += 0.3f;
+		return new Vector3(nl, nl, nl);
+	}
+	
+}
+
 @SuppressWarnings("serial")
 class demo3D extends Application {
 
@@ -85,15 +103,18 @@ class demo3D extends Application {
 		cube.shader = new Tex();
 		
 		//Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/book.obj");
-		Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
+		Mesh cube2Mesh = ObjLoader.Load("./res/3D-Objects/monke.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\OneDrive\\Desktop\\ball.obj");
+		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\level\\level.obj");
 		//Mesh cube2Mesh = ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj");
 		cube2 = new RenderObject(cube2Mesh);
 		//cube2.transform.position.z = 5;
-		cube2.shader = new Tex();
+		cube2.shader = new normal();
 		//cube2.transform.scale = new Vector3(3, 3, 3);
 		
 		cam.transform.position.z = -3.5f;
 		pipeline = new Pipeline(this, cam);
+		//pipeline.renderFlag = RenderFlag.Wireframe;
 	}
 	
 	@Override
@@ -104,7 +125,7 @@ class demo3D extends Application {
 		GetInput();
 		//pipeline.DrawMesh(cube);
 		pipeline.DrawMesh(cube2);
-		//cube2.transform.rotation.y += getDeltaTime() * 80;
+		cube2.transform.rotation.y += getDeltaTime() * 80;
 	}
 	
 	boolean confined = false;

@@ -27,6 +27,7 @@ final class Triangle {
 		Vector3[] vertices = mesh.getVertices();
 		Vector2[] uv = mesh.getUV();
 		Vector3[] colors = mesh.getColors();
+		Vector3[] normals = mesh.getNormals();
 		int[] tris = mesh.getTriangles();
 		
 		for (int i = 0; i < triangles.length; i++) {
@@ -44,6 +45,11 @@ final class Triangle {
 				t.verts[0].color = colors[tris[0+i*3]];
 				t.verts[1].color = colors[tris[1+i*3]];
 				t.verts[2].color = colors[tris[2+i*3]];
+			}
+			if (normals != null) {
+				t.verts[0].normal = normals[tris[0+i*3]];
+				t.verts[1].normal = normals[tris[1+i*3]];
+				t.verts[2].normal = normals[tris[2+i*3]];
 			}
 			
 			triangles[i] = t;

@@ -1,14 +1,10 @@
 package Renderer3D;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,8 +145,10 @@ public final class ObjLoader {
 		if (uvs != null) {
 			mesh.setUV(uvs.toArray(new Vector2[uvs.size()]));
 		}
+		if (normals != null) {
+			mesh.setNormals(normals.toArray(new Vector3[normals.size()]));
+		}
 		mesh.setTriangles(vertexIndices.stream().mapToInt(Integer::intValue).toArray());
-		
 		Debug.log("Loaded mesh with " + indexCount/3 + " triangles");
 		return mesh;
 	}

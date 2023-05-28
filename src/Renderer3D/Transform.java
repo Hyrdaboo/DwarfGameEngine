@@ -17,6 +17,19 @@ public class Transform {
 	private Matrix4x4 rotationMatrix = Matrix4x4.identityMatrix();
 	private Matrix4x4 scaleMatrix = Matrix4x4.identityMatrix();
 	
+	public Matrix4x4 getRotationMatrix() {
+		return rotationMatrix;
+	}
+	public Matrix4x4 getTranslationMatrix() {
+		return translation;
+	}
+	public Matrix4x4 getScaleMatrix() {
+		return scaleMatrix;
+	}
+	public Matrix4x4 getTRS() {
+		return transformMatrix;
+	}
+	
 	public Matrix4x4 getTransformMatrix() {
 		translation.makeTranslation(position);
 		rotationMatrix = Matrix4x4.GetRotation(rotation);

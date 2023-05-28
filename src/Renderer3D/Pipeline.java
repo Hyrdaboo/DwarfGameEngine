@@ -19,8 +19,8 @@ import static DwarfEngine.Core.DisplayRenderer.*;
 
 public final class Pipeline {
 
-	public enum DrawFlag { Shaded, Wireframe, ShadedWireframe };
-	public DrawFlag drawFlag = DrawFlag.Shaded;
+	public enum RenderFlag { Shaded, Wireframe, ShadedWireframe };
+	public RenderFlag renderFlag = RenderFlag.Shaded;
 	
 	private Application application;
 	private Camera camera;
@@ -58,6 +58,7 @@ public final class Pipeline {
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 		
+		renderObject.shader.objectTransform = renderObject.transform;
 		for (Triangle t : renderObject.triangles) {
 			Triangle fullyTransformed = new Triangle();
 			Triangle transformed = new Triangle();
@@ -112,10 +113,10 @@ public final class Pipeline {
 	}
 	
 	private void DrawProjectedTriangle(Triangle projected, Shader shader) {
-		if (drawFlag != DrawFlag.Wireframe) {
+		if (renderFlag != RenderFlag.Wireframe) {
 			tr.DrawTriangle(projected.verts, shader);
 		}
-		if (drawFlag != DrawFlag.Shaded) {
+		if (renderFlag != RenderFlag.Shaded) {
 			DrawTriangle(new Vector2(projected.verts[0].position),new Vector2(projected.verts[1].position),new Vector2(projected.verts[2].position), Color.gray);
 		}
 	}
