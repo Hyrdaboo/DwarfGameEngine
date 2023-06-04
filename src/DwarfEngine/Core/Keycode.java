@@ -5,7 +5,8 @@ public enum Keycode {
 	J(74), K(75), L(76), Z(90), X(88), C(67), V(86), B(66), N(78), M(77), Space(32), LeftArrow(37), RightArrow(39),
 	UpArrow(38), DownArrow(40), F1(112), F2(113), F3(114), F4(115), F5(116), F6(117), F7(118), F8(119), F9(120),
 	F10(121), F11(122), F12(123), Enter(10), Backspace(8), Delete(127), Insert(155), Escape(27), Backquote(192),
-	Slash(47), Shift(16), Ctrl(17), Alt(18), Tab(9), AnyKey(-100);
+	Slash(47), BackSlash(92), Shift(16), Ctrl(17), Alt(18), Tab(9), AnyKey(-100), Digit1(49), Digit2(50), Digit3(51),
+	Digit4(52), Digit5(53), Digit6(54), Digit7(55), Digit8(56), Digit9(57), Digit0(48);
 
 	private final int num;
 

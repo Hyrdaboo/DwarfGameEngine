@@ -231,8 +231,8 @@ class demo3D extends Application {
 	@Override
 	public void OnStart() {
 		SceneManager.AddScene(suzanne.class, "Monke");
-		SceneManager.LoadScene("Monke");
 		SceneManager.AddScene(cubeScene.class, "Cube");
+		SceneManager.LoadScene("Cube");
 	}
 
 	@Override
