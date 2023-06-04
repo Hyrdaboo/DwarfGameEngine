@@ -12,7 +12,7 @@ import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Camera;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
-import Renderer3D.RenderObject;
+import Renderer3D.Prop;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
@@ -119,11 +119,11 @@ class suzanne extends Scene {
 		cam.transform.position.z = -3;
 		setCamera(cam);
 
-		RenderObject monke = new RenderObject(ObjLoader.Load("res/3D-Objects/monke.obj"));
+		Prop monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
 		monke.setShader(new point());
 		addObject(monke);
 
-		RenderObject sky = new RenderObject(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
+		Prop sky = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
 		sky.setShader(new Tex("C:\\Users\\USER\\Downloads\\sky\\Space.png"));
 		//sky.setShader(new Tex("res/Textures/uvtest.png"));
 		addObject(sky);
@@ -207,14 +207,14 @@ class cubeScene extends Scene {
 		cube.transform.rotation.y += app.getDeltaTime() * 50;
 	}
 
-	RenderObject cube;
+	Prop cube;
 	Camera cam;
 	@Override
 	public void OnSceneLoad() {
 		cam = new Camera();
 		cam.transform.position.z = -2;
 		setCamera(cam);
-		cube = new RenderObject(Mesh.MakeCube());
+		cube = new Prop(Mesh.MakeCube());
 		cube.setShader(new Tex("res/Textures/uvtest.png"));
 		addObject(cube);
 	}

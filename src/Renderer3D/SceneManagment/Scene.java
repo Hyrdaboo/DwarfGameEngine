@@ -6,12 +6,12 @@ import java.util.List;
 import DwarfEngine.Core.Application;
 import Renderer3D.Camera;
 import Renderer3D.Pipeline;
-import Renderer3D.RenderObject;
+import Renderer3D.Prop;
 
 public abstract class Scene {
 	private Pipeline pipeline;
 	private Camera camera;
-	private final List<RenderObject> objects;
+	private final List<Prop> objects;
 
 	public Scene(Application application) {
 		objects = new ArrayList<>();
@@ -27,19 +27,19 @@ public abstract class Scene {
 	public void render() {
 		if (camera == null) return;
 		pipeline.clear();
-		for (RenderObject obj : objects) {
+		for (Prop obj : objects) {
 			pipeline.DrawMesh(obj);
 		}
 
 		OnSceneUpdate();
 	}
 
-	public void addObject(RenderObject object) {
+	public void addObject(Prop object) {
 		if (object == null) return;
 		objects.add(object);
 	}
 	
-	public void removeObject(RenderObject object) {
+	public void removeObject(Prop object) {
 		if (object == null) return;
 		objects.remove(object);
 	}

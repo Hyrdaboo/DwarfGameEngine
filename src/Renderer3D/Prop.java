@@ -13,13 +13,13 @@ class ErrorShader extends Shader {
 
 }
 
-public final class RenderObject {
+public final class Prop {
 	public final Transform transform;
 	Shader shader = new ErrorShader();
 
 	Triangle[] triangles;
 
-	public RenderObject(Mesh mesh) {
+	public Prop(Mesh mesh) {
 		if (mesh == null) {
 			throw new NullPointerException("The Mesh you provided for this object is null");
 		}
