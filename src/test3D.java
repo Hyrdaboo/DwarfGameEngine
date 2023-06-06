@@ -24,6 +24,7 @@ import Renderer3D.Vertex;
 import Renderer3D.BuiltInShaders.Diffuse;
 import Renderer3D.BuiltInShaders.Phong;
 import Renderer3D.BuiltInShaders.Unlit;
+import Renderer3D.BuiltInShaders.VertexColor;
 
 class Tex extends Shader {
 	static Texture spr = new Texture();
@@ -78,9 +79,10 @@ class suzanne extends Scene {
 		//monke = new Prop(ObjLoader.Load("res/3D-Objects/teapot.obj"));
 		//monke = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\cube.obj"));
 	
-		Phong shader = new Phong("res/Textures/uvtest.png");
-		//Phong shader = new Phong();
-		shader.shininess = 45;
+		Shader baseColor = new Unlit("res/Textures/uvtest.png");
+		
+		Phong shader = new Phong(baseColor);
+		shader.shininess = 75;
 		
 		monke.setShader(shader);
 		objects.add(monke);
@@ -88,8 +90,9 @@ class suzanne extends Scene {
 		sun = new Light();
 		//sun.type = LightType.Point;
 		sun.transform.position = new Vector3(0, 0, -2f);
-		sun.setColor(new Vector3(1, 1, 0.3f));
+		sun.setColor(new Vector3(1, 1, 0.55f));
 		sun.radius = 2;
+		sun.intensity = 0.75f;
 		lights.add(sun);
 		
 		Light ambient = new Light();

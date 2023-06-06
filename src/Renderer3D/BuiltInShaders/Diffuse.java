@@ -15,24 +15,14 @@ import Renderer3D.Shader;
 import Renderer3D.Vertex;
 
 public class Diffuse extends Shader {
-	
-	private Unlit baseColor = new Unlit();
-	
-	public Diffuse() {}
-	public Diffuse(String texturePath) {
-		baseColor.texture.LoadFromFile(texturePath);
+
+	private Shader baseColor;
+
+	public Diffuse(Shader shader) {
+		baseColor = shader;
 	}
 	
-	public void setTint(Vector3 tint) {
-		baseColor.setTint(tint);
-	}
-	public Vector3 getTint() {
-		return baseColor.getTint();
-	}
-	public void setTexture(Texture texture) {
-		baseColor.setTexture(texture);
-	}
-	
+	private Vector3 white = Vector3.one();
 	@Override
 	public Vector3 Fragment(Vertex in) {
 		
@@ -71,7 +61,8 @@ public class Diffuse extends Shader {
 			finalCol.multiplyBy(attenuation);
 		}
 		
-		finalCol = Vector3.mul2Vecs(finalCol, baseColor.Fragment(in));
+		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
+		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
 		
 		return finalCol;
 	}

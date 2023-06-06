@@ -11,25 +11,13 @@ import Renderer3D.Light.LightType;
 public class Phong extends Shader {
 	public float shininess = 1;
 	public Vector3 specularColor = Vector3.one();
-	private Unlit baseColor = new Unlit();
+	private Shader baseColor;
 
-	public Phong() {}
-	public Phong(String texturePath) {
-		baseColor.texture.LoadFromFile(texturePath);
+	public Phong(Shader shader) {
+		baseColor = shader;
 	}
-
-	public void setTint(Vector3 tint) {
-		baseColor.setTint(tint);
-	}
-
-	public Vector3 getTint() {
-		return baseColor.getTint();
-	}
-
-	public void setTexture(Texture texture) {
-		baseColor.setTexture(texture);
-	}
-
+	
+	private Vector3 white = Vector3.one();
 	@Override
 	public Vector3 Fragment(Vertex in) {
 
@@ -79,7 +67,8 @@ public class Phong extends Shader {
 			finalCol.multiplyBy(light.intensity);
 			finalCol.multiplyBy(attenuation);
 		}
-		finalCol = Vector3.mul2Vecs(finalCol, baseColor.Fragment(in));
+		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
+		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
 		finalCol.addTo(finalSpecular);
 		
 		return finalCol;

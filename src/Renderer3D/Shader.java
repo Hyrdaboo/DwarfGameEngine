@@ -8,7 +8,7 @@ public abstract class Shader {
 	List<Light> lights = null;
 	protected Transform objectTransform = null;
 	protected Transform cameraTransform = null;
-	protected boolean cull = true;
+	public boolean cull = true;
 	
 	protected Light GetLight(int index) {
 		if (index < 0 || index >= lights.size()) return null;
