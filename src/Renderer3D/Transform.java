@@ -18,30 +18,27 @@ public class Transform {
 	private Matrix4x4 scaleMatrix = Matrix4x4.identityMatrix();
 
 	public Matrix4x4 getRotationMatrix() {
+		rotationMatrix = Matrix4x4.GetRotation(rotation);
 		return rotationMatrix;
 	}
 
 	public Matrix4x4 getTranslationMatrix() {
+		translation.makeTranslation(position);
 		return translation;
 	}
 
 	public Matrix4x4 getScaleMatrix() {
+		scaleMatrix.scaleMatrix(scale);
 		return scaleMatrix;
 	}
+	
 
-	public Matrix4x4 getTRS() {
-		return transformMatrix;
-	}
-
-	public Matrix4x4 getTransformMatrix() {
-		translation.makeTranslation(position);
-		rotationMatrix = Matrix4x4.GetRotation(rotation);
-		scaleMatrix.scaleMatrix(scale);
-
+	public Matrix4x4 getMatrixTRS() {
+		
 		transformMatrix = Matrix4x4.identityMatrix();
-		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, scaleMatrix);
-		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, rotationMatrix);
-		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, translation);
+		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, getScaleMatrix());
+		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, getRotationMatrix());
+		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, getTranslationMatrix());
 
 		forward = rotationMatrix.MultiplyByVector(Vector3.forward());
 		up = rotationMatrix.MultiplyByVector(Vector3.up());

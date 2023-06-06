@@ -130,7 +130,7 @@ public final class ObjLoader {
 		if (tempNormals.size() > 0) {
 			normals = new ArrayList<>();
 			for (int i : normalIndices) {
-				normals.add(tempNormals.get(i));
+				normals.add(tempNormals.get(i).normalized());
 			}
 		}
 

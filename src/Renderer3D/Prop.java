@@ -32,4 +32,7 @@ public final class Prop {
 		if (shader == null) return;
 		this.shader = shader;
 	}
+	public Shader getShader() {
+		return this.shader;
+	}
 }

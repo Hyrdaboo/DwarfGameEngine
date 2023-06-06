@@ -19,7 +19,7 @@ import javax.swing.WindowConstants;
 
 import DwarfEngine.FpsCounter;
 import DwarfEngine.MathTypes.Vector2;
-import Renderer3D.SceneManagment.SceneManager;
+import Renderer3D.SceneManager;
 
 public abstract class Application extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;

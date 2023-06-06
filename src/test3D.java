@@ -10,14 +10,20 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Camera;
+import Renderer3D.Light;
+import Renderer3D.Light.LightType;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
+import Renderer3D.Pipeline.RenderFlag;
 import Renderer3D.Prop;
+import Renderer3D.Scene;
+import Renderer3D.SceneManager;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
-import Renderer3D.SceneManagment.Scene;
-import Renderer3D.SceneManagment.SceneManager;
+import Renderer3D.BuiltInShaders.Diffuse;
+import Renderer3D.BuiltInShaders.Phong;
+import Renderer3D.BuiltInShaders.Unlit;
 
 class Tex extends Shader {
 	static Texture spr = new Texture();
@@ -45,59 +51,6 @@ class frag extends Shader {
 	}
 }
 
-class normal extends Shader {
-
-	Vector3 lightDir = Vector3.back();
-
-	static Texture spr = new Texture();
-
-	public normal() {
-		// spr.LoadFromFile("./res/3D-Objects/rat/albedo.png");
-		spr.LoadFromFile("./res/Textures/uvtest.png");
-	}
-
-	@Override
-	public Vector3 Fragment(Vertex in) {
-		Vector2 coord = in.texcoord;
-		Vector3 col = spr.SampleFast(coord.x, coord.y);
-		Vector3 normal = objectTransform.getRotationMatrix().MultiplyByVector(in.normal);
-
-		float nl = Vector3.Dot(lightDir, normal);
-		nl = Mathf.Clamp01(nl - 0.3f);
-		nl += 0.3f;
-		// nl = (nl < 0.6) ? 0.2f : 1;
-		col.multiplyBy(nl);
-		return col;
-	}
-
-}
-
-class point extends Shader {
-
-	public Vector3 ldir = new Vector3(0.75f, 0.4f, 1);
-	public Vector3 point = Vector3.back();
-	float radius = 4.5f;
-	public Vector3 plightColor = new Vector3(0, 0, 0.8f);
-	private Vector3 dlCol = new Vector3(0.96f, 0.72f, 0.18f);
-
-	@Override
-	public Vector3 Fragment(Vertex in) {
-		Vector3 normal = objectTransform.getRotationMatrix().MultiplyByVector(in.normal);
-		Vector3 sub = Vector3.subtract2Vecs(point, in.worldPos);
-		float nl = Vector3.Dot(sub.normalized(), normal);
-		nl *= Mathf.Clamp01((radius / sub.magnitude()) - 1);
-		float nldir = Vector3.Dot(ldir, normal);
-
-		Vector3 plout = Vector3.mulVecFloat(plightColor, nl);
-		Vector3 dlout = Vector3.mulVecFloat(dlCol, nldir);
-		Vector3.Clamp01(plout);
-		Vector3.Clamp01(dlout);
-		Vector3 fCol = Vector3.add2Vecs(plout, dlout);
-
-		return fCol;
-	}
-
-}
 
 class suzanne extends Scene {
 	Application app;
@@ -112,21 +65,43 @@ class suzanne extends Scene {
 		GetInput();
 	}
 
+	Prop monke;
+	Light sun;
 	Camera cam;
 	@Override
 	public void OnSceneLoad() {
 		cam = new Camera();
 		cam.transform.position.z = -3;
 		setCamera(cam);
-
-		Prop monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
-		monke.setShader(new point());
-		addObject(monke);
-
-		Prop sky = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
-		sky.setShader(new Tex("C:\\Users\\USER\\Downloads\\sky\\Space.png"));
+		
+		monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
+		//monke = new Prop(ObjLoader.Load("res/3D-Objects/teapot.obj"));
+		//monke = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\cube.obj"));
+	
+		Phong shader = new Phong("res/Textures/uvtest.png");
+		//Phong shader = new Phong();
+		shader.shininess = 45;
+		
+		monke.setShader(shader);
+		objects.add(monke);
+		
+		sun = new Light();
+		//sun.type = LightType.Point;
+		sun.transform.position = new Vector3(0, 0, -2f);
+		sun.setColor(new Vector3(1, 1, 0.3f));
+		sun.radius = 2;
+		lights.add(sun);
+		
+		Light ambient = new Light();
+		ambient.type = LightType.Ambient;
+		float strength = 0.05f;
+		ambient.setColor(new Vector3(strength, strength, strength));
+		lights.add(ambient);
+		
+		//Prop sky = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
+		//sky.setShader(new Tex("C:\\Users\\USER\\Downloads\\sky\\Space.png"));
 		//sky.setShader(new Tex("res/Textures/uvtest.png"));
-		addObject(sky);
+		//addObject(sky);
 	}
 
 	boolean confined = false;
@@ -139,6 +114,20 @@ class suzanne extends Scene {
 		float speed = 15 * mul;
 		float lookSpeed = 100;
 		Transform camTransform = cam.transform;
+		
+		if (Input.OnKeyHeld(Keycode.LeftArrow)) {
+			monke.transform.rotation.y += lookSpeed * app.getDeltaTime();
+		}
+		if (Input.OnKeyHeld(Keycode.RightArrow)) {
+			monke.transform.rotation.y -= lookSpeed * app.getDeltaTime();
+		}
+		
+		if (Input.OnKeyHeld(Keycode.UpArrow)) {
+			monke.transform.rotation.x -= lookSpeed * app.getDeltaTime();
+		}
+		if (Input.OnKeyHeld(Keycode.DownArrow)) {
+			monke.transform.rotation.x += lookSpeed * app.getDeltaTime();
+		}
 
 		if (Input.OnKeyHeld(Keycode.W)) {
 			Vector3 forward = Vector3.mulVecFloat(camTransform.forward, speed * deltaTime);
@@ -216,7 +205,7 @@ class cubeScene extends Scene {
 		setCamera(cam);
 		cube = new Prop(Mesh.MakeCube());
 		cube.setShader(new Tex("res/Textures/uvtest.png"));
-		addObject(cube);
+		objects.add(cube);
 	}
 	
 	@Override
@@ -232,18 +221,12 @@ class demo3D extends Application {
 	public void OnStart() {
 		SceneManager.AddScene(suzanne.class, "Monke");
 		SceneManager.AddScene(cubeScene.class, "Cube");
-		SceneManager.LoadScene("Cube");
+		SceneManager.LoadScene("Monke");
 	}
 
 	@Override
 	public void OnUpdate() {
 		SceneManager.renderActiveScene();
-		if (Input.OnKeyPressed(Keycode.RightArrow)) {
-			SceneManager.LoadScene("Cube");
-		}
-		if (Input.OnKeyPressed(Keycode.LeftArrow)) {
-			SceneManager.LoadScene("Monke");
-		}
 	}
 }
 

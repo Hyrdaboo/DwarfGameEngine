@@ -1,4 +1,4 @@
-package Renderer3D.SceneManagment;
+package Renderer3D;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +44,8 @@ public class SceneManager {
 			activeScene = (Scene) constructor.newInstance(app);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			Debug.log("An unkown error occured while trying to load your scene");
+			Debug.log(e.getCause());
+			e.printStackTrace();
 		}
 	}
 

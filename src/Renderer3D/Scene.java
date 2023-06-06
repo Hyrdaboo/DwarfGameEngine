@@ -1,20 +1,22 @@
-package Renderer3D.SceneManagment;
+package Renderer3D;
 
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import DwarfEngine.Core.Application;
-import Renderer3D.Camera;
-import Renderer3D.Pipeline;
-import Renderer3D.Prop;
+import Renderer3D.Light.LightType;
+import Renderer3D.Pipeline.RenderFlag;
 
 public abstract class Scene {
 	private Pipeline pipeline;
 	private Camera camera;
-	private final List<Prop> objects;
+	public final List<Prop> objects;
+	public final List<Light> lights;
 
 	public Scene(Application application) {
 		objects = new ArrayList<>();
+		lights = new ArrayList<>();
 		pipeline = new Pipeline(application);
 		OnSceneLoad();
 	}
@@ -27,29 +29,27 @@ public abstract class Scene {
 	public void render() {
 		if (camera == null) return;
 		pipeline.clear();
+		
+		for (Light l : lights) {
+			if (l == null) {
+				lights.remove(l);
+				continue;
+			}
+			if (l.type == LightType.Ambient) continue;
+			l.transform.getMatrixTRS();
+		}
+		
 		for (Prop obj : objects) {
+			Shader shader = obj.getShader();
+			shader.lights = lights;
 			pipeline.DrawMesh(obj);
 		}
 
 		OnSceneUpdate();
 	}
-
-	public void addObject(Prop object) {
-		if (object == null) return;
-		objects.add(object);
-	}
 	
-	public void removeObject(Prop object) {
-		if (object == null) return;
-		objects.remove(object);
-	}
-	public void removeObject(int index) {
-		if (index < 0 || index >= objects.size()) return;
-		objects.remove(index);
-	}
-	
-	public void clearObjects() {
-		objects.clear();
+	public void SetRenderFlag(RenderFlag flag) {
+		pipeline.renderFlag = flag;
 	}
 
 	protected abstract void OnSceneLoad();

@@ -62,11 +62,12 @@ public final class Pipeline {
 		float aspectRatio = windowSize.y / windowSize.x;
 
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
-		Matrix4x4 transformMatrix = renderObject.transform.getTransformMatrix();
+		Matrix4x4 transformMatrix = renderObject.transform.getMatrixTRS();
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 
 		renderObject.shader.objectTransform = renderObject.transform;
+		renderObject.shader.cameraTransform = camera.transform;
 		for (Triangle t : renderObject.triangles) {
 			Triangle fullyTransformed = new Triangle();
 			Triangle transformed = new Triangle();

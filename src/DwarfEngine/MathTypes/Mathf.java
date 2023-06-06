@@ -79,4 +79,8 @@ public final class Mathf {
 	public static float sqrt(float a) {
 		return (float) Math.sqrt(a);
 	}
+	
+	public static float pow(float a, float b) {
+		return (float) Math.pow(a, b);
+	}
 }

@@ -7,7 +7,7 @@ public final class Vertex implements Cloneable {
 	public Vector3 position = Vector3.zero();
 	public Vector2 texcoord = Vector2.zero();
 	public Vector3 color = Vector3.zero();
-	public Vector3 normal = Vector3.one();
+	public Vector3 normal = Vector3.one(); // not normalized
 	public Vector3 worldPos = Vector3.one();
 
 	static Vertex Lerp(Vertex a, Vertex b, float t) {
@@ -16,7 +16,7 @@ public final class Vertex implements Cloneable {
 		v.position = Vector3.Lerp(a.position, b.position, t);
 		v.texcoord = Vector2.Lerp(a.texcoord, b.texcoord, t);
 		v.color = Vector3.Lerp(a.color, b.color, t);
-		v.normal = Vector3.Lerp(a.normal, b.normal, t);
+		v.normal = Vector3.Lerp(a.normal, b.normal, t).normalized();
 		v.worldPos = Vector3.Lerp(a.worldPos, b.worldPos, t);
 		return v;
 	}

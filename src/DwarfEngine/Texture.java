@@ -37,6 +37,15 @@ public final class Texture {
 		this.height = height;
 		pixels = new int[width * height];
 	}
+	
+	public static Texture solidTexture(Color color) {
+		Texture t = new Texture(2, 2);
+		t.SetPixel(0, 0, color);
+		t.SetPixel(0, 1, color);
+		t.SetPixel(1, 0, color);
+		t.SetPixel(1, 1, color);
+		return t;
+	}
 
 	public void LoadFromFile(String path) {
 		try {

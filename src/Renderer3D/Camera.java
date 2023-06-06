@@ -38,7 +38,7 @@ public class Camera {
 	}
 
 	public Matrix4x4 getViewMatrix() {
-		transform.getTransformMatrix();
+		transform.getMatrixTRS();
 
 		Vector3 targetForward = Vector3.add2Vecs(transform.position, transform.forward);
 		Matrix4x4 cameraMatrix = Matrix4x4.MatrixPointAt(transform.position, targetForward, transform.up);
