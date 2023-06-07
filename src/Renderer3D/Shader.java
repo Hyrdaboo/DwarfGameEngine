@@ -9,12 +9,12 @@ public abstract class Shader {
 	protected Transform objectTransform = null;
 	protected Transform cameraTransform = null;
 	public boolean cull = true;
-	
+
 	protected Light GetLight(int index) {
 		if (index < 0 || index >= lights.size()) return null;
 		return lights.get(index);
 	}
-	
+
 	protected int lightCount() {
 		return lights.size();
 	}

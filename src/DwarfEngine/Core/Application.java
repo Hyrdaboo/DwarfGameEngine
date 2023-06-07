@@ -25,7 +25,7 @@ public abstract class Application extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public String title = "Untitled";
-	public boolean showFpsOnTitle = true;
+	public boolean onTitleFrameStats = true;
 
 	private double deltaTime;
 	private double time;
@@ -80,8 +80,10 @@ public abstract class Application extends Canvas implements Runnable {
 		updateFps();
 
 		String modifiedTitle = "Dwarf Engine - " + title;
-		if (showFpsOnTitle)
-			modifiedTitle += " | " + fpsCounter.GetFps();
+		if (onTitleFrameStats) {
+			double ms = 1.0 / fpsCounter.GetFps() * 1000;
+			modifiedTitle += String.format(" | %.1f FPS", fpsCounter.GetFps()) + String.format(" %.1f ms", ms);
+		}
 		applicationWindow.setTitle(modifiedTitle);
 
 		if (!hasFocus())

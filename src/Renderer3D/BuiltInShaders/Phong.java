@@ -1,12 +1,11 @@
 package Renderer3D.BuiltInShaders;
 
-import DwarfEngine.Texture;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Light;
+import Renderer3D.Light.LightType;
 import Renderer3D.Shader;
 import Renderer3D.Vertex;
-import Renderer3D.Light.LightType;
 
 public class Phong extends Shader {
 	public float shininess = 1;
@@ -16,7 +15,7 @@ public class Phong extends Shader {
 	public Phong(Shader shader) {
 		baseColor = shader;
 	}
-	
+
 	private Vector3 white = Vector3.one();
 	@Override
 	public Vector3 Fragment(Vertex in) {
@@ -38,7 +37,7 @@ public class Phong extends Shader {
 
 			Vector3 lightDir = null;
 			float attenuation = 1;
-			
+
 			Vector3 cameraDir = Vector3.subtract2Vecs(cameraTransform.position, in.worldPos).normalized();
 
 			if (light.type == LightType.Directional) {
@@ -50,7 +49,7 @@ public class Phong extends Shader {
 				float lightDist = difference.magnitude();
 				attenuation = Mathf.Clamp01((light.radius / lightDist) - 1);
 			}
-			
+
 			Vector3 halfVector = Vector3.add2Vecs(lightDir, cameraDir).normalized();
 			float specular = Vector3.Dot(normal, halfVector);
 			specular = Mathf.pow(specular, shininess);
@@ -59,7 +58,7 @@ public class Phong extends Shader {
 			finalSpecular = Vector3.mul2Vecs(finalSpecular, light.getColor());
 			finalSpecular.multiplyBy(light.intensity);
 			finalSpecular.multiplyBy(attenuation);
-			
+
 			float diffuse = Vector3.Dot(normal, lightDir);
 			diffuse = Mathf.Clamp01(diffuse);
 			finalCol.addTo(diffuse);
@@ -70,7 +69,7 @@ public class Phong extends Shader {
 		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
 		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
 		finalCol.addTo(finalSpecular);
-		
+
 		return finalCol;
 	}
 }

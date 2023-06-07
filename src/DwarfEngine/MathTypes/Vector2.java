@@ -119,7 +119,7 @@ public final class Vector2 {
 	public static Vector2 add2Vecs(Vector2 a, Vector2 b) {
 		return new Vector2(a.x + b.x, a.y + b.y);
 	}
-	
+
 	public static Vector2 mul2Vecs(Vector2 vec1, Vector2 vec2) {
 		return new Vector2(vec1.x * vec2.x, vec1.y * vec2.y);
 	}

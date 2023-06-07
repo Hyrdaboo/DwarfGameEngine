@@ -31,10 +31,10 @@ public class Transform {
 		scaleMatrix.scaleMatrix(scale);
 		return scaleMatrix;
 	}
-	
+
 
 	public Matrix4x4 getMatrixTRS() {
-		
+
 		transformMatrix = Matrix4x4.identityMatrix();
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, getScaleMatrix());
 		transformMatrix = Matrix4x4.matrixMultiplyMatrix(transformMatrix, getRotationMatrix());

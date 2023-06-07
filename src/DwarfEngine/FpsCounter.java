@@ -38,6 +38,5 @@ public final class FpsCounter {
 		}
 
 		averageFps = sum / bufferLength;
-		averageFps = Math.round(averageFps * 10.0) / 10.0;
 	}
 }

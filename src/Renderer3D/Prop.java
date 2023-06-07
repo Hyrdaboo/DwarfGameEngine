@@ -27,7 +27,7 @@ public final class Prop {
 
 		triangles = Triangle.CreateIndexedTriangleStream(mesh);
 	}
-	
+
 	public void setShader(Shader shader) {
 		if (shader == null) return;
 		this.shader = shader;

@@ -1,6 +1,5 @@
 package Renderer3D;
 
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public abstract class Scene {
 	public void render() {
 		if (camera == null) return;
 		pipeline.clear();
-		
+
 		for (Light l : lights) {
 			if (l == null) {
 				lights.remove(l);
@@ -38,7 +37,7 @@ public abstract class Scene {
 			if (l.type == LightType.Ambient) continue;
 			l.transform.getMatrixTRS();
 		}
-		
+
 		for (Prop obj : objects) {
 			Shader shader = obj.getShader();
 			shader.lights = lights;
@@ -47,7 +46,7 @@ public abstract class Scene {
 
 		OnSceneUpdate();
 	}
-	
+
 	public void SetRenderFlag(RenderFlag flag) {
 		pipeline.renderFlag = flag;
 	}
@@ -55,6 +54,6 @@ public abstract class Scene {
 	protected abstract void OnSceneLoad();
 	protected abstract void OnSceneUpdate();
 	protected void OnSceneGUI() {
-		
-	};
+
+	}
 }

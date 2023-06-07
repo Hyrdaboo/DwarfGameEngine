@@ -37,7 +37,7 @@ public final class Texture {
 		this.height = height;
 		pixels = new int[width * height];
 	}
-	
+
 	public static Texture solidTexture(Color color) {
 		Texture t = new Texture(2, 2);
 		t.SetPixel(0, 0, color);

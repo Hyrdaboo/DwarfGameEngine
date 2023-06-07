@@ -1,12 +1,9 @@
 import java.awt.Color;
 
-import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
-import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Camera;
@@ -14,43 +11,14 @@ import Renderer3D.Light;
 import Renderer3D.Light.LightType;
 import Renderer3D.Mesh;
 import Renderer3D.ObjLoader;
-import Renderer3D.Pipeline.RenderFlag;
 import Renderer3D.Prop;
 import Renderer3D.Scene;
 import Renderer3D.SceneManager;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
-import Renderer3D.Vertex;
-import Renderer3D.BuiltInShaders.Diffuse;
 import Renderer3D.BuiltInShaders.Phong;
 import Renderer3D.BuiltInShaders.Unlit;
-import Renderer3D.BuiltInShaders.VertexColor;
 
-class Tex extends Shader {
-	static Texture spr = new Texture();
-
-	public Tex(String path) {
-		spr.LoadFromFile(path);
-	}
-
-	@Override
-	public Vector3 Fragment(Vertex in) {
-		Vector2 coord = in.texcoord;
-		Vector3 col = spr.SampleFast(coord.x, coord.y);
-
-		return col;
-	}
-}
-
-class frag extends Shader {
-
-	Vector3 white = Vector3.one();
-
-	@Override
-	public Vector3 Fragment(Vertex in) {
-		return white;
-	}
-}
 
 
 class suzanne extends Scene {
@@ -74,19 +42,19 @@ class suzanne extends Scene {
 		cam = new Camera();
 		cam.transform.position.z = -3;
 		setCamera(cam);
-		
+
 		monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
 		//monke = new Prop(ObjLoader.Load("res/3D-Objects/teapot.obj"));
 		//monke = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\cube.obj"));
-	
+
 		Shader baseColor = new Unlit("res/Textures/uvtest.png");
-		
+
 		Phong shader = new Phong(baseColor);
 		shader.shininess = 75;
-		
+
 		monke.setShader(shader);
 		objects.add(monke);
-		
+
 		sun = new Light();
 		//sun.type = LightType.Point;
 		sun.transform.position = new Vector3(0, 0, -2f);
@@ -94,13 +62,13 @@ class suzanne extends Scene {
 		sun.radius = 2;
 		sun.intensity = 0.75f;
 		lights.add(sun);
-		
+
 		Light ambient = new Light();
 		ambient.type = LightType.Ambient;
 		float strength = 0.05f;
 		ambient.setColor(new Vector3(strength, strength, strength));
 		lights.add(ambient);
-		
+
 		//Prop sky = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
 		//sky.setShader(new Tex("C:\\Users\\USER\\Downloads\\sky\\Space.png"));
 		//sky.setShader(new Tex("res/Textures/uvtest.png"));
@@ -117,14 +85,14 @@ class suzanne extends Scene {
 		float speed = 15 * mul;
 		float lookSpeed = 100;
 		Transform camTransform = cam.transform;
-		
+
 		if (Input.OnKeyHeld(Keycode.LeftArrow)) {
 			monke.transform.rotation.y += lookSpeed * app.getDeltaTime();
 		}
 		if (Input.OnKeyHeld(Keycode.RightArrow)) {
 			monke.transform.rotation.y -= lookSpeed * app.getDeltaTime();
 		}
-		
+
 		if (Input.OnKeyHeld(Keycode.UpArrow)) {
 			monke.transform.rotation.x -= lookSpeed * app.getDeltaTime();
 		}
@@ -207,10 +175,10 @@ class cubeScene extends Scene {
 		cam.transform.position.z = -2;
 		setCamera(cam);
 		cube = new Prop(Mesh.MakeCube());
-		cube.setShader(new Tex("res/Textures/uvtest.png"));
+		cube.setShader(new Unlit("res/Textures/uvtest.png"));
 		objects.add(cube);
 	}
-	
+
 	@Override
 	protected void OnSceneGUI() {
 		DisplayRenderer.FillCircle(new Vector2(300, 100), 20, Color.yellow);

@@ -9,8 +9,8 @@ public final class Light {
 	private Vector3 color = Vector3.one();
 	public float radius = 1;
 	public float intensity = 1;
-	
-	
+
+
 	public void setColor(Vector3 color) {
 		if (color == null) return;
 		this.color = color;
