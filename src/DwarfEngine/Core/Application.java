@@ -21,7 +21,7 @@ import DwarfEngine.FpsCounter;
 import DwarfEngine.MathTypes.Vector2;
 import Renderer3D.SceneManager;
 
-public abstract class Application extends Canvas implements Runnable {
+public abstract class Application extends Canvas {
 	private static final long serialVersionUID = 1L;
 
 	public String title = "Untitled";
@@ -33,7 +33,6 @@ public abstract class Application extends Canvas implements Runnable {
 	private FpsCounter fpsCounter = new FpsCounter();
 
 	private boolean isRunning = true;
-	private Thread mainThread;
 
 	private JFrame applicationWindow;
 	private BufferedImage frame;
@@ -57,10 +56,8 @@ public abstract class Application extends Canvas implements Runnable {
 		setFocusTraversalKeysEnabled(false);
 
 		SceneManager.setTargetApplication(this);
-		Start();
-	}
-
-	private synchronized void Start() {
+		
+		// initialize application window and start the application
 		applicationWindow.add(this);
 		applicationWindow.pack();
 		applicationWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -69,14 +66,12 @@ public abstract class Application extends Canvas implements Runnable {
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		applicationWindow.getContentPane().setBackground(Color.black);
 
-		mainThread = new Thread(this, "Dwarf Main Thread");
 		OnStart();
-		mainThread.start();
-
 		startTime = System.currentTimeMillis();
+		Run();
 	}
 
-	private synchronized void Update() {
+	private void Update() {
 		updateFps();
 
 		String modifiedTitle = "Dwarf Engine - " + title;
@@ -117,21 +112,14 @@ public abstract class Application extends Canvas implements Runnable {
 
 	public synchronized void Exit() {
 		isRunning = false;
-
-		try {
-			applicationWindow.dispatchEvent(new WindowEvent(applicationWindow, WindowEvent.WINDOW_CLOSING));
-			mainThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		applicationWindow.dispatchEvent(new WindowEvent(applicationWindow, WindowEvent.WINDOW_CLOSING));
 	}
 
 	public abstract void OnStart();
 
 	public abstract void OnUpdate();
 
-	@Override
-	public void run() {
+	private void Run() {
 		long timeLastFrame = System.nanoTime();
 		while (isRunning) {
 			long currentTime = System.nanoTime();
@@ -139,8 +127,8 @@ public abstract class Application extends Canvas implements Runnable {
 			timeLastFrame = currentTime;
 			time = (System.currentTimeMillis() - startTime) / 1000.0f;
 
-			render();
 			Update();
+			render();
 		}
 	}
 
@@ -204,22 +192,17 @@ public abstract class Application extends Canvas implements Runnable {
 	}
 
 	public void saveImage(String directory, String imageName) {
-		File outputFile = new File(directory + "/" + imageName + ".png");
-		int i = 1;
-		while (outputFile.exists()) {
-			outputFile = new File(directory + "/" + imageName + i + ".png");
-			i++;
-		}
-		try {
-			ImageIO.write(frame, "png", outputFile);
-			Debug.log("Image " + outputFile.getName() + " saved to " + directory);
-		} catch (IOException e) {
-			Debug.log("AN ERROR OCCURED WHILE TRYING TO SAVE THE IMAGE. Is the given directory correct?");
-			e.printStackTrace();
-		}
-	}
-
-	public void log(Object o) {
-		Debug.log(o);
-	}
+        File outputFile = new File(directory + "/" + imageName + ".png");
+        if (!outputFile.getParentFile().exists()) {
+            System.err.println("Specified directiory is not valid!");
+            return;
+        }
+        try {
+            outputFile.createNewFile();
+            ImageIO.write(frame, "png", outputFile);
+            Debug.log("Image " + outputFile.getName() + " saved to " + directory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

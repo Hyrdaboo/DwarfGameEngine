@@ -47,14 +47,8 @@ public final class DisplayRenderer {
 
 	public static Color GetPixel(int x, int y) {
 		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0)
-			return null;
+			return Color.black;
 		return new Color(pixelBuffer[x + y * bufferWidth]);
-	}
-
-	public static int GetPixelInt(int x, int y) {
-		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0)
-			return 0;
-		return pixelBuffer[x + y * bufferWidth];
 	}
 
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {

@@ -1,6 +1,7 @@
 import java.awt.Color;
 
 import DwarfEngine.Core.Application;
+import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
