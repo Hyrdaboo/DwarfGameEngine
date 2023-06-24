@@ -19,6 +19,10 @@ import java.util.List;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
+/**
+ * A simple polling-based input system that provides methods for handling user input.
+ * It provides methods for checking the state of keys, buttons and such.
+ */
 public final class Input implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	class KeyEvt {
 		Integer keycode;
@@ -42,6 +46,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	static int pressedKey = -1;
 	static int releasedKey = -1;
 
+	/**
+	 * Checks if a specific key is currently pressed.
+	 *
+	 * @param e The keycode of the key to check.
+	 * @return True if the key is currently pressed, false otherwise.
+	 */
 	public static boolean OnKeyPressed(Keycode e) {
 		if ((e.GetKeyCode() == pressedKey) || (pressedKey != -1 && e == Keycode.AnyKey)) {
 			pressedKey = -1;
@@ -50,6 +60,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		return false;
 	}
 
+	/**
+	 * Checks if a specific key is currently released.
+	 *
+	 * @param e The keycode of the key to check.
+	 * @return True if the key is currently released, false otherwise.
+	 */
 	public static boolean OnKeyReleased(Keycode e) {
 		if ((e.GetKeyCode() == releasedKey) || (releasedKey != -1 && e == Keycode.AnyKey)) {
 			releasedKey = -1;
@@ -58,6 +74,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		return false;
 	}
 
+	/**
+	 * Checks if a specific key is currently held down.
+	 *
+	 * @param e The keycode of the key to check.
+	 * @return True if the key is currently held down, false otherwise.
+	 */
 	public static boolean OnKeyHeld(Keycode e) {
 		for (Integer heldKey : heldKeys) {
 			try {
@@ -106,6 +128,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	//////// MOUSE EVENTS /////////
 	private static Vector2 mousePosition = Vector2.zero();
 
+	/**
+	 * Returns the current position of the mouse cursor.
+	 *
+	 * @return The current position of the mouse cursor as a Vector2.
+	 */
 	public static Vector2 getMousePosition() {
 		return mousePosition;
 	}
@@ -117,6 +144,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	static float windowWidth, windowHeight;
 	static float windowX, windowY;
 
+	/**
+	 * Checks if a mouse button is currently being held down.
+	 *
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
+	 * @return {@code true} if the specified mouse button is being held down, {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 */
 	public static boolean MouseButtonHeld(int button) {
 		if (button < 1 || button > 3) {
 			throw new IllegalArgumentException("Invalid Mouse button index. Valid indexes are 1, 2, 3");
@@ -127,6 +161,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		return false;
 	}
 
+	/**
+	 * Checks if a mouse button has been clicked.
+	 *
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
+	 * @return {@code true} if the specified mouse button has been clicked, {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 */
 	public static boolean MouseButtonClicked(int button) {
 		if (button < 1 || button > 3) {
 			throw new IllegalArgumentException("Invalid Mouse button index. Valid indexes are 1, 2, 3");
@@ -138,6 +179,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		return false;
 	}
 
+	/**
+	 * Checks if a mouse button has been released.
+	 *
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
+	 * @return {@code true} if the specified mouse button has been released, {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 */
 	public static boolean MouseButtonReleased(int button) {
 		if (button < 1 || button > 3) {
 			throw new IllegalArgumentException("Invalid Mouse button index. Valid indexes are 1, 2, 3");
@@ -177,7 +225,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-
+		mousePosition.x = (e.getX() / windowWidth) * frameWidth;
+		mousePosition.y = (e.getY() / windowHeight) * frameHeight;
 	}
 
 	@Override
@@ -226,6 +275,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		}
 	}
 
+	/**
+	 * Returns the delta (change) in mouse position since the last frame.
+	 *
+	 * @return The delta in mouse position as a Vector2.
+	 */
 	public static Vector2 GetMouseDelta() {
 		return delta;
 	}
@@ -233,6 +287,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	private static Robot bot;
 	private static boolean mouseConfined = false;
 
+	/**
+	 * Sets whether the mouse cursor should be confined within the window.
+	 *
+	 * @param confined true to confine the mouse cursor, false to allow it to move freely.
+	 */
 	public static void setMouseConfined(boolean confined) {
 		mouseConfined = confined;
 
@@ -255,6 +314,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		scrollDir = 0;
 	}
 
+	/**
+	 * Returns the direction of the mouse wheel scroll.
+	 *
+	 * @return An integer representing the direction of the mouse wheel scroll.
+	 *         Positive value indicates scrolling up, negative value indicates scrolling down,
+	 *         and 0 indicates no scrolling.
+	 */
 	public static int getMouseWheel() {
 		return scrollDir;
 	}

@@ -8,12 +8,26 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
+/**
+ * Utility class for loading 3D models from OBJ files.
+ * <br><br>
+ * <strong>IMPORTANT!</strong> You have to make sure your mesh is properly triangulated.
+ * This OBJ loader is a basic implementation and does not perform automatic triangulation.
+ */
 public final class ObjLoader {
 
+	/**
+	 * 
+	 * Loads a 3D Mesh object from an OBJ file.
+	 * 
+	 * @param path The file path of the OBJ file.
+	 * @return The loaded Mesh as a {@link Mesh} object
+	 * @throws RuntimeException if an error occurs while reading your file
+	 * @throws Exception if the file format is not .obj or the file doesn't exist
+	 */
 	public static Mesh Load(String path) {
 		File objFile = null;
 
@@ -102,7 +116,7 @@ public final class ObjLoader {
 			reader.close();
 
 		} catch (Exception e) {
-			Debug.log("An unknown error occured while trying to load your obj file");
+			System.err.println("An unknown error occured while trying to load your obj file");
 		}
 
 		List<Vector3> vertices = new ArrayList<>();
@@ -152,7 +166,7 @@ public final class ObjLoader {
 			mesh.setNormals(normals.toArray(new Vector3[normals.size()]));
 		}
 		mesh.setTriangles(vertexIndices.stream().mapToInt(Integer::intValue).toArray());
-		Debug.log("Loaded mesh with " + indexCount / 3 + " triangles");
+		System.out.println("Loaded mesh with " + indexCount / 3 + " triangles");
 		return mesh;
 	}
 }

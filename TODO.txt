@@ -1,4 +1,0 @@
-*Final refactoring of Application class.Screenshot not working
-*Image drawing routine
-*Text rendering (Optional)
-#Push to master

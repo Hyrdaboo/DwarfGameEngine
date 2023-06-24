@@ -7,15 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DwarfEngine.Core.Application;
-import DwarfEngine.Core.Debug;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
+/**
+ * Represents a pipeline that a mesh goes through to get rendered on the screen.
+ *
+ * This class provides a way to render a single Mesh on the screen. By making a call to <code>DrawMesh</code>
+ * method you can draw a single mesh on the screen. When a mesh gets rendered it goes through all the 
+ * stages of pipeline before it turns into triangles that can be drawn on the screen by the {@link TriangleRasterizer}
+ */
 public final class Pipeline {
 
+	/**
+	 * The RenderFlag enumeration represents different rendering modes for the Pipeline
+	 * It specifies how the objects should be rendered.
+	 */
 	public enum RenderFlag {
-		Shaded, Wireframe, ShadedWireframe
+	    Shaded,
+	    Wireframe,
+	    ShadedWireframe
 	}
 
 	public RenderFlag renderFlag = RenderFlag.Shaded;
@@ -41,29 +53,46 @@ public final class Pipeline {
 		tr.bindDepth(depthBuffer);
 	}
 
+	/**
+	 * Sets the camera for the Pipeline
+	 * The camera determines the viewpoint and perspective for rendering.
+	 *
+	 * @param camera The camera object to set. Must not be null.
+	 */
 	public void setCamera(Camera camera) {
 		if (camera != null) {
 			this.camera = camera;
 		}
 	}
 
+	/**
+	 * Draws a mesh on the screen using the provided render object.
+	 * This method is part of the Pipeline and handles the complete rendering process for an object,
+	 * including culling, projecting, and drawing its triangles.
+	 *
+	 * @param renderObject The render object containing the mesh, shader, and other relevant data.
+	 *                     It must not be null and should have valid mesh and shader references.
+	 */
 	public void DrawMesh(Prop renderObject) {
 		if (renderObject == null) {
-			Debug.log("WARNING: RenderObject is null!!!");
+			System.err.println("RenderObject is null");
 			return;
 		}
 		if (camera == null) {
-			Debug.log("WARNING: No camera set!!!");
+			System.err.println("Camera has not been set");
 			return;
 		}
+		camera.frameSize = frameSize;
 
 		Vector2 windowSize = new Vector2(application.getWidth() / application.getPixelScale(),
 				application.getHeight() / application.getPixelScale());
 		float aspectRatio = windowSize.y / windowSize.x;
 
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
+		camera.projection = projectionMatrix;
 		Matrix4x4 transformMatrix = renderObject.transform.getMatrixTRS();
 		Matrix4x4 viewMatrix = camera.getViewMatrix();
+		camera.view = viewMatrix;
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 
 		renderObject.shader.objectTransform = renderObject.transform;
@@ -118,7 +147,7 @@ public final class Pipeline {
 					clipped.verts[i].worldPos = Vector3.mulVecFloat(clipped.verts[i].worldPos,
 							clipped.verts[i].position.w);
 
-					clipped.verts[i].position = viewportPointToScreenPoint(clipped.verts[i].position);
+					clipped.verts[i].position = camera.viewportToScreenPoint(clipped.verts[i].position);
 				}
 
 				DrawProjectedTriangle(clipped, renderObject.shader);
@@ -136,17 +165,11 @@ public final class Pipeline {
 		}
 	}
 
+	/**
+	 * Clear all screen buffers
+	 */
 	public void clear() {
 		tr.clearAll();
-	}
-
-	private Vector3 viewportPointToScreenPoint(Vector3 point) {
-		float x = (point.x + 1) / 2.0f * frameSize.x;
-		float y = (-point.y + 1) / 2.0f * frameSize.y;
-
-		Vector3 v = new Vector3(x, y, point.z);
-		v.w = point.w;
-		return v;
 	}
 
 	private Vector3 surfaceNormalFromIndices(Vector3 a, Vector3 b, Vector3 c) {

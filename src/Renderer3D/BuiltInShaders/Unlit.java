@@ -7,6 +7,9 @@ import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Shader;
 import Renderer3D.Vertex;
 
+/**
+ * A simple shader that outputs a texture with a tint
+ */
 public class Unlit extends Shader {
 
 	Texture texture = Texture.solidTexture(Color.white);
@@ -14,8 +17,18 @@ public class Unlit extends Shader {
 	public boolean fastSample = true;
 
 	public Unlit() {}
+	/**
+	 * Initializes the shader texture directly from a file path.<br>
+	 * Not that you can also use the {@link #setTexture(Texture)} method.
+	 *
+	 * @param texturePath The path to the texture file.
+	 */
 	public Unlit(String texturePath) {
-		texture.LoadFromFile(texturePath);
+		try {
+			texture.LoadFromFile(texturePath);
+		} catch (Exception e) {
+			System.out.println("Couldn't load texture");
+		}
 	}
 
 	public void setTint(Vector3 tint) {

@@ -1,5 +1,9 @@
 package DwarfEngine.MathTypes;
 
+
+/**
+ * A 4x4 matrix implementation.
+ */
 public final class Matrix4x4 {
 	private float matrix[][];
 
@@ -15,15 +19,46 @@ public final class Matrix4x4 {
 		s += matrix[0][2] + ", " + matrix[1][2] + ", " + matrix[2][2] + "\n";
 		return s;
 	}
+	
+	private boolean inBounds(int x, int y) {
+		return x < 4 && x >= 0 && y < 4 && y >= 0;
+	}
 
+	/**
+	 * Sets the value of the matrix element at the specified row and column.
+	 *
+	 * @param x       The row index of the element.
+	 * @param y       The column index of the element.
+	 * @param element The value to set.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 */
 	public void setElement(int x, int y, float element) {
+		if (!inBounds(x, y)) {
+			throw new IndexOutOfBoundsException("index " + x + ", " + y + " is invalid");
+		}
 		matrix[x][y] = element;
 	}
 
+	/**
+	 * Retrieves the value of the matrix element at the specified row and column.
+	 *
+	 * @param x The row index of the element.
+	 * @param y The column index of the element.
+	 * @return The value of the matrix element at the given indices.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 */
 	public float getElement(int x, int y) {
+		if (!inBounds(x, y)) {
+			throw new IndexOutOfBoundsException("index " + x + ", " + y + " is invalid");
+		}
 		return matrix[x][y];
 	}
 
+	/**
+	 * Creates and returns an identity matrix.
+	 *
+	 * @return An identity matrix where all diagonal elements are set to 1.
+	 */
 	public static Matrix4x4 identityMatrix() {
 		Matrix4x4 mat = new Matrix4x4();
 		mat.matrix[0][0] = 1;
@@ -33,6 +68,13 @@ public final class Matrix4x4 {
 		return mat;
 	}
 
+	/**
+	 * Multiplies two matrices and returns the resulting matrix.
+	 *
+	 * @param mat1 The first matrix to multiply.
+	 * @param mat2 The second matrix to multiply.
+	 * @return The matrix resulting from the multiplication of mat1 and mat2.
+	 */
 	public static Matrix4x4 matrixMultiplyMatrix(Matrix4x4 mat1, Matrix4x4 mat2) {
 		Matrix4x4 mat = new Matrix4x4();
 		for (int c = 0; c < 4; c++) {
@@ -44,6 +86,12 @@ public final class Matrix4x4 {
 		return mat;
 	}
 
+	/**
+	 * Multiplies the given vector by the matrix and returns the resulting vector.
+	 *
+	 * @param vec The vector to be multiplied by the matrix.
+	 * @return The vector resulting from the multiplication of the given vector and the matrix.
+	 */
 	public Vector3 MultiplyByVector(Vector3 vec) {
 		Vector3 out = new Vector3(0, 0, 0);
 		out.x = vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + matrix[3][0];
@@ -53,6 +101,15 @@ public final class Matrix4x4 {
 		return out;
 	}
 
+	/**
+	 * Applies perspective projection to the given projection matrix based on the provided parameters.
+	 *
+	 * @param fov           The field of view angle in degrees.
+	 * @param aspectRatio   The aspect ratio of the projection.
+	 * @param near          The distance to the near clipping plane.
+	 * @param far           The distance to the far clipping plane.
+	 * @param projectionMatrix The projection matrix to be modified.
+	 */
 	public static void PerspectiveProjection(float fov, float aspectRatio, float near, float far,
 			Matrix4x4 projectionMatrix) {
 		fov = Mathf.Clamp(fov, 1, 179);
@@ -67,6 +124,11 @@ public final class Matrix4x4 {
 		projectionMatrix.matrix[3][3] = 0.0f;
 	}
 
+	/**
+	 * Sets the matrix to represent a translation transformation based on the given position.
+	 *
+	 * @param pos The translation position.
+	 */
 	public void makeTranslation(Vector3 pos) {
 		matrix[0][0] = 1;
 		matrix[1][1] = 1;
@@ -77,6 +139,12 @@ public final class Matrix4x4 {
 		matrix[3][2] = pos.z;
 	}
 
+	/**
+	 * Creates a rotation matrix around the x-axis with the specified angle.
+	 *
+	 * @param angleRad The rotation angle in radians.
+	 * @return The resulting rotation matrix.
+	 */
 	public static Matrix4x4 xRotation(float angleRad) {
 		Matrix4x4 m = new Matrix4x4();
 		m.matrix[0][0] = 1;
@@ -88,6 +156,12 @@ public final class Matrix4x4 {
 		return m;
 	}
 
+	/**
+	 * Creates a rotation matrix around the y-axis with the specified angle.
+	 *
+	 * @param angleRad The rotation angle in radians.
+	 * @return The resulting rotation matrix.
+	 */
 	public static Matrix4x4 yRotation(float angleRad) {
 		Matrix4x4 m = new Matrix4x4();
 		m.matrix[0][0] = Mathf.cos(angleRad);
@@ -99,6 +173,12 @@ public final class Matrix4x4 {
 		return m;
 	}
 
+	/**
+	 * Creates a rotation matrix around the z-axis with the specified angle.
+	 *
+	 * @param angleRad The rotation angle in radians.
+	 * @return The resulting rotation matrix.
+	 */
 	public static Matrix4x4 zRotation(float angleRad) {
 		Matrix4x4 m = new Matrix4x4();
 		m.matrix[0][0] = Mathf.cos(angleRad);
@@ -110,6 +190,12 @@ public final class Matrix4x4 {
 		return m;
 	}
 
+	/**
+	 * Creates a rotation matrix based on the specified Euler angles.
+	 *
+	 * @param angles The Euler angles for rotation around each axis.
+	 * @return The resulting rotation matrix.
+	 */
 	public static Matrix4x4 GetRotation(Vector3 angles) {
 		Matrix4x4 x = xRotation(angles.x * Mathf.Deg2Rad);
 		Matrix4x4 y = yRotation(angles.y * Mathf.Deg2Rad);
@@ -122,6 +208,11 @@ public final class Matrix4x4 {
 		return combined;
 	}
 
+	/**
+	 * Sets the scaling components of the matrix based on the specified scale vector.
+	 *
+	 * @param scale The vector representing the scaling factors along each axis.
+	 */
 	public void scaleMatrix(Vector3 scale) {
 		matrix[0][0] = scale.x;
 		matrix[1][1] = scale.y;
@@ -129,6 +220,14 @@ public final class Matrix4x4 {
 		matrix[3][3] = 1;
 	}
 
+	/**
+	 * Creates a transformation matrix that aligns an object's orientation with the given position, target, and up vector.
+	 *
+	 * @param pos    The position of the object.
+	 * @param target The target position to align with.
+	 * @param up     The up vector.
+	 * @return The resulting transformation matrix.
+	 */
 	public static Matrix4x4 MatrixPointAt(Vector3 pos, Vector3 target, Vector3 up) {
 		Vector3 newForward = Vector3.subtract2Vecs(target, pos);
 		newForward.Normalize();
@@ -160,8 +259,8 @@ public final class Matrix4x4 {
 	}
 
 	/**
-	 * Only for Rotation/Translation Matrices. Copied from Javidx9 like most of the
-	 * other functions :)
+	 * Only for Rotation/Translation Matrices. <br>
+	 * Code by javidx9
 	 */
 	public static Matrix4x4 inverseMatrix(Matrix4x4 mat) {
 		Matrix4x4 inversed = new Matrix4x4();

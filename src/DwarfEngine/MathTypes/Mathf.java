@@ -2,6 +2,11 @@ package DwarfEngine.MathTypes;
 
 import java.awt.Color;
 
+/**
+ * A Math class that wraps java math methods into floats and has a couple of useful methods such as 
+ * {@link Mathf#Lerp(Color, Color, float)}. It mostly serves the purpose of storing those methods and 
+ * saving me some effort from explicitly converting commonly used {@link Math} methods to float
+ */
 public final class Mathf {
 	public static final float Deg2Rad = 0.01745329251994329576923690768489f;
 	public static final float Rad2Deg = 57.295779513082320876798154814105f;

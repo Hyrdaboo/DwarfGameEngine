@@ -14,6 +14,11 @@ import java.util.List;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 
+/**
+ * The <code>TriangleRasterizer</code> class provides functionality for rasterizing triangles
+ * and interpolating attributes across the triangle surface.
+ * It is used for rendering triangles on a 2D screen or surface.
+ */
 public final class TriangleRasterizer {
 
 	private static float[] depthBuffer;
@@ -24,6 +29,13 @@ public final class TriangleRasterizer {
 		height = getBufferHeight();
 	}
 
+	/**
+	 * Binds a depth buffer to the renderer, specifying the buffer to use for storing depth information.
+	 * The depth buffer should have the same size as the screen.
+	 *
+	 * @param buffer The depth buffer to bind.
+	 * @throws IllegalArgumentException if the provided depth buffer size does not match the screen size.
+	 */
 	public void bindDepth(float[] buffer) {
 		if (buffer.length != width * height) {
 			throw new IllegalArgumentException("Depth buffer should be same size as screen");
@@ -31,25 +43,34 @@ public final class TriangleRasterizer {
 		depthBuffer = buffer;
 	}
 
+	/**
+	 * Clears all the buffers
+	 */
 	public void clearAll() {
 		clear(Color.black);
 		Arrays.fill(depthBuffer, Float.MAX_VALUE);
 	}
 
-	public void writeDepth(int x, int y, Float value) {
+	private void writeDepth(int x, int y, Float value) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
 			throw new IndexOutOfBoundsException("Invalid write index. Cannot write at " + x + ", " + y);
 		}
 		depthBuffer[x + y * width] = value;
 	}
 
-	public Float readDepth(int x, int y) {
+	private float readDepth(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
 			throw new IndexOutOfBoundsException("Invalid read index. Cannot read at " + x + ", " + y);
 		}
 		return depthBuffer[x + y * width];
 	}
 
+	/**
+	 * Draws a triangle using the specified vertices and shader.
+	 *
+	 * @param vertices The array of vertices that make up the triangle.
+	 * @param shader The shader to use for rendering the triangle.
+	 */
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
 
 		Plane[] clippingPlanes = new Plane[] { new Plane(Vector3.zero(), Vector3.up()), // top
@@ -183,7 +204,7 @@ public final class TriangleRasterizer {
 		return rgb;
 	}
 
-	public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value) {
+	private static float InverseLerp(Vector3 a, Vector3 b, Vector3 value) {
 		Vector3 AB = Vector3.subtract2Vecs(b, a);
 		Vector3 AV = Vector3.subtract2Vecs(value, a);
 		return Vector3.Dot(AV, AB) / Vector3.Dot(AB, AB);

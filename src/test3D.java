@@ -1,7 +1,8 @@
 import java.awt.Color;
 
+import DwarfEngine.Text;
+import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
-import DwarfEngine.Core.Debug;
 import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
@@ -17,10 +18,9 @@ import Renderer3D.Scene;
 import Renderer3D.SceneManager;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
+import Renderer3D.Vertex;
 import Renderer3D.BuiltInShaders.Phong;
 import Renderer3D.BuiltInShaders.Unlit;
-
-
 
 class suzanne extends Scene {
 	Application app;
@@ -33,23 +33,33 @@ class suzanne extends Scene {
 	@Override
 	public void OnSceneUpdate() {
 		GetInput();
+		Vector3 screenPos = cam.worldToScreenPoint(Vector3.add2Vecs(monke.transform.position, Vector3.up()));
+		note.drawText(new Vector2(screenPos.x-50, screenPos.y), new Vector2(0.3f, 0.3f));
 	}
 
 	Prop monke;
 	Light sun;
 	Camera cam;
+	Text note;
 	@Override
 	public void OnSceneLoad() {
+		Texture t = new Texture();
+		t.LoadFromFile("res/Textures/DejaVu Sans Mono.png");
+		note = new Text(t, 64);
+		note.SetText("Hehe monke! (Aka suzanne)");
+		note.spacing = -8;
+		
 		cam = new Camera();
 		cam.transform.position.z = -3;
 		setCamera(cam);
-
+		
 		monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
 		//monke = new Prop(ObjLoader.Load("res/3D-Objects/teapot.obj"));
 		//monke = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\cube.obj"));
 
 		Shader baseColor = new Unlit("res/Textures/uvtest.png");
-
+		
+		
 		Phong shader = new Phong(baseColor);
 		shader.shininess = 75;
 
@@ -76,7 +86,6 @@ class suzanne extends Scene {
 		//addObject(sky);
 	}
 
-	boolean confined = false;
 	void GetInput() {
 		float deltaTime = (float) app.getDeltaTime();
 		float mul = 0.1f;
@@ -125,13 +134,15 @@ class suzanne extends Scene {
 			camTransform.position.y += deltaTime * speed;
 		}
 
-		if (Input.OnKeyPressed(Keycode.Escape)) {
-			confined = !confined;
-			Input.setMouseConfined(confined);
+		if (Input.MouseButtonClicked(3)) {
+			Input.setMouseConfined(true);
+		}
+		if (Input.MouseButtonReleased(3)) {
+			Input.setMouseConfined(false);
 		}
 		if (Input.isMouseConfined()) {
-			camTransform.rotation.y += Input.GetMouseDelta().x * 100;
-			camTransform.rotation.x += Input.GetMouseDelta().y * 100;
+			camTransform.rotation.y += Input.GetMouseDelta().x * 200;
+			camTransform.rotation.x += Input.GetMouseDelta().y * 200;
 		}
 
 		// rotate camera
@@ -156,43 +167,12 @@ class suzanne extends Scene {
 	}
 }
 
-class cubeScene extends Scene {
-	Application app;
-	public cubeScene(Application application) {
-		super(application);
-		app = application;
-	}
-
-	@Override
-	public void OnSceneUpdate() {
-		cube.transform.rotation.y += app.getDeltaTime() * 50;
-	}
-
-	Prop cube;
-	Camera cam;
-	@Override
-	public void OnSceneLoad() {
-		cam = new Camera();
-		cam.transform.position.z = -2;
-		setCamera(cam);
-		cube = new Prop(Mesh.MakeCube());
-		cube.setShader(new Unlit("res/Textures/uvtest.png"));
-		objects.add(cube);
-	}
-
-	@Override
-	protected void OnSceneGUI() {
-		DisplayRenderer.FillCircle(new Vector2(300, 100), 20, Color.yellow);
-	}
-}
-
 @SuppressWarnings("serial")
 class demo3D extends Application {
 
 	@Override
 	public void OnStart() {
 		SceneManager.AddScene(suzanne.class, "Monke");
-		SceneManager.AddScene(cubeScene.class, "Cube");
 		SceneManager.LoadScene("Monke");
 	}
 

@@ -3,6 +3,10 @@ package Renderer3D;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
+/**
+ * The Vertex class represents a vertex of a model with all of its
+ * various attributes such as position, texture coordinates, color, normal, and world position.
+ */
 public final class Vertex implements Cloneable {
 	public Vector3 position = Vector3.zero();
 	public Vector2 texcoord = Vector2.zero();

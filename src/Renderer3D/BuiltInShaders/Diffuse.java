@@ -7,10 +7,17 @@ import Renderer3D.Light.LightType;
 import Renderer3D.Shader;
 import Renderer3D.Vertex;
 
+/**
+ * The Diffuse class represents a diffuse shading model shader implementation.
+ */
 public class Diffuse extends Shader {
 
 	private Shader baseColor;
 
+	/**
+	 * Uses another unlit shader and applies diffuse lighting on it
+	 * @param shader a Shader that doesn't implement lighting for example {@link Unlit}
+	 */
 	public Diffuse(Shader shader) {
 		baseColor = shader;
 	}

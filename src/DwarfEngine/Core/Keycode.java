@@ -1,5 +1,13 @@
 package DwarfEngine.Core;
 
+/**
+ * The Keycode enum represents various key codes with their corresponding integer values.
+ * It is used by the <code>Input</code> class for methods involving key presses.
+ *
+ * @see Input#OnKeyPressed(Keycode)
+ * @see Input#OnKeyHeld(Keycode)
+ * @see Input#OnKeyReleased(Keycode)
+ */
 public enum Keycode {
 	Q(81), W(87), E(69), R(82), T(84), Y(89), U(85), I(73), O(79), P(80), A(65), S(83), D(68), F(70), G(71), H(72),
 	J(74), K(75), L(76), Z(90), X(88), C(67), V(86), B(66), N(78), M(77), Space(32), LeftArrow(37), RightArrow(39),

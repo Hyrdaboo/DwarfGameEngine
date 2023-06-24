@@ -7,11 +7,18 @@ import Renderer3D.Light.LightType;
 import Renderer3D.Shader;
 import Renderer3D.Vertex;
 
+/**
+ * The Phong class represents a Phong shading model shader implementation.
+ */
 public class Phong extends Shader {
 	public float shininess = 1;
 	public Vector3 specularColor = Vector3.one();
 	private Shader baseColor;
 
+	/**
+	 * Uses another unlit shader and applies phong lighting on it
+	 * @param shader a Shader that doesn't implement lighting for example {@link Unlit}
+	 */
 	public Phong(Shader shader) {
 		baseColor = shader;
 	}

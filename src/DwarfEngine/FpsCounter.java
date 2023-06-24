@@ -1,5 +1,9 @@
 package DwarfEngine;
 
+/**
+ * A precise fps counter based on tutorials from catlike coding. <br>
+ * Uses an fps buffer that accumulates fps values over time and calculates the average fps
+ */
 public final class FpsCounter {
 	public int bufferLength = 25;
 
@@ -16,6 +20,9 @@ public final class FpsCounter {
 		calculateFps();
 	}
 
+	/**
+	 * @return the calculated average fps
+	 */
 	public double GetFps() {
 		return averageFps;
 	}
