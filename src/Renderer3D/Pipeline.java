@@ -15,7 +15,7 @@ import DwarfEngine.MathTypes.Vector3;
  * Represents a pipeline that a mesh goes through to get rendered on the screen.
  *
  * This class provides a way to render a single Mesh on the screen. By making a call to <code>DrawMesh</code>
- * method you can draw a single mesh on the screen. When a mesh gets rendered it goes through all the 
+ * method you can draw a single mesh on the screen. When a mesh gets rendered it goes through all the
  * stages of pipeline before it turns into triangles that can be drawn on the screen by the {@link TriangleRasterizer}
  */
 public final class Pipeline {
@@ -108,7 +108,7 @@ public final class Pipeline {
 				fullyTransformed.verts[i].worldPos = transformed.verts[i].position;
 			}
 
-			Vector3 faceNormal = surfaceNormalFromIndices(transformed.verts[0].position, transformed.verts[1].position,
+			Vector3 faceNormal = Mesh.surfaceNormalFromVertices(transformed.verts[0].position, transformed.verts[1].position,
 					transformed.verts[2].position);
 			Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position)
 					.normalized();
@@ -170,12 +170,5 @@ public final class Pipeline {
 	 */
 	public void clear() {
 		tr.clearAll();
-	}
-
-	private Vector3 surfaceNormalFromIndices(Vector3 a, Vector3 b, Vector3 c) {
-		Vector3 sideAB = Vector3.subtract2Vecs(b, a);
-		Vector3 sideAC = Vector3.subtract2Vecs(c, a);
-
-		return Vector3.Cross(sideAB, sideAC).normalized();
 	}
 }

@@ -46,7 +46,7 @@ public abstract class Application extends Canvas {
 
 	/**
 	 * Initializes the Application with the specified resolution and pixel scale.
-	 * 
+	 *
 	 * @param resX The horizontal resolution of the display.
 	 * @param resY The vertical resolution of the display.
 	 * @param pixelScale The scaling factor for the display pixels.
@@ -179,7 +179,7 @@ public abstract class Application extends Canvas {
 	public double getDeltaTime() {
 		return deltaTime;
 	}
-	
+
 	/**
 	 * Returns the time passed since the application started in seconds.
 	 *
@@ -191,7 +191,7 @@ public abstract class Application extends Canvas {
 
 	/**
 	 * Returns the size of the application frame.
-	 * 
+	 *
 	 * @return The size of the application frame as a Vector2 object.
 	 */
 	public Vector2 getFrameSize() {

@@ -71,7 +71,7 @@ public class Camera {
 
 		return viewMatrix;
 	}
-	
+
 	Matrix4x4 projection;
 	Matrix4x4 view;
 	/**
@@ -83,7 +83,7 @@ public class Camera {
 	public Vector3 worldToScreenPoint(Vector3 point) {
 		return viewportToScreenPoint(worldToViewportPoint(point));
 	}
-	
+
 	/**
 	 * Transforms a point from world coordinates to viewport coordinates.
 	 *
@@ -97,7 +97,7 @@ public class Camera {
 	    newPoint.divideBy(newPoint.w);
 		return newPoint;
 	}
-	
+
 	Vector2 frameSize;
 	/**
 	 * Transforms a point from viewport coordinates to screen coordinates.

@@ -13,11 +13,11 @@ import DwarfEngine.Core.Application;
  * call the <code>LoadScene</code> method with the desired scene name, and call
  * the <code>renderActiveScene</code> method in the application's update loop to
  * render the currently active scene.
- * 
+ *
  * <br>
  * <br>
  * Example usage:
- * 
+ *
  * <pre>
  * class YourApplication extends Application {
  *
@@ -45,7 +45,7 @@ public class SceneManager {
 	/**
 	 * Called by {@link Application} to set the currently active application for
 	 * which scenes will be initialized.
-	 * 
+	 *
 	 * @param application Target application
 	 */
 	public static void setTargetApplication(Application application) {
@@ -56,7 +56,7 @@ public class SceneManager {
 
 	/**
 	 * Adds a scene class to the scene manager with the specified name.
-	 * 
+	 *
 	 * @param scene The scene class to add.
 	 * @param name  The name of the scene.
 	 */
@@ -68,7 +68,7 @@ public class SceneManager {
 
 	/**
 	 * Loads a scene with the specified name and sets it as the active scene.
-	 * 
+	 *
 	 * @param name The name of the scene to load.
 	 */
 	public static void LoadScene(String name) {

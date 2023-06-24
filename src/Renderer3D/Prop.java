@@ -57,7 +57,7 @@ public final class Prop {
 	public Shader getShader() {
 		return this.shader;
 	}
-	
+
 	/**
 	 * Set the lights for the Shader of this object
 	 * @param lights List of lights to set

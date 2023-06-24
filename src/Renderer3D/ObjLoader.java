@@ -20,9 +20,9 @@ import DwarfEngine.MathTypes.Vector3;
 public final class ObjLoader {
 
 	/**
-	 * 
+	 *
 	 * Loads a 3D Mesh object from an OBJ file.
-	 * 
+	 *
 	 * @param path The file path of the OBJ file.
 	 * @return The loaded Mesh as a {@link Mesh} object
 	 * @throws RuntimeException if an error occurs while reading your file

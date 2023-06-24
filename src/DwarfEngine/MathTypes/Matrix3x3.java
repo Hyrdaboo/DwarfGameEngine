@@ -4,7 +4,7 @@ import Renderer3D.TriangleRasterizer;
 
 /**
  * A 3x3 matrix implementation. This class was originally implemented for 2D image manipulation purposes.
- * But later I decided to scrap that but I still kept this class. If you want to implement your own 2D image 
+ * But later I decided to scrap that but I still kept this class. If you want to implement your own 2D image
  * manipulation you can do so using {@link TriangleRasterizer} class and manipulate vertices with 3x3 matrices.
  * Though the performance of the rasterizer at the time of writing this is not that great and I am not sure if
  * I'll improve it in the future so I don't know it's here do whatever you please with this.

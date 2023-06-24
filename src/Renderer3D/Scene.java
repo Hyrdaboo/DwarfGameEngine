@@ -32,7 +32,7 @@ public abstract class Scene {
 
 	/**
 	 * Sets the camera for the scene.
-	 * 
+	 *
 	 * @param camera The camera to be set.
 	 */
 	public void setCamera(Camera camera) {
@@ -65,7 +65,7 @@ public abstract class Scene {
 	/**
 	 * Sets the render flag for the rendering pipeline.
 	 * The render flag determines the specific rendering operation or mode to be used by the pipeline.
-	 * 
+	 *
 	 * @param flag The render flag to be set.
 	 * @see Pipeline#renderFlag
 	 */

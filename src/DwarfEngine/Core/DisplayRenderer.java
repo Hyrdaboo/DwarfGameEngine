@@ -1,13 +1,11 @@
 package DwarfEngine.Core;
 
 import java.awt.Color;
-import java.lang.runtime.ObjectMethods;
 import java.util.Arrays;
 
 import DwarfEngine.Texture;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
-import DwarfEngine.MathTypes.Vector3;
 
 /**
  * The DisplayRenderer class is designed for low-level pixel manipulation on the screen.
@@ -102,7 +100,7 @@ public final class DisplayRenderer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Draws an image at the specified position with the given size.
 	 *

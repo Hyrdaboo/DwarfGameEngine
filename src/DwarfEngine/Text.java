@@ -22,7 +22,8 @@ public class Text {
 	 * Spacing of characters when being drawn.<br> Can be negative. Default value is 0
 	 */
 	public float spacing = 0;
-	
+
+	@SuppressWarnings("serial")
 	private static final HashMap<Character, int[]> charset = new HashMap<>() {
 		{
 			put(' ', new int[] {0, 0});
@@ -41,7 +42,7 @@ public class Text {
 			put('-', new int[] {13,0});
 			put('.', new int[] {14,0});
 			put('/', new int[] {15,0});
-			
+
 			put('0', new int[] {0, 1});
 			put('1', new int[] {1, 1});
 			put('2', new int[] {2, 1});
@@ -58,7 +59,7 @@ public class Text {
 			put('=', new int[] {13,1});
 			put('>', new int[] {14,1});
 			put('?', new int[] {15,1});
-			
+
 			put('@', new int[] {0, 2});
 			put('A', new int[] {1, 2});
 			put('B', new int[] {2, 2});
@@ -75,7 +76,7 @@ public class Text {
 			put('M', new int[] {13,2});
 			put('N', new int[] {14,2});
 			put('O', new int[] {15,2});
-			
+
 			put('P', new int[] {0, 3});
 			put('Q', new int[] {1, 3});
 			put('R', new int[] {2, 3});
@@ -92,7 +93,7 @@ public class Text {
 			put(']', new int[] {13,3});
 			put('^', new int[] {14,3});
 			put('_', new int[] {15,3});
-			
+
 			put('`', new int[] {0, 4});
 			put('a', new int[] {1, 4});
 			put('b', new int[] {2, 4});
@@ -109,7 +110,7 @@ public class Text {
 			put('m', new int[] {13,4});
 			put('n', new int[] {14,4});
 			put('o', new int[] {15,4});
-			
+
 			put('p', new int[] {0, 5});
 			put('q', new int[] {1, 5});
 			put('r', new int[] {2, 5});
@@ -127,7 +128,7 @@ public class Text {
 			put('~', new int[] {14,5});
 		}
 	};
-	
+
 	/**
 	 * Creates text object defined by a font atlas and size of each character
 	 * @param fontAtlas A texture that contains all the characters from ASCII printable charset
@@ -137,7 +138,7 @@ public class Text {
 		source = fontAtlas;
 		charSize = characterSize;
 	}
-	
+
 	/**
 	 * Assings text to be drawn
 	 * @param text
@@ -157,14 +158,14 @@ public class Text {
 			charImages.add(getTexture(x, y));
 		}
 	}
-	
+
 	private Texture getTexture(int x, int y) {
 		Texture tex = new Texture(charSize, charSize);
 		int[] pixels = source.GetPixels(x*charSize, y*charSize, charSize, charSize);
 		tex.SetPixels(pixels, charSize, charSize, 0, 0);
 		return tex;
 	}
-	
+
 	/**
 	 * Draws the text assigned to this object
 	 * @param position Screen space position of the text (top-left)
@@ -173,14 +174,13 @@ public class Text {
 	public void drawText(Vector2 position, Vector2 scale) {
 		Vector2 pos = new Vector2(position);
 		Vector2 size = Vector2.mulVecFloat(scale, charSize);
-		for (int i = 0; i < charImages.size(); i++) {
-			Texture t = charImages.get(i);
+		for (Texture t : charImages) {
 			if (t == null) {
 				pos.y += charSize * scale.y + spacing;
 				pos.x = position.x;
 				continue;
 			}
-			DisplayRenderer.DrawImage(pos, size, charImages.get(i));
+			DisplayRenderer.DrawImage(pos, size, t);
 			pos.x += charSize * scale.x + spacing;
 		}
 	}

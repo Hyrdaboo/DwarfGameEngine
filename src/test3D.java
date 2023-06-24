@@ -1,17 +1,21 @@
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.DebugGraphics;
 
 import DwarfEngine.Text;
 import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
-import DwarfEngine.Core.DisplayRenderer;
 import DwarfEngine.Core.Input;
 import DwarfEngine.Core.Keycode;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Camera;
 import Renderer3D.Light;
-import Renderer3D.Light.LightType;
 import Renderer3D.Mesh;
+import Renderer3D.Light.LightType;
+import Renderer3D.Pipeline.RenderFlag;
 import Renderer3D.ObjLoader;
 import Renderer3D.Prop;
 import Renderer3D.Scene;
@@ -19,8 +23,19 @@ import Renderer3D.SceneManager;
 import Renderer3D.Shader;
 import Renderer3D.Transform;
 import Renderer3D.Vertex;
+import Renderer3D.BuiltInShaders.Diffuse;
 import Renderer3D.BuiltInShaders.Phong;
 import Renderer3D.BuiltInShaders.Unlit;
+import Renderer3D.BuiltInShaders.VertexColor;
+
+class normal extends Shader {
+
+	@Override
+	public Vector3 Fragment(Vertex in) {
+		return in.normal;
+	}
+	
+}
 
 class suzanne extends Scene {
 	Application app;
@@ -33,57 +48,76 @@ class suzanne extends Scene {
 	@Override
 	public void OnSceneUpdate() {
 		GetInput();
-		Vector3 screenPos = cam.worldToScreenPoint(Vector3.add2Vecs(monke.transform.position, Vector3.up()));
-		note.drawText(new Vector2(screenPos.x-50, screenPos.y), new Vector2(0.3f, 0.3f));
+		//sun.transform.rotation.x += app.getDeltaTime() * 20;
 	}
 
-	Prop monke;
-	Light sun;
 	Camera cam;
-	Text note;
+	Light sun;
 	@Override
 	public void OnSceneLoad() {
-		Texture t = new Texture();
-		t.LoadFromFile("res/Textures/DejaVu Sans Mono.png");
-		note = new Text(t, 64);
-		note.SetText("Hehe monke! (Aka suzanne)");
-		note.spacing = -8;
-		
 		cam = new Camera();
 		cam.transform.position.z = -3;
 		setCamera(cam);
 		
-		monke = new Prop(ObjLoader.Load("res/3D-Objects/monke.obj"));
-		//monke = new Prop(ObjLoader.Load("res/3D-Objects/teapot.obj"));
-		//monke = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\cube.obj"));
-
-		Shader baseColor = new Unlit("res/Textures/uvtest.png");
+		Texture tex = new Texture();
+		tex.LoadFromFile("res/Textures/Heightmap.png");
+		Texture ramp = new Texture();
+		ramp.LoadFromFile("res/Textures/ramp.png");
+		Mesh m = GeneratePlane(100, tex, 30, ramp);
+		Prop prop = new Prop(m);
+		Diffuse phong = new Diffuse(new VertexColor());
+		prop.setShader(phong);
+		objects.add(prop);
 		
-		
-		Phong shader = new Phong(baseColor);
-		shader.shininess = 75;
-
-		monke.setShader(shader);
-		objects.add(monke);
-
 		sun = new Light();
-		//sun.type = LightType.Point;
-		sun.transform.position = new Vector3(0, 0, -2f);
-		sun.setColor(new Vector3(1, 1, 0.55f));
-		sun.radius = 2;
-		sun.intensity = 0.75f;
+		sun.transform.rotation.x = 70;
+		sun.setColor(new Vector3(0.75f, 0.75f, 0.8f));
 		lights.add(sun);
-
+		
 		Light ambient = new Light();
 		ambient.type = LightType.Ambient;
-		float strength = 0.05f;
-		ambient.setColor(new Vector3(strength, strength, strength));
+		ambient.setColor(new Vector3(0.3f, 0.3f, 0.3f));
 		lights.add(ambient);
-
-		//Prop sky = new Prop(ObjLoader.Load("C:\\Users\\USER\\Downloads\\sky\\skybox.obj"));
-		//sky.setShader(new Tex("C:\\Users\\USER\\Downloads\\sky\\Space.png"));
-		//sky.setShader(new Tex("res/Textures/uvtest.png"));
-		//addObject(sky);
+		//SetRenderFlag(RenderFlag.Wireframe);
+	}
+	
+	public static Mesh GeneratePlane(int res, Texture heightmap, float maxHeight, Texture ramp) {
+		res = Math.max(1, res);
+		
+		int[] indices = new int[res*res*6];
+		res += 1;
+		Vector3[] vertices = new Vector3[res*res];
+		Vector3[] colors = new Vector3[res*res];
+		
+		for (int y = 0; y < res; y++) {
+			for (int x = 0; x < res; x++) {
+				Vector3 col = heightmap.SampleFast(x / (float)res, y / (float)res);
+				float h = (col.x+col.y+col.z) / 3.0f;
+				Vector3 vtcol = ramp.SampleFast(0, h);
+				colors[x + y*res] = vtcol;
+				h *= maxHeight;
+				vertices[x + y*res] = new Vector3(x, h, y);
+			}
+		}
+		
+		int faceCount = indices.length / 6;
+		for (int i = 0, k = 0; i < faceCount; i++, k++) {
+			if (k % res == res-1) k++;
+			
+			indices[0+i*6] = k;
+			indices[1+i*6] = k+res;
+			indices[2+i*6] = k+res+1;
+			indices[3+i*6] = k+res+1;
+			indices[4+i*6] = k+1;
+			indices[5+i*6] = k;
+		}
+		
+		Mesh mesh = new Mesh();
+		mesh.setVertices(vertices);
+		mesh.setTriangles(indices);
+		mesh.setColors(colors);
+		mesh.recalculateNormals();
+		return mesh;
 	}
 
 	void GetInput() {
@@ -95,20 +129,6 @@ class suzanne extends Scene {
 		float speed = 15 * mul;
 		float lookSpeed = 100;
 		Transform camTransform = cam.transform;
-
-		if (Input.OnKeyHeld(Keycode.LeftArrow)) {
-			monke.transform.rotation.y += lookSpeed * app.getDeltaTime();
-		}
-		if (Input.OnKeyHeld(Keycode.RightArrow)) {
-			monke.transform.rotation.y -= lookSpeed * app.getDeltaTime();
-		}
-
-		if (Input.OnKeyHeld(Keycode.UpArrow)) {
-			monke.transform.rotation.x -= lookSpeed * app.getDeltaTime();
-		}
-		if (Input.OnKeyHeld(Keycode.DownArrow)) {
-			monke.transform.rotation.x += lookSpeed * app.getDeltaTime();
-		}
 
 		if (Input.OnKeyHeld(Keycode.W)) {
 			Vector3 forward = Vector3.mulVecFloat(camTransform.forward, speed * deltaTime);

@@ -28,7 +28,7 @@ public final class Texture {
 	 *     <li><b>Clamp:</b> The texture's edge pixels are repeated beyond the texture boundaries.</li>
 	 *     <li><b>RepeatMirrored:</b> The texture wraps around and repeats in both directions, with mirrored repetitions.</li>
 	 * </ul>
-	 * 
+	 *
 	 * <strong>Note!</strong> This doesn't work with {@link Texture#SampleFast(float, float)} as it ignores wrap modes and by default only supports clamping
 	 */
 	public enum WrapMode {
@@ -142,7 +142,7 @@ public final class Texture {
 		int a = (rgb >> 24) & 0xFF;
 		return new Color(r, g, b, a);
 	}
-	
+
 	/**
 	 * Retrieves an array of pixels from the specified region of the texture.
 	 *
@@ -185,7 +185,7 @@ public final class Texture {
 		}
 		pixels[x + y * width] = c.getRGB();
 	}
-	
+
 	/**
 	 * Sets the pixels of the texture starting from the specified coordinates.
 	 *
@@ -197,7 +197,7 @@ public final class Texture {
 	 */
 	public void SetPixels(int[] pixels, int w, int h, int xStart, int yStart) {
 		if (pixels == null) return;
-		
+
 		try {
 			for (int y = yStart; y < yStart + h; y++) {
 				for (int x = xStart; x < xStart + w; x++) {
@@ -223,7 +223,7 @@ public final class Texture {
 
 	/**
 	 * Samples the texture at the specified UV coordinates and returns the sampled color as a Vector3.
-	 * This method implements all the sampling and wrap modes, but it exhibits slower performance due to the implementation of multiple sampling and wrap modes. 
+	 * This method implements all the sampling and wrap modes, but it exhibits slower performance due to the implementation of multiple sampling and wrap modes.
 	 * If performance is a concern and wrap modes aren't a requirement, then using {@link Texture#SampleFast(float, float)} is advised.
 	 *
 	 * @param u The U-coordinate of the texture.

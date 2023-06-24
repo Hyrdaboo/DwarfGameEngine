@@ -10,8 +10,8 @@ import DwarfEngine.MathTypes.Vector3;
 public final class Vertex implements Cloneable {
 	public Vector3 position = Vector3.zero();
 	public Vector2 texcoord = Vector2.zero();
-	public Vector3 color = Vector3.zero();
-	public Vector3 normal = Vector3.one(); // not normalized
+	public Vector3 color = Vector3.one();
+	public Vector3 normal = Vector3.up(); // not normalized
 	public Vector3 worldPos = Vector3.one();
 
 	static Vertex Lerp(Vertex a, Vertex b, float t) {

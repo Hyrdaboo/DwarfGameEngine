@@ -19,7 +19,7 @@ public final class Matrix4x4 {
 		s += matrix[0][2] + ", " + matrix[1][2] + ", " + matrix[2][2] + "\n";
 		return s;
 	}
-	
+
 	private boolean inBounds(int x, int y) {
 		return x < 4 && x >= 0 && y < 4 && y >= 0;
 	}

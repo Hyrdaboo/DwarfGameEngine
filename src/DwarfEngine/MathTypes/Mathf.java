@@ -3,8 +3,8 @@ package DwarfEngine.MathTypes;
 import java.awt.Color;
 
 /**
- * A Math class that wraps java math methods into floats and has a couple of useful methods such as 
- * {@link Mathf#Lerp(Color, Color, float)}. It mostly serves the purpose of storing those methods and 
+ * A Math class that wraps java math methods into floats and has a couple of useful methods such as
+ * {@link Mathf#Lerp(Color, Color, float)}. It mostly serves the purpose of storing those methods and
  * saving me some effort from explicitly converting commonly used {@link Math} methods to float
  */
 public final class Mathf {

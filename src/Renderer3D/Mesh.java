@@ -1,5 +1,7 @@
 package Renderer3D;
 
+import java.util.Arrays;
+
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
@@ -138,4 +140,30 @@ public final class Mesh {
 		return normals;
 	}
 
+	public void recalculateNormals() {
+		if (vertices == null || triangles == null) return;
+		normals = new Vector3[vertices.length];
+		Arrays.fill(normals, Vector3.zero());
+		for (int i = 0; i < triangles.length; i += 3) {
+			Vector3 a = vertices[triangles[i]];
+			Vector3 b = vertices[triangles[i+1]];
+			Vector3 c = vertices[triangles[i+2]];
+			
+			Vector3 normal = surfaceNormalFromVertices(a, b, c);
+			normals[triangles[i]] = Vector3.add2Vecs(normals[triangles[i]], normal);
+			normals[triangles[i+1]] = Vector3.add2Vecs(normals[triangles[i+1]], normal);
+			normals[triangles[i+2]] = Vector3.add2Vecs(normals[triangles[i+2]], normal);
+		}
+		
+		for (int i = 0; i < normals.length; i++) {
+			normals[i].Normalize();
+		}
+	}
+	
+	public static Vector3 surfaceNormalFromVertices(Vector3 a, Vector3 b, Vector3 c) {
+		Vector3 sideAB = Vector3.subtract2Vecs(b, a);
+		Vector3 sideAC = Vector3.subtract2Vecs(c, a);
+
+		return Vector3.Cross(sideAB, sideAC).normalized();
+	}
 }
