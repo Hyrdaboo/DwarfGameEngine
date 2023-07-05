@@ -8,9 +8,10 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 /**
- * The DisplayRenderer class is designed for low-level pixel manipulation on the screen.
- * It provides static methods to manipulate pixels and draw shapes, offering precise control at the pixel level.
- * With this class, you can utilize various algorithms to create custom graphics and implement your own effects.
+ * The DisplayRenderer class is designed for low-level pixel manipulation on the
+ * screen. It provides static methods to manipulate pixels and draw shapes,
+ * offering precise control at the pixel level. With this class, you can utilize
+ * various algorithms to create custom graphics and implement your own effects.
  * This class serves as the foundational layer for graphics rendering.
  */
 
@@ -29,7 +30,8 @@ public final class DisplayRenderer {
 	}
 
 	/**
-	 * Fills the entire pixel buffer with the specified color, effectively clearing the screen.
+	 * Fills the entire pixel buffer with the specified color, effectively clearing
+	 * the screen.
 	 *
 	 * @param color The color to fill the pixel buffer with.
 	 */
@@ -68,7 +70,7 @@ public final class DisplayRenderer {
 	public static void SetPixel(int x, int y, int rgb) {
 		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0)
 			return;
-		rgb = (int) Mathf.Clamp(rgb, 0, 0xffffff);
+		rgb = (int) Mathf.clamp(rgb, 0, 0xffffff);
 		pixelBuffer[x + y * bufferWidth] = rgb;
 	}
 
@@ -111,10 +113,11 @@ public final class DisplayRenderer {
 	public static void DrawImage(Vector2 pos, Vector2 size, Texture texture) {
 		for (int y = 0; y < size.y; y++) {
 			for (int x = 0; x < size.x; x++) {
-				int cx = (int)((x / size.x) * texture.getWidth());
-				int cy = (int)((y / size.y) * texture.getHeight());
+				int cx = (int) ((x / size.x) * texture.getWidth());
+				int cy = (int) ((y / size.y) * texture.getHeight());
 				Color c = texture.GetPixel(cx, cy);
-				if (c.getAlpha() < 255) continue;
+				if (c.getAlpha() < 255)
+					continue;
 				SetPixel((int) pos.x + x, (int) pos.y + y, c);
 			}
 		}
@@ -154,13 +157,13 @@ public final class DisplayRenderer {
 	/**
 	 * Draws a circle with the specified center, radius, stroke width, and color.
 	 *
-	 * @param center     The center position of the circle.
-	 * @param radius     The radius of the circle.
+	 * @param center      The center position of the circle.
+	 * @param radius      The radius of the circle.
 	 * @param strokeWidth The width of the circle's stroke.
-	 * @param color      The color of the circle's outline.
+	 * @param color       The color of the circle's outline.
 	 */
 	public static void DrawCircle(Vector2 center, float radius, float strokeWidth, Color color) {
-		strokeWidth = Mathf.Clamp(strokeWidth, 1, radius - 1);
+		strokeWidth = Mathf.clamp(strokeWidth, 1, radius - 1);
 		for (int y = (int) -radius; y < radius; y++) {
 			for (int x = (int) -radius; x < radius; x++) {
 				float dst = Vector2.distance(Vector2.zero(), new Vector2(x, y));

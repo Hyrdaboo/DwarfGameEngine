@@ -186,8 +186,8 @@ public final class Vector3 {
 	}
 
 	/**
-	 * Returns a normalized version of the vector.
-	 * If the vector's magnitude is zero, returns a zero vector.
+	 * Returns a normalized version of the vector. If the vector's magnitude is
+	 * zero, returns a zero vector.
 	 *
 	 * @return The normalized vector.
 	 */
@@ -218,10 +218,10 @@ public final class Vector3 {
 	 */
 	public static Vector3 Lerp(Vector3 a, Vector3 b, float t) {
 		Vector3 v = Vector3.zero();
-		v.x = Mathf.Lerp(a.x, b.x, t);
-		v.y = Mathf.Lerp(a.y, b.y, t);
-		v.z = Mathf.Lerp(a.z, b.z, t);
-		v.w = Mathf.Lerp(a.w, b.w, t);
+		v.x = Mathf.lerp(a.x, b.x, t);
+		v.y = Mathf.lerp(a.y, b.y, t);
+		v.z = Mathf.lerp(a.z, b.z, t);
+		v.w = Mathf.lerp(a.w, b.w, t);
 		return v;
 	}
 
@@ -231,8 +231,8 @@ public final class Vector3 {
 	 * @param v The vector to clamp.
 	 */
 	public static void Clamp01(Vector3 v) {
-		v.x = Mathf.Clamp01(v.x);
-		v.y = Mathf.Clamp01(v.y);
-		v.z = Mathf.Clamp01(v.z);
+		v.x = Mathf.clamp01(v.x);
+		v.y = Mathf.clamp01(v.y);
+		v.z = Mathf.clamp01(v.z);
 	}
 }

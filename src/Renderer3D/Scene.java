@@ -8,8 +8,8 @@ import Renderer3D.Light.LightType;
 import Renderer3D.Pipeline.RenderFlag;
 
 /**
- * The base class for defining a scene in the 3D rendering engine.
- * Subclasses of this class can be created to represent different scenes in the application.
+ * The base class for defining a scene in the 3D rendering engine. Subclasses of
+ * this class can be created to represent different scenes in the application.
  */
 public abstract class Scene {
 	private Pipeline pipeline;
@@ -27,7 +27,6 @@ public abstract class Scene {
 		objects = new ArrayList<>();
 		lights = new ArrayList<>();
 		pipeline = new Pipeline(application);
-		OnSceneLoad();
 	}
 
 	/**
@@ -41,7 +40,8 @@ public abstract class Scene {
 	}
 
 	public void render() {
-		if (camera == null) return;
+		if (camera == null)
+			return;
 		pipeline.clear();
 
 		for (Light l : lights) {
@@ -49,7 +49,8 @@ public abstract class Scene {
 				lights.remove(l);
 				continue;
 			}
-			if (l.type == LightType.Ambient) continue;
+			if (l.type == LightType.Ambient)
+				continue;
 			l.transform.getMatrixTRS();
 		}
 
@@ -63,8 +64,8 @@ public abstract class Scene {
 	}
 
 	/**
-	 * Sets the render flag for the rendering pipeline.
-	 * The render flag determines the specific rendering operation or mode to be used by the pipeline.
+	 * Sets the render flag for the rendering pipeline. The render flag determines
+	 * the specific rendering operation or mode to be used by the pipeline.
 	 *
 	 * @param flag The render flag to be set.
 	 * @see Pipeline#renderFlag
@@ -73,19 +74,21 @@ public abstract class Scene {
 		pipeline.renderFlag = flag;
 	}
 
-	 /**
-     * Called when the scene is loaded.
-     * Subclasses can override this method to perform scene-specific initialization logic.
-     */
-	protected abstract void OnSceneLoad();
-	 /**
-     * Called on each frame update of the scene.
-     * Subclasses can override this method to update the scene's state and perform rendering operations.
-     */
-	protected abstract void OnSceneUpdate();
 	/**
-	 * Called after the {@link Scene#OnSceneUpdate()} function
-	 * Subclasses can override this method to perform additional operations after the scene update
+	 * Called when the scene is loaded. Subclasses can override this method to
+	 * perform scene-specific initialization logic.
+	 */
+	protected abstract void OnSceneLoad();
+
+	/**
+	 * Called on each frame update of the scene. Subclasses can override this method
+	 * to update the scene's state and perform rendering operations.
+	 */
+	protected abstract void OnSceneUpdate();
+
+	/**
+	 * Called after the {@link Scene#OnSceneUpdate()} function Subclasses can
+	 * override this method to perform additional operations after the scene update
 	 * such as drawing shapes over the 3D scene.<br>
 	 * By default, this method does nothing.
 	 */

@@ -14,20 +14,20 @@ import DwarfEngine.MathTypes.Vector3;
 /**
  * Represents a pipeline that a mesh goes through to get rendered on the screen.
  *
- * This class provides a way to render a single Mesh on the screen. By making a call to <code>DrawMesh</code>
- * method you can draw a single mesh on the screen. When a mesh gets rendered it goes through all the
- * stages of pipeline before it turns into triangles that can be drawn on the screen by the {@link TriangleRasterizer}
+ * This class provides a way to render a single Mesh on the screen. By making a
+ * call to <code>DrawMesh</code> method you can draw a single mesh on the
+ * screen. When a mesh gets rendered it goes through all the stages of pipeline
+ * before it turns into triangles that can be drawn on the screen by the
+ * {@link TriangleRasterizer}
  */
 public final class Pipeline {
 
 	/**
-	 * The RenderFlag enumeration represents different rendering modes for the Pipeline
-	 * It specifies how the objects should be rendered.
+	 * The RenderFlag enumeration represents different rendering modes for the
+	 * Pipeline It specifies how the objects should be rendered.
 	 */
 	public enum RenderFlag {
-	    Shaded,
-	    Wireframe,
-	    ShadedWireframe
+		Shaded, Wireframe, ShadedWireframe
 	}
 
 	public RenderFlag renderFlag = RenderFlag.Shaded;
@@ -54,8 +54,8 @@ public final class Pipeline {
 	}
 
 	/**
-	 * Sets the camera for the Pipeline
-	 * The camera determines the viewpoint and perspective for rendering.
+	 * Sets the camera for the Pipeline The camera determines the viewpoint and
+	 * perspective for rendering.
 	 *
 	 * @param camera The camera object to set. Must not be null.
 	 */
@@ -66,12 +66,13 @@ public final class Pipeline {
 	}
 
 	/**
-	 * Draws a mesh on the screen using the provided render object.
-	 * This method is part of the Pipeline and handles the complete rendering process for an object,
-	 * including culling, projecting, and drawing its triangles.
+	 * Draws a mesh on the screen using the provided render object. This method is
+	 * part of the Pipeline and handles the complete rendering process for an
+	 * object, including culling, projecting, and drawing its triangles.
 	 *
-	 * @param renderObject The render object containing the mesh, shader, and other relevant data.
-	 *                     It must not be null and should have valid mesh and shader references.
+	 * @param renderObject The render object containing the mesh, shader, and other
+	 *                     relevant data. It must not be null and should have valid
+	 *                     mesh and shader references.
 	 */
 	public void DrawMesh(Prop renderObject) {
 		if (renderObject == null) {
@@ -108,8 +109,8 @@ public final class Pipeline {
 				fullyTransformed.verts[i].worldPos = transformed.verts[i].position;
 			}
 
-			Vector3 faceNormal = Mesh.surfaceNormalFromVertices(transformed.verts[0].position, transformed.verts[1].position,
-					transformed.verts[2].position);
+			Vector3 faceNormal = Mesh.surfaceNormalFromVertices(transformed.verts[0].position,
+					transformed.verts[1].position, transformed.verts[2].position);
 			Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position)
 					.normalized();
 

@@ -66,6 +66,16 @@ public class SceneManager {
 		scenes.putIfAbsent(name, scene);
 	}
 
+	public static void RemoveScene(String name) {
+		if (!scenes.containsKey(name))
+			return;
+		scenes.remove(name);
+	}
+
+	public static int getSceneCount() {
+		return scenes.size();
+	}
+
 	/**
 	 * Loads a scene with the specified name and sets it as the active scene.
 	 *
@@ -86,6 +96,7 @@ public class SceneManager {
 			Constructor<?> constructor = sceneClass.getConstructor(Application.class);
 			constructor.setAccessible(true);
 			activeScene = (Scene) constructor.newInstance(app);
+			activeScene.OnSceneLoad();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			System.err.println(e.getCause());

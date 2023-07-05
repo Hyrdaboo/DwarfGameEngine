@@ -3,11 +3,13 @@ package DwarfEngine.MathTypes;
 import Renderer3D.TriangleRasterizer;
 
 /**
- * A 3x3 matrix implementation. This class was originally implemented for 2D image manipulation purposes.
- * But later I decided to scrap that but I still kept this class. If you want to implement your own 2D image
- * manipulation you can do so using {@link TriangleRasterizer} class and manipulate vertices with 3x3 matrices.
- * Though the performance of the rasterizer at the time of writing this is not that great and I am not sure if
- * I'll improve it in the future so I don't know it's here do whatever you please with this.
+ * A 3x3 matrix implementation. This class was originally implemented for 2D
+ * image manipulation purposes. But later I decided to scrap that but I still
+ * kept this class. If you want to implement your own 2D image manipulation you
+ * can do so using {@link TriangleRasterizer} class and manipulate vertices with
+ * 3x3 matrices. Though the performance of the rasterizer at the time of writing
+ * this is not that great and I am not sure if I'll improve it in the future so
+ * I don't know it's here do whatever you please with this.
  */
 public final class Matrix3x3 {
 	private float[] matrix;
@@ -36,10 +38,11 @@ public final class Matrix3x3 {
 	/**
 	 * Sets the value of the matrix element at the specified row and column.
 	 *
-	 * @param x       The row index of the element.
-	 * @param y       The column index of the element.
+	 * @param x     The row index of the element.
+	 * @param y     The column index of the element.
 	 * @param value The value to set.
-	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out
+	 *                                   of bounds.
 	 */
 	public void setElement(int x, int y, float value) {
 		if (!inBounds(x, y)) {
@@ -54,7 +57,8 @@ public final class Matrix3x3 {
 	 * @param x The row index of the element.
 	 * @param y The column index of the element.
 	 * @return The value of the matrix element at the given indices.
-	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out
+	 *                                   of bounds.
 	 */
 	public float getElement(int x, int y) {
 		if (!inBounds(x, y)) {
@@ -79,28 +83,30 @@ public final class Matrix3x3 {
 	/**
 	 * Creates a translation matrix based on the given translation vector.
 	 *
-	 * @param translation The translation vector representing the displacement in x and y coordinates.
+	 * @param translation The translation vector representing the displacement in x
+	 *                    and y coordinates.
 	 * @return The translation matrix.
 	 */
 	public static Matrix3x3 translationMatrix(Vector2 translation) {
-	    Matrix3x3 m = identityMatrix();
-	    m.matrix[i2D(2, 0)] = translation.x;
-	    m.matrix[i2D(2, 1)] = translation.y;
-	    return m;
+		Matrix3x3 m = identityMatrix();
+		m.matrix[i2D(2, 0)] = translation.x;
+		m.matrix[i2D(2, 1)] = translation.y;
+		return m;
 	}
 
 	/**
 	 * Creates a scale matrix based on the given scale vector.
 	 *
-	 * @param scale The scale vector representing the scaling factors in x and y coordinates.
+	 * @param scale The scale vector representing the scaling factors in x and y
+	 *              coordinates.
 	 * @return The scale matrix.
 	 */
 	public static Matrix3x3 scaleMatrix(Vector2 scale) {
-	    Matrix3x3 m = new Matrix3x3();
-	    m.matrix[i2D(0, 0)] = scale.x;
-	    m.matrix[i2D(1, 1)] = scale.y;
-	    m.matrix[i2D(2, 2)] = 1;
-	    return m;
+		Matrix3x3 m = new Matrix3x3();
+		m.matrix[i2D(0, 0)] = scale.x;
+		m.matrix[i2D(1, 1)] = scale.y;
+		m.matrix[i2D(2, 2)] = 1;
+		return m;
 	}
 
 	/**
@@ -110,27 +116,28 @@ public final class Matrix3x3 {
 	 * @return The rotation matrix.
 	 */
 	public static Matrix3x3 rotationMatrix(float angleDeg) {
-	    angleDeg *= Mathf.Deg2Rad;
-	    Matrix3x3 m = new Matrix3x3();
-	    m.matrix[i2D(0, 0)] = Mathf.cos(angleDeg);
-	    m.matrix[i2D(1, 0)] = Mathf.sin(angleDeg);
-	    m.matrix[i2D(0, 1)] = -Mathf.sin(angleDeg);
-	    m.matrix[i2D(1, 1)] = Mathf.cos(angleDeg);
-	    m.matrix[i2D(2, 2)] = 1;
-	    return m;
+		angleDeg *= Mathf.Deg2Rad;
+		Matrix3x3 m = new Matrix3x3();
+		m.matrix[i2D(0, 0)] = Mathf.cos(angleDeg);
+		m.matrix[i2D(1, 0)] = Mathf.sin(angleDeg);
+		m.matrix[i2D(0, 1)] = -Mathf.sin(angleDeg);
+		m.matrix[i2D(1, 1)] = Mathf.cos(angleDeg);
+		m.matrix[i2D(2, 2)] = 1;
+		return m;
 	}
 
 	/**
 	 * Creates a shear matrix based on the given shear vector.
 	 *
-	 * @param shear The shear vector representing the shearing factors in x and y coordinates.
+	 * @param shear The shear vector representing the shearing factors in x and y
+	 *              coordinates.
 	 * @return The shear matrix.
 	 */
 	public static Matrix3x3 shearMatrix(Vector2 shear) {
-	    Matrix3x3 m = identityMatrix();
-	    m.matrix[i2D(1, 0)] = shear.x;
-	    m.matrix[i2D(0, 1)] = shear.y;
-	    return m;
+		Matrix3x3 m = identityMatrix();
+		m.matrix[i2D(1, 0)] = shear.x;
+		m.matrix[i2D(0, 1)] = shear.y;
+		return m;
 	}
 
 	/**

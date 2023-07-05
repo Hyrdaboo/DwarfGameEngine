@@ -15,9 +15,9 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 
 /**
- * The <code>TriangleRasterizer</code> class provides functionality for rasterizing triangles
- * and interpolating attributes across the triangle surface.
- * It is used for rendering triangles on a 2D screen or surface.
+ * The <code>TriangleRasterizer</code> class provides functionality for
+ * rasterizing triangles and interpolating attributes across the triangle
+ * surface. It is used for rendering triangles on a 2D screen or surface.
  */
 public final class TriangleRasterizer {
 
@@ -30,11 +30,13 @@ public final class TriangleRasterizer {
 	}
 
 	/**
-	 * Binds a depth buffer to the renderer, specifying the buffer to use for storing depth information.
-	 * The depth buffer should have the same size as the screen.
+	 * Binds a depth buffer to the renderer, specifying the buffer to use for
+	 * storing depth information. The depth buffer should have the same size as the
+	 * screen.
 	 *
 	 * @param buffer The depth buffer to bind.
-	 * @throws IllegalArgumentException if the provided depth buffer size does not match the screen size.
+	 * @throws IllegalArgumentException if the provided depth buffer size does not
+	 *                                  match the screen size.
 	 */
 	public void bindDepth(float[] buffer) {
 		if (buffer.length != width * height) {
@@ -69,7 +71,7 @@ public final class TriangleRasterizer {
 	 * Draws a triangle using the specified vertices and shader.
 	 *
 	 * @param vertices The array of vertices that make up the triangle.
-	 * @param shader The shader to use for rendering the triangle.
+	 * @param shader   The shader to use for rendering the triangle.
 	 */
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
 
@@ -120,7 +122,7 @@ public final class TriangleRasterizer {
 			}
 			flatTop(v1, v2, v3, shader);
 		} else {
-			float t = Mathf.InverseLerp(v1.position.y, v3.position.y, v2.position.y);
+			float t = Mathf.inverseLerp(v1.position.y, v3.position.y, v2.position.y);
 			Vertex v4 = Vertex.Lerp(v1, v3, t);
 
 			if (v4.position.x > v2.position.x) {
@@ -193,9 +195,9 @@ public final class TriangleRasterizer {
 	}
 
 	private int toColor(Vector3 v) {
-		v.x = Mathf.Clamp01(v.x);
-		v.y = Mathf.Clamp01(v.y);
-		v.z = Mathf.Clamp01(v.z);
+		v.x = Mathf.clamp01(v.x);
+		v.y = Mathf.clamp01(v.y);
+		v.z = Mathf.clamp01(v.z);
 
 		int r = (int) (v.x * 255);
 		int g = (int) (v.y * 255);

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -22,9 +23,12 @@ import DwarfEngine.MathTypes.Vector2;
 import Renderer3D.SceneManager;
 
 /**
- * The <code>Application</code> class serves as the central component of the program, responsible for rendering pixels and creating the application window.
- * It is an abstract class that extends the <code>Canvas</code> class, providing a drawing surface on which pixels can be rendered.
- * Subclasses of <code>Application</code> must implement the necessary methods for rendering and handling user interactions.
+ * The <code>Application</code> class serves as the central component of the
+ * program, responsible for rendering pixels and creating the application
+ * window. It is an abstract class that extends the <code>Canvas</code> class,
+ * providing a drawing surface on which pixels can be rendered. Subclasses of
+ * <code>Application</code> must implement the necessary methods for rendering
+ * and handling user interactions.
  */
 public abstract class Application extends Canvas {
 	private static final long serialVersionUID = 1L;
@@ -47,11 +51,12 @@ public abstract class Application extends Canvas {
 	/**
 	 * Initializes the Application with the specified resolution and pixel scale.
 	 *
-	 * @param resX The horizontal resolution of the display.
-	 * @param resY The vertical resolution of the display.
+	 * @param resX       The horizontal resolution of the display.
+	 * @param resY       The vertical resolution of the display.
 	 * @param pixelScale The scaling factor for the display pixels.
 	 */
 	public void Initialize(int resX, int resY, int pixelScale) {
+		pixelScale = Math.max(pixelScale, 1);
 		this.pixelScale = pixelScale;
 		frameSize = new Vector2(resX, resY);
 
@@ -78,6 +83,11 @@ public abstract class Application extends Canvas {
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		applicationWindow.getContentPane().setBackground(Color.black);
 
+		try {
+			setIcon(ImageIO.read(Application.class.getResource("/Dwarf-Logo.png")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		OnStart();
 		startTime = System.currentTimeMillis();
 		Run();
@@ -123,8 +133,9 @@ public abstract class Application extends Canvas {
 	}
 
 	/**
-	 * Gracefully exits the application by stopping the main loop and triggering the window closing event.
-	 * This method should be called to terminate the application and clean up any resources.
+	 * Gracefully exits the application by stopping the main loop and triggering the
+	 * window closing event. This method should be called to terminate the
+	 * application and clean up any resources.
 	 */
 	public synchronized void Exit() {
 		isRunning = false;
@@ -132,13 +143,15 @@ public abstract class Application extends Canvas {
 	}
 
 	/**
-	 * This method is called when the application starts.
-	 * Implement this method in your subclass to define the actions to be performed on application start.
+	 * This method is called when the application starts. Implement this method in
+	 * your subclass to define the actions to be performed on application start.
 	 */
 	public abstract void OnStart();
+
 	/**
-	 * This method is called on every update frame of the application.
-	 * Implement this method in your subclass to define the actions to be performed on each update.
+	 * This method is called on every update frame of the application. Implement
+	 * this method in your subclass to define the actions to be performed on each
+	 * update.
 	 */
 	public abstract void OnUpdate();
 
@@ -205,10 +218,11 @@ public abstract class Application extends Canvas {
 	boolean fullscreen = false;
 
 	/**
-	 * Switches the application between fullscreen and windowed mode.
-	 * This method disposes the application window and resets the key states.
-	 * If the application is currently in windowed mode, it will switch to fullscreen mode.
-	 * If the application is already in fullscreen mode, it will switch back to windowed mode.
+	 * Switches the application between fullscreen and windowed mode. This method
+	 * disposes the application window and resets the key states. If the application
+	 * is currently in windowed mode, it will switch to fullscreen mode. If the
+	 * application is already in fullscreen mode, it will switch back to windowed
+	 * mode.
 	 */
 	public void switchFullscreen() {
 		applicationWindow.dispose();
@@ -231,37 +245,33 @@ public abstract class Application extends Canvas {
 	}
 
 	/**
-	 * Sets the icon of the application window using the image located at the specified path.
+	 * Sets the icon of the application window
 	 *
-	 * @param imagePath The path to the image file used as the application window icon.
+	 * @param icon The image to be set as a an icon
 	 */
-	public final void setIcon(String imagepath) {
-		try {
-			applicationWindow.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(imagepath)));
-		} catch (Exception e) {
-			System.err.println("failed to load icon");
-			return;
-		}
+	public final void setIcon(Image icon) {
+		applicationWindow.setIconImage(icon);
 	}
 
 	/**
-	 * Saves the current frame as an image file in the specified directory with the given image name.
+	 * Saves the current frame as an image file in the specified directory with the
+	 * given image name.
 	 *
 	 * @param directory The directory path where the image will be saved.
 	 * @param imageName The name of the image file (without the file extension).
 	 */
 	public void saveImage(String directory, String imageName) {
-        File outputFile = new File(directory + "/" + imageName + ".png");
-        if (!outputFile.getParentFile().exists()) {
-            System.err.println("Specified directiory is not valid!");
-            return;
-        }
-        try {
-            outputFile.createNewFile();
-            ImageIO.write(frame, "png", outputFile);
-            System.out.println("Image " + outputFile.getName() + " saved to " + directory);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		File outputFile = new File(directory + "/" + imageName + ".png");
+		if (!outputFile.getParentFile().exists()) {
+			System.err.println("Specified directiory is not valid!");
+			return;
+		}
+		try {
+			outputFile.createNewFile();
+			ImageIO.write(frame, "png", outputFile);
+			System.out.println("Image " + outputFile.getName() + " saved to " + directory);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,0 +1,1 @@
+These are the assets used by the demos. Do not delete anything or change names otherwise the DemoSceneLoader class will fail to find the necessary asset files and crash as a result

@@ -20,8 +20,8 @@ import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 
 /**
- * A simple polling-based input system that provides methods for handling user input.
- * It provides methods for checking the state of keys, buttons and such.
+ * A simple polling-based input system that provides methods for handling user
+ * input. It provides methods for checking the state of keys, buttons and such.
  */
 public final class Input implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	class KeyEvt {
@@ -147,9 +147,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	/**
 	 * Checks if a mouse button is currently being held down.
 	 *
-	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
-	 * @return {@code true} if the specified mouse button is being held down, {@code false} otherwise.
-	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
+	 *               and 3.
+	 * @return {@code true} if the specified mouse button is being held down,
+	 *         {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is
+	 *                                  provided.
 	 */
 	public static boolean MouseButtonHeld(int button) {
 		if (button < 1 || button > 3) {
@@ -164,9 +167,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	/**
 	 * Checks if a mouse button has been clicked.
 	 *
-	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
-	 * @return {@code true} if the specified mouse button has been clicked, {@code false} otherwise.
-	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
+	 *               and 3.
+	 * @return {@code true} if the specified mouse button has been clicked,
+	 *         {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is
+	 *                                  provided.
 	 */
 	public static boolean MouseButtonClicked(int button) {
 		if (button < 1 || button > 3) {
@@ -182,9 +188,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	/**
 	 * Checks if a mouse button has been released.
 	 *
-	 * @param button The index of the mouse button to check. Valid indexes are 1, 2, and 3.
-	 * @return {@code true} if the specified mouse button has been released, {@code false} otherwise.
-	 * @throws IllegalArgumentException if an invalid mouse button index is provided.
+	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
+	 *               and 3.
+	 * @return {@code true} if the specified mouse button has been released,
+	 *         {@code false} otherwise.
+	 * @throws IllegalArgumentException if an invalid mouse button index is
+	 *                                  provided.
 	 */
 	public static boolean MouseButtonReleased(int button) {
 		if (button < 1 || button > 3) {
@@ -252,10 +261,10 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
 		if (!mouseConfined)
 			return;
-		float rightEdge = Mathf.Clamp(windowX + windowWidth, 0, screenSize.width - 1);
-		float leftEdge = Mathf.Clamp(windowX, 0, screenSize.width - 1);
-		float bottomEdge = Mathf.Clamp(windowY + windowHeight, 0, screenSize.height - 1);
-		float topEdge = Mathf.Clamp(windowY, 0, screenSize.height - 1);
+		float rightEdge = Mathf.clamp(windowX + windowWidth, 0, screenSize.width - 1);
+		float leftEdge = Mathf.clamp(windowX, 0, screenSize.width - 1);
+		float bottomEdge = Mathf.clamp(windowY + windowHeight, 0, screenSize.height - 1);
+		float topEdge = Mathf.clamp(windowY, 0, screenSize.height - 1);
 
 		if (pos.x >= rightEdge) {
 			bot.mouseMove((int) leftEdge + 1, pos.y);
@@ -290,7 +299,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	/**
 	 * Sets whether the mouse cursor should be confined within the window.
 	 *
-	 * @param confined true to confine the mouse cursor, false to allow it to move freely.
+	 * @param confined true to confine the mouse cursor, false to allow it to move
+	 *                 freely.
 	 */
 	public static void setMouseConfined(boolean confined) {
 		mouseConfined = confined;
@@ -318,8 +328,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * Returns the direction of the mouse wheel scroll.
 	 *
 	 * @return An integer representing the direction of the mouse wheel scroll.
-	 *         Positive value indicates scrolling up, negative value indicates scrolling down,
-	 *         and 0 indicates no scrolling.
+	 *         Positive value indicates scrolling up, negative value indicates
+	 *         scrolling down, and 0 indicates no scrolling.
 	 */
 	public static int getMouseWheel() {
 		return scrollDir;

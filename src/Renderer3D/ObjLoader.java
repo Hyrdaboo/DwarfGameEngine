@@ -5,17 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 /**
- * Utility class for loading 3D models from OBJ files.
- * <br><br>
- * <strong>IMPORTANT!</strong> You have to make sure your mesh is properly triangulated.
- * This OBJ loader is a basic implementation and does not perform automatic triangulation.
+ * Utility class for loading 3D models from OBJ files. <br>
+ * <br>
+ * <strong>IMPORTANT!</strong> You have to make sure your mesh is properly
+ * triangulated. This OBJ loader is a basic implementation and does not perform
+ * automatic triangulation.
  */
 public final class ObjLoader {
 
@@ -23,26 +22,15 @@ public final class ObjLoader {
 	 *
 	 * Loads a 3D Mesh object from an OBJ file.
 	 *
-	 * @param path The file path of the OBJ file.
+	 * @param objFile ObjFile
 	 * @return The loaded Mesh as a {@link Mesh} object
-	 * @throws RuntimeException if an error occurs while reading your file
-	 * @throws Exception if the file format is not .obj or the file doesn't exist
 	 */
-	public static Mesh Load(String path) {
-		File objFile = null;
-
-		try {
-			Pattern pattern = Pattern.compile(".obj");
-			Matcher matcher = pattern.matcher(path + "$");
-			if (!matcher.find()) {
-				throw new Exception("The specified file format is not \".obj\"");
-			}
-
-			objFile = new File(path);
-			if (!objFile.exists())
-				throw new Exception("Specified file does not exist!");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	public static Mesh Load(File objFile) {
+		String[] name = objFile.getName().split("\\.");
+		String extension = name[name.length - 1];
+		if (!extension.equals("obj")) {
+			System.err.println("Provided file is not obj");
+			return null;
 		}
 
 		List<Vector3> tempVertices = new ArrayList<>();
@@ -116,7 +104,7 @@ public final class ObjLoader {
 			reader.close();
 
 		} catch (Exception e) {
-			System.err.println("An unknown error occured while trying to load your obj file");
+			System.err.println("An unknown error occured while trying to load your obj file: \n" + e.getMessage());
 		}
 
 		List<Vector3> vertices = new ArrayList<>();

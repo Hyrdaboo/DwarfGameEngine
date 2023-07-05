@@ -1,8 +1,9 @@
 package DwarfEngine.Core;
 
 /**
- * The Keycode enum represents various key codes with their corresponding integer values.
- * It is used by the <code>Input</code> class for methods involving key presses.
+ * The Keycode enum represents various key codes with their corresponding
+ * integer values. It is used by the <code>Input</code> class for methods
+ * involving key presses.
  *
  * @see Input#OnKeyPressed(Keycode)
  * @see Input#OnKeyHeld(Keycode)

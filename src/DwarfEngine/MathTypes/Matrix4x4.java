@@ -1,6 +1,5 @@
 package DwarfEngine.MathTypes;
 
-
 /**
  * A 4x4 matrix implementation.
  */
@@ -30,7 +29,8 @@ public final class Matrix4x4 {
 	 * @param x       The row index of the element.
 	 * @param y       The column index of the element.
 	 * @param element The value to set.
-	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out
+	 *                                   of bounds.
 	 */
 	public void setElement(int x, int y, float element) {
 		if (!inBounds(x, y)) {
@@ -45,7 +45,8 @@ public final class Matrix4x4 {
 	 * @param x The row index of the element.
 	 * @param y The column index of the element.
 	 * @return The value of the matrix element at the given indices.
-	 * @throws IndexOutOfBoundsException If the provided row or column index is out of bounds.
+	 * @throws IndexOutOfBoundsException If the provided row or column index is out
+	 *                                   of bounds.
 	 */
 	public float getElement(int x, int y) {
 		if (!inBounds(x, y)) {
@@ -90,7 +91,8 @@ public final class Matrix4x4 {
 	 * Multiplies the given vector by the matrix and returns the resulting vector.
 	 *
 	 * @param vec The vector to be multiplied by the matrix.
-	 * @return The vector resulting from the multiplication of the given vector and the matrix.
+	 * @return The vector resulting from the multiplication of the given vector and
+	 *         the matrix.
 	 */
 	public Vector3 MultiplyByVector(Vector3 vec) {
 		Vector3 out = new Vector3(0, 0, 0);
@@ -102,17 +104,18 @@ public final class Matrix4x4 {
 	}
 
 	/**
-	 * Applies perspective projection to the given projection matrix based on the provided parameters.
+	 * Applies perspective projection to the given projection matrix based on the
+	 * provided parameters.
 	 *
-	 * @param fov           The field of view angle in degrees.
-	 * @param aspectRatio   The aspect ratio of the projection.
-	 * @param near          The distance to the near clipping plane.
-	 * @param far           The distance to the far clipping plane.
+	 * @param fov              The field of view angle in degrees.
+	 * @param aspectRatio      The aspect ratio of the projection.
+	 * @param near             The distance to the near clipping plane.
+	 * @param far              The distance to the far clipping plane.
 	 * @param projectionMatrix The projection matrix to be modified.
 	 */
 	public static void PerspectiveProjection(float fov, float aspectRatio, float near, float far,
 			Matrix4x4 projectionMatrix) {
-		fov = Mathf.Clamp(fov, 1, 179);
+		fov = Mathf.clamp(fov, 1, 179);
 
 		float fovRad = 1.0f / Mathf.tan(fov * 0.5f * Mathf.Deg2Rad);
 
@@ -125,7 +128,8 @@ public final class Matrix4x4 {
 	}
 
 	/**
-	 * Sets the matrix to represent a translation transformation based on the given position.
+	 * Sets the matrix to represent a translation transformation based on the given
+	 * position.
 	 *
 	 * @param pos The translation position.
 	 */
@@ -209,7 +213,8 @@ public final class Matrix4x4 {
 	}
 
 	/**
-	 * Sets the scaling components of the matrix based on the specified scale vector.
+	 * Sets the scaling components of the matrix based on the specified scale
+	 * vector.
 	 *
 	 * @param scale The vector representing the scaling factors along each axis.
 	 */
@@ -221,7 +226,8 @@ public final class Matrix4x4 {
 	}
 
 	/**
-	 * Creates a transformation matrix that aligns an object's orientation with the given position, target, and up vector.
+	 * Creates a transformation matrix that aligns an object's orientation with the
+	 * given position, target, and up vector.
 	 *
 	 * @param pos    The position of the object.
 	 * @param target The target position to align with.

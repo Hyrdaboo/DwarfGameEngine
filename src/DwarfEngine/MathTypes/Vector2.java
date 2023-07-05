@@ -156,8 +156,8 @@ public final class Vector2 {
 	}
 
 	/**
-	 * Returns a normalized version of the vector.
-	 * If the vector's magnitude is zero, returns a zero vector.
+	 * Returns a normalized version of the vector. If the vector's magnitude is
+	 * zero, returns a zero vector.
 	 *
 	 * @return The normalized vector.
 	 */
@@ -187,8 +187,8 @@ public final class Vector2 {
 	 */
 	public static Vector2 Lerp(Vector2 a, Vector2 b, float t) {
 		Vector2 v = Vector2.zero();
-		v.x = Mathf.Lerp(a.x, b.x, t);
-		v.y = Mathf.Lerp(a.y, b.y, t);
+		v.x = Mathf.lerp(a.x, b.x, t);
+		v.y = Mathf.lerp(a.y, b.y, t);
 		return v;
 	}
 
@@ -198,7 +198,7 @@ public final class Vector2 {
 	 * @param v The vector to clamp.
 	 */
 	public static void Clamp01(Vector2 v) {
-		v.x = Mathf.Clamp01(v.x);
-		v.y = Mathf.Clamp01(v.y);
+		v.x = Mathf.clamp01(v.x);
+		v.y = Mathf.clamp01(v.y);
 	}
 }

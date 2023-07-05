@@ -12,41 +12,49 @@ import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 /**
- * The Texture class represents an image texture used for loading and manipulating textures.
- * It provides functionalities to load image files, set and get individual pixel colors,
- * and supports various wrap modes and sampling modes for texture sampling.
+ * The Texture class represents an image texture used for loading and
+ * manipulating textures. It provides functionalities to load image files, set
+ * and get individual pixel colors, and supports various wrap modes and sampling
+ * modes for texture sampling.
  */
 public final class Texture {
 	private int[] pixels;
 	int width, height;
 
 	/**
-	 * The WrapMode enum represents different wrap modes for texture sampling.
-	 * It defines the following wrap modes:
+	 * The WrapMode enum represents different wrap modes for texture sampling. It
+	 * defines the following wrap modes:
 	 * <ul>
-	 *     <li><b>Repeat:</b> The texture wraps around and repeats in both directions.</li>
-	 *     <li><b>Clamp:</b> The texture's edge pixels are repeated beyond the texture boundaries.</li>
-	 *     <li><b>RepeatMirrored:</b> The texture wraps around and repeats in both directions, with mirrored repetitions.</li>
+	 * <li><b>Repeat:</b> The texture wraps around and repeats in both
+	 * directions.</li>
+	 * <li><b>Clamp:</b> The texture's edge pixels are repeated beyond the texture
+	 * boundaries.</li>
+	 * <li><b>RepeatMirrored:</b> The texture wraps around and repeats in both
+	 * directions, with mirrored repetitions.</li>
 	 * </ul>
 	 *
-	 * <strong>Note!</strong> This doesn't work with {@link Texture#SampleFast(float, float)} as it ignores wrap modes and by default only supports clamping
+	 * <strong>Note!</strong> This doesn't work with
+	 * {@link Texture#SampleFast(float, float)} as it ignores wrap modes and by
+	 * default only supports clamping
 	 */
 	public enum WrapMode {
 		Repeat, Clamp, RepeatMirrored
 	}
 
 	/**
-	 * The wrapMode field represents the current wrap mode for texture sampling.
-	 * It is initialized with the default value of {@link WrapMode#Clamp}.
+	 * The wrapMode field represents the current wrap mode for texture sampling. It
+	 * is initialized with the default value of {@link WrapMode#Clamp}.
 	 */
 	public WrapMode wrapMode = WrapMode.Clamp;
 
 	/**
-	 * The SamplingMode enum represents different sampling modes for texture sampling.
-	 * It defines the following sampling modes:
+	 * The SamplingMode enum represents different sampling modes for texture
+	 * sampling. It defines the following sampling modes:
 	 * <ul>
-	 *     <li><b>Point:</b> The texture is sampled using nearest-neighbor interpolation.</li>
-	 *     <li><b>Bilinear:</b> The texture is sampled using bilinear interpolation.</li>
+	 * <li><b>Point:</b> The texture is sampled using nearest-neighbor
+	 * interpolation.</li>
+	 * <li><b>Bilinear:</b> The texture is sampled using bilinear
+	 * interpolation.</li>
 	 * </ul>
 	 */
 	public enum SamplingMode {
@@ -54,8 +62,9 @@ public final class Texture {
 	}
 
 	/**
-	 * The samplingMode field represents the current sampling mode for texture sampling.
-	 * It is initialized with the default value of {@link SamplingMode#Point}.
+	 * The samplingMode field represents the current sampling mode for texture
+	 * sampling. It is initialized with the default value of
+	 * {@link SamplingMode#Point}.
 	 */
 	public SamplingMode samplingMode = SamplingMode.Point;
 	public Vector2 tiling = Vector2.one();
@@ -92,12 +101,14 @@ public final class Texture {
 	}
 
 	/**
-	 * Loads an image from the specified file path and initializes the texture with its pixel data.
+	 * Loads an image from the specified file path and initializes the texture with
+	 * its pixel data.
 	 *
 	 * @param path The path of the image file to load.
-	 * @throws RuntimeException If the image path is invalid or the image cannot be loaded.
+	 * @throws RuntimeException If the image path is invalid or the image cannot be
+	 *                          loaded.
 	 */
-	public void LoadFromFile(String path) {
+	public void Load(String path) {
 		try {
 			BufferedImage image = ImageIO.read(new File(path));
 			int w = image.getWidth();
@@ -111,6 +122,22 @@ public final class Texture {
 				throw new RuntimeException("Invalid image path");
 			}
 		}
+	}
+
+	/**
+	 * Initializes the texture with pixel data of a {@link BufferedImage}
+	 *
+	 * @param image <code>BufferedImage</code> to be used
+	 */
+	public void Load(BufferedImage image) {
+		if (image == null)
+			return;
+		int w = image.getWidth();
+		int h = image.getHeight();
+		width = w;
+		height = h;
+		pixels = new int[width * height];
+		pixels = image.getRGB(0, 0, width, height, pixels, 0, width);
 	}
 
 	public int getWidth() {
@@ -127,7 +154,8 @@ public final class Texture {
 	 * @param x The x-coordinate of the pixel.
 	 * @param y The y-coordinate of the pixel.
 	 * @return The Color object representing the pixel color.
-	 * @throws IndexOutOfBoundsException If the specified coordinates are outside the image bounds.
+	 * @throws IndexOutOfBoundsException If the specified coordinates are outside
+	 *                                   the image bounds.
 	 */
 	public Color GetPixel(int x, int y) {
 		if (x >= width || x < 0 || y >= height || y < 0) {
@@ -150,16 +178,17 @@ public final class Texture {
 	 * @param yStart The starting y-coordinate of the region.
 	 * @param w      The width of the region.
 	 * @param h      The height of the region.
-	 * @return An array of pixels representing the specified region. <br><code>null</code> if something goes wrong
+	 * @return An array of pixels representing the specified region. <br>
+	 *         <code>null</code> if something goes wrong
 	 */
 	public int[] GetPixels(int xStart, int yStart, int w, int h) {
 		try {
-			int[] newImg = new int[w*h];
-			for (int y = yStart; y < yStart+h; y++) {
-				for (int x = xStart; x < xStart+w; x++) {
-					int xCoord = x-xStart;
-					int yCoord = y-yStart;
-					newImg[xCoord + yCoord*w] = pixels[x + y*width];
+			int[] newImg = new int[w * h];
+			for (int y = yStart; y < yStart + h; y++) {
+				for (int x = xStart; x < xStart + w; x++) {
+					int xCoord = x - xStart;
+					int yCoord = y - yStart;
+					newImg[xCoord + yCoord * w] = pixels[x + y * width];
 				}
 			}
 			return newImg;
@@ -176,7 +205,8 @@ public final class Texture {
 	 * @param x The x-coordinate of the pixel.
 	 * @param y The y-coordinate of the pixel.
 	 * @param c The Color object representing the new color of the pixel.
-	 * @throws IndexOutOfBoundsException If the specified coordinates are outside the image bounds.
+	 * @throws IndexOutOfBoundsException If the specified coordinates are outside
+	 *                                   the image bounds.
 	 */
 	public void SetPixel(int x, int y, Color c) {
 		if (x >= width || x < 0 || y >= height || y < 0) {
@@ -189,21 +219,22 @@ public final class Texture {
 	/**
 	 * Sets the pixels of the texture starting from the specified coordinates.
 	 *
-	 * @param pixels  The array of pixels to set.
-	 * @param w       The width of the pixel data.
-	 * @param h       The height of the pixel data.
-	 * @param xStart  The starting x-coordinate of the destination region.
-	 * @param yStart  The starting y-coordinate of the destination region.
+	 * @param pixels The array of pixels to set.
+	 * @param w      The width of the pixel data.
+	 * @param h      The height of the pixel data.
+	 * @param xStart The starting x-coordinate of the destination region.
+	 * @param yStart The starting y-coordinate of the destination region.
 	 */
 	public void SetPixels(int[] pixels, int w, int h, int xStart, int yStart) {
-		if (pixels == null) return;
+		if (pixels == null)
+			return;
 
 		try {
 			for (int y = yStart; y < yStart + h; y++) {
 				for (int x = xStart; x < xStart + w; x++) {
-					int xCoord = x-xStart;
-					int yCoord = y-yStart;
-					this.pixels[x + y*width] = pixels[xCoord + yCoord*w];
+					int xCoord = x - xStart;
+					int yCoord = y - yStart;
+					this.pixels[x + y * width] = pixels[xCoord + yCoord * w];
 				}
 			}
 		} catch (Exception e) {
@@ -222,9 +253,11 @@ public final class Texture {
 	}
 
 	/**
-	 * Samples the texture at the specified UV coordinates and returns the sampled color as a Vector3.
-	 * This method implements all the sampling and wrap modes, but it exhibits slower performance due to the implementation of multiple sampling and wrap modes.
-	 * If performance is a concern and wrap modes aren't a requirement, then using {@link Texture#SampleFast(float, float)} is advised.
+	 * Samples the texture at the specified UV coordinates and returns the sampled
+	 * color as a Vector3. This method implements all the sampling and wrap modes,
+	 * but it exhibits slower performance due to the implementation of multiple
+	 * sampling and wrap modes. If performance is a concern and wrap modes aren't a
+	 * requirement, then using {@link Texture#SampleFast(float, float)} is advised.
 	 *
 	 * @param u The U-coordinate of the texture.
 	 * @param v The V-coordinate of the texture.
@@ -242,8 +275,8 @@ public final class Texture {
 
 		switch (wrapMode) {
 		case Clamp: {
-			x = (int) Mathf.Clamp(x, 0, ((width - 1) * precision));
-			y = (int) Mathf.Clamp(y, 0, ((height - 1) * precision));
+			x = (int) Mathf.clamp(x, 0, ((width - 1) * precision));
+			y = (int) Mathf.clamp(y, 0, ((height - 1) * precision));
 			break;
 		}
 		case Repeat:
@@ -280,8 +313,8 @@ public final class Texture {
 		} else {
 			float xf = x / (float) precision;
 			float yf = y / (float) precision;
-			xf = Mathf.Clamp(xf, 0, width - 1);
-			yf = Mathf.Clamp(yf, 0, height - 1);
+			xf = Mathf.clamp(xf, 0, width - 1);
+			yf = Mathf.clamp(yf, 0, height - 1);
 			Vector2 tl = new Vector2((int) xf, (int) yf);
 			Vector2 tr = new Vector2(Mathf.ceil(xf), (int) yf);
 			Vector2 bl = new Vector2((int) xf, Mathf.ceil(yf));
@@ -298,16 +331,18 @@ public final class Texture {
 	}
 
 	/**
-	 * Fast sampling method that performs clamping and interpolation to sample the texture at the specified UV coordinates.
-	 * This method is faster than the regular {@link Texture#Sample(float, float)} method, making it advantageous when performance is a concern.
+	 * Fast sampling method that performs clamping and interpolation to sample the
+	 * texture at the specified UV coordinates. This method is faster than the
+	 * regular {@link Texture#Sample(float, float)} method, making it advantageous
+	 * when performance is a concern.
 	 *
 	 * @param u The U-coordinate of the texture.
 	 * @param v The V-coordinate of the texture.
 	 * @return The sampled color as a Vector3.
 	 */
 	public Vector3 SampleFast(float u, float v) {
-		float x = Mathf.Clamp(u * width, 0, width - 1);
-		float y = Mathf.Clamp(v * height, 0, height - 1);
+		float x = Mathf.clamp(u * width, 0, width - 1);
+		float y = Mathf.clamp(v * height, 0, height - 1);
 
 		if (samplingMode == SamplingMode.Point) {
 			return GetPixelUv((int) x, (int) y);

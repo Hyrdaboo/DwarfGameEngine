@@ -4,9 +4,9 @@ import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector3;
 
 /**
- * The <code>Transform</code> class represents the transformation of an object in 3D space.
- * It encapsulates the position, rotation, and scale of the object, as well as provides
- * utility methods for generating transformation matrices.
+ * The <code>Transform</code> class represents the transformation of an object
+ * in 3D space. It encapsulates the position, rotation, and scale of the object,
+ * as well as provides utility methods for generating transformation matrices.
  */
 public class Transform {
 	public Vector3 position = Vector3.zero();
@@ -38,10 +38,10 @@ public class Transform {
 	}
 
 	/**
-     * Retrieves the transformation matrix of the object.
-     *
-     * @return The transformation matrix.
-     */
+	 * Retrieves the transformation matrix of the object.
+	 *
+	 * @return The transformation matrix.
+	 */
 	public Matrix4x4 getMatrixTRS() {
 
 		transformMatrix = Matrix4x4.identityMatrix();
