@@ -46,13 +46,13 @@ public abstract class Shader {
 	 * use ouput of another shader and modify it and if the other shader uses
 	 * lighting or ({@link #objectTransform}, {@link #cameraTransform}). Call this
 	 * function before getting the output of another shader. Example:
-	 * 
+	 *
 	 * <pre>
 	 * //inside Fragment function of your shader:
 	 * passObjectData(base);
 	 * Vector3 baseCol = base.Fragment(in);
 	 * </pre>
-	 * 
+	 *
 	 * @param other
 	 */
 	protected void passObjectData(Shader other) {

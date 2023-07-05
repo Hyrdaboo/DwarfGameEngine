@@ -16,8 +16,8 @@ import DwarfEngine.MathTypes.Vector2;
 import Renderer3D.SceneManager;
 
 /**
- * To load demos you'll need to copy the folder DemoResources into the main directory of 
- * your project otherwise none of the demos will work
+ * To load demos you'll need to copy the folder DemoResources into the main
+ * directory of your project otherwise none of the demos will work
  */
 @SuppressWarnings("serial")
 public class DemoSceneLoader extends Application {
@@ -44,12 +44,15 @@ public class DemoSceneLoader extends Application {
 		SceneManager.AddScene(ShaderShowcaseScene.class, "Showcase");
 		SceneManager.AddScene(WarningScene.class, "Warning");
 		SceneManager.AddScene(TerrainDemo.class, "Terrain");
+		SceneManager.AddScene(WarningScene.class, "Warning");
+		SceneManager.AddScene(LightsDemo.class, "Lights");
+
 		SceneManager.LoadScene("Suzanne");
 	}
 
 	Vector2 textPos = Vector2.zero();
 	Vector2 textScale = new Vector2(0.6f, 0.6f);
-	String[] sceneNames = new String[] { "Suzanne", "Warning", "Showcase", "Warning", "Terrain" };
+	String[] sceneNames = new String[] { "Suzanne", "Warning", "Showcase", "Warning", "Terrain", "Lights" };
 	int sceneIndex = 1;
 
 	@Override

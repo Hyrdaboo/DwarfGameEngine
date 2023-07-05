@@ -57,24 +57,21 @@ public class Phong extends Shader {
 				Vector3 difference = Vector3.subtract2Vecs(light.transform.position, in.worldPos);
 				lightDir = difference.normalized();
 				float lightDist = difference.magnitude();
-				attenuation = Mathf.clamp01((light.radius / lightDist) - 1);
+				attenuation = Mathf.clamp01(lightDist / light.radius);
+				attenuation = 1 - attenuation;
 			}
 
 			Vector3 halfVector = Vector3.add2Vecs(lightDir, cameraDir).normalized();
 			float specular = Vector3.Dot(normal, halfVector);
 			specular = Mathf.pow(specular, shininess);
 			specular = Mathf.clamp01(specular);
-			finalSpecular.addTo(Vector3.mulVecFloat(specularColor, specular));
-			finalSpecular = Vector3.mul2Vecs(finalSpecular, light.getColor());
-			finalSpecular.multiplyBy(light.intensity);
-			finalSpecular.multiplyBy(attenuation);
+			specular *= light.intensity * attenuation;
+			finalSpecular.addTo(Vector3.mul2Vecs(Vector3.mulVecFloat(specularColor, specular), light.getColor()));
 
 			float diffuse = Vector3.Dot(normal, lightDir);
 			diffuse = Mathf.clamp01(diffuse);
-			finalCol.addTo(diffuse);
-			finalCol = Vector3.mul2Vecs(finalCol, light.getColor());
-			finalCol.multiplyBy(light.intensity);
-			finalCol.multiplyBy(attenuation);
+			diffuse *= light.intensity * attenuation;
+			finalCol.addTo(Vector3.mulVecFloat(light.getColor(), diffuse));
 		}
 		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
 		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
