@@ -23,6 +23,7 @@ public class LightsDemo extends Scene {
 
 	Application app;
 
+	@SuppressWarnings("unused")
 	public LightsDemo(Application application) {
 		super(application);
 		app = application;
