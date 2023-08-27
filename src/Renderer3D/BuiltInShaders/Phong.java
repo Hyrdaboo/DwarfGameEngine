@@ -43,9 +43,9 @@ public class Phong extends Shader {
 			}
 
 			Vector3 normal = in.normal.normalized();
-			normal = objectTransform.getRotationMatrix().MultiplyByVector(normal);
+			normal = rotationMatrix.MultiplyByVector(normal);
 
-			Vector3 lightDir = null;
+			Vector3 lightDir;
 			float attenuation = 1;
 
 			Vector3 cameraDir = Vector3.subtract2Vecs(cameraTransform.position, in.worldPos).normalized();

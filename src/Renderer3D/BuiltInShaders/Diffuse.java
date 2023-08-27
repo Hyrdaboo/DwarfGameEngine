@@ -41,7 +41,7 @@ public class Diffuse extends Shader {
 			}
 
 			Vector3 normal = in.normal.normalized();
-			normal = objectTransform.getRotationMatrix().MultiplyByVector(normal);
+			normal = rotationMatrix.MultiplyByVector(normal);
 
 			Vector3 lightDir = null;
 			float attenuation = 1;
