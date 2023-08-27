@@ -1,11 +1,11 @@
 package Renderer3D.BuiltInShaders;
 
-import java.awt.Color;
-
-import DwarfEngine.Texture;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.Texture;
 import Renderer3D.Shader;
 import Renderer3D.Vertex;
+
+import java.awt.*;
 
 /**
  * A simple shader that outputs a texture with a tint
@@ -13,7 +13,7 @@ import Renderer3D.Vertex;
 public class Unlit extends Shader {
 
 	Texture texture = Texture.solidTexture(Color.white);
-	private Vector3 tint = Vector3.one();
+	private Vector3 tint = null;
 	public boolean fastSample = true;
 
 	public Unlit() {
@@ -37,14 +37,13 @@ public class Unlit extends Shader {
 
 	@Override
 	public Vector3 Fragment(Vertex in, Vector3 dst) {
-		Vector3 col;
 		if (fastSample) {
-			col = texture.SampleFast(in.texcoord.x, in.texcoord.y, dst);
+			texture.SampleFast(in.texcoord.x, in.texcoord.y, dst);
 		} else {
-			col = texture.Sample(in.texcoord.x, in.texcoord.y, dst);
+			texture.Sample(in.texcoord.x, in.texcoord.y, dst);
 		}
-		Vector3.mul2Vecs(col, tint, col);
-		return col;
+		if (tint != null) Vector3.mul2Vecs(dst, tint, dst);
+		return dst;
 	}
 
 }

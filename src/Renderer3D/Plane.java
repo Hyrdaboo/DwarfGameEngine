@@ -1,34 +1,33 @@
 package Renderer3D;
 
-import java.util.function.Function;
-
 import DwarfEngine.MathTypes.Vector3;
+
+import java.util.function.Function;
 
 class Plane {
 
-	Vector3 point;
+	float point;
 	Vector3 normal;
 
 	public Plane(Vector3 point, Vector3 dir) {
-		this.point = point;
+		this.point = Vector3.Dot(point, dir);
 		this.normal = dir;
 	}
 
-	private static float lineIntersectPlane(Vector3 planePoint, Vector3 planeNormal, Vector3 lineStart,
+	private static float lineIntersectPlane(float planePoint, Vector3 planeNormal, Vector3 lineStart,
 											Vector3 lineEnd) {
 		planeNormal.Normalize();
-		float planeD = -Vector3.Dot(planeNormal, planePoint);
 		float ad = Vector3.Dot(lineStart, planeNormal);
 		float bd = Vector3.Dot(lineEnd, planeNormal);
-		return (-planeD - ad) / (bd - ad);
+		return (planePoint - ad) / (bd - ad);
 	}
 
-	static Triangle[] triangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Triangle inTri) {
+	static Triangle[] triangleClipAgainstPlane(float planePoint, Vector3 planeNormal, Triangle inTri) {
 
 		Triangle[] outTris = new Triangle[2];
 		planeNormal.Normalize();
 
-		Function<Vector3, Float> dist = (p) -> (planeNormal.x * p.x + planeNormal.y * p.y + planeNormal.z * p.z - Vector3.Dot(planeNormal, planePoint));
+		Function<Vector3, Float> dist = (p) -> (planeNormal.x * p.x + planeNormal.y * p.y + planeNormal.z * p.z - planePoint);
 
 		Vertex[] insidePoints = new Vertex[3];
 		int insidePointCount = 0;

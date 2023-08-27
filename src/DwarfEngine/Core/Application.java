@@ -1,26 +1,18 @@
 package DwarfEngine.Core;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
+import DwarfEngine.FpsCounter;
+import DwarfEngine.MathTypes.Vector2;
+import Renderer3D.SceneManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
-import DwarfEngine.FpsCounter;
-import DwarfEngine.MathTypes.Vector2;
-import Renderer3D.SceneManager;
 
 /**
  * The <code>Application</code> class serves as the central component of the
@@ -159,7 +151,7 @@ public abstract class Application extends Canvas {
 		long timeLastFrame = System.nanoTime();
 		while (isRunning) {
 			long currentTime = System.nanoTime();
-			deltaTime = (currentTime - timeLastFrame) / 1000000000.0;
+			deltaTime = (currentTime - timeLastFrame) / 1e9;
 			timeLastFrame = currentTime;
 			time = (System.currentTimeMillis() - startTime) / 1000.0f;
 
@@ -172,7 +164,7 @@ public abstract class Application extends Canvas {
 		BufferStrategy bufferStrategy = getBufferStrategy();
 
 		if (bufferStrategy == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(2);
 			return;
 		}
 
@@ -267,7 +259,6 @@ public abstract class Application extends Canvas {
 			return;
 		}
 		try {
-			outputFile.createNewFile();
 			ImageIO.write(frame, "png", outputFile);
 			System.out.println("Image " + outputFile.getName() + " saved to " + directory);
 		} catch (IOException e) {

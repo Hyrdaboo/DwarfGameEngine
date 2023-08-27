@@ -12,7 +12,6 @@ public class ThreadPool {
 	private static final ArrayList<Future> futures = new ArrayList<>();
 
 	public static void executeInParallel(int numItems, Task task) {
-		long t0 = System.nanoTime();
 		futures.ensureCapacity(numItems);
 		for (int i = 0; i < numItems; i++) {
 			final long j = i;
@@ -26,8 +25,6 @@ public class ThreadPool {
 		} catch (InterruptedException | ExecutionException e) {
 			throw new RuntimeException(e);
 		}
-		long t1 = System.nanoTime();
-		System.out.println("Time/obj: " + (1e9 / (t1 - t0)) + ", @" + numItems);
 	}
 
 	public static abstract class Task {

@@ -46,7 +46,7 @@ public abstract class Scene {
 
 		for (Light l : lights) {
 			if (l == null) {
-				lights.remove(l);
+				lights.remove(null);
 				continue;
 			}
 			if (l.type == LightType.Ambient)

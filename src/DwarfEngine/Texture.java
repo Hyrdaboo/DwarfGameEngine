@@ -354,20 +354,21 @@ public final class Texture {
 		if (samplingMode == SamplingMode.Point) {
 			return GetPixelUv((int) x, (int) y, dst);
 		} else {
-			Vector2 tl = new Vector2((int) x, (int) y);
-			Vector2 tr = new Vector2(Mathf.ceil(x), (int) y);
-			Vector2 bl = new Vector2((int) x, Mathf.ceil(y));
-			Vector2 br = new Vector2(Mathf.ceil(x), Mathf.ceil(y));
+			float fx = Mathf.floor(x), fy = Mathf.floor(y);
+			int x0 = (int) fx, y0 = (int) fy, x1 = x0 + 1, y1 = y0 + 1;
 
-			float tx = x - tl.x;
-			float ty = y - tl.y;
+			float tx = x - fx;
+			float ty = y - fy;
+			Vector3 a = Vector3.POOL.get(), b = Vector3.POOL.get();
 
 			Vector3 top = Vector3.Lerp(
-					GetPixelUv((int) tl.x, (int) tl.y, new Vector3()),
-					GetPixelUv((int) tr.x, (int) tr.y, new Vector3()), tx);
+					GetPixelUv(x0, y0, a),
+					GetPixelUv(x1, y0, b), tx, dst);
 			Vector3 bottom = Vector3.Lerp(
-					GetPixelUv((int) bl.x, (int) bl.y, new Vector3()),
-					GetPixelUv((int) br.x, (int) br.y, new Vector3()), tx);
+					GetPixelUv(x0, y1, a),
+					GetPixelUv(x1, y1, b), tx, a);
+
+			Vector3.POOL.sub(2);
 
 			return Vector3.Lerp(top, bottom, ty, dst);
 		}

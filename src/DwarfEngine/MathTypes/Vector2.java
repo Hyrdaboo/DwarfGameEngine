@@ -1,11 +1,15 @@
 package DwarfEngine.MathTypes;
 
+import DwarfEngine.Pool;
+
 import java.util.Objects;
 
 /**
  * Represents a two-dimensional vector.
  */
 public final class Vector2 {
+
+	public static final Pool<Vector2> POOL = new Pool<>(Vector2::new);
 
 	public Vector2() {
 	}
@@ -111,7 +115,13 @@ public final class Vector2 {
 	}
 
 	public static Vector2 mulVecFloat(Vector2 vec, float num) {
-		return new Vector2(vec.x * num, vec.y * num);
+		return mulVecFloat(vec, num, new Vector2());
+	}
+
+	public static Vector2 mulVecFloat(Vector2 vec, float num, Vector2 dst) {
+		dst.x = vec.x * num;
+		dst.y = vec.y * num;
+		return dst;
 	}
 
 	public static Vector2 divide2Vecs(Vector2 a, Vector2 b) {

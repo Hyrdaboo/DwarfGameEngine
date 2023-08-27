@@ -45,27 +45,36 @@ public final class Vertex implements Cloneable {
 		this.worldPos.z = startVertex.worldPos.z;
 	}
 
-	static Vertex delta(Vertex a, Vertex b, float mag) {
-		Vertex v = new Vertex();
-
-		v.position.w = (b.position.w - a.position.w) / mag;
-		subVecs(b.texcoord, a.texcoord, v.texcoord);
-		v.texcoord.divideBy(mag);
-		subVecs(b.color, a.color, v.color);
-		v.color.divideBy(mag);
-		subVecs(b.normal, a.normal, v.normal);
-		v.normal.divideBy(mag);
-		subVecs(b.worldPos, a.worldPos, v.worldPos);
-		v.worldPos.divideBy(mag);
-		return v;
+	static void delta(Vertex a, Vertex b, float mag, Vertex v) {
+		v.position.w = (b.position.w - a.position.w) * mag;
+		v.texcoord.x = (b.texcoord.x - a.texcoord.x) * mag;
+		v.texcoord.y = (b.texcoord.y - a.texcoord.y) * mag;
+		v.color.x = (b.color.x - a.color.x) * mag;
+		v.color.y = (b.color.y - a.color.y) * mag;
+		v.color.z = (b.color.z - a.color.z) * mag;
+		v.normal.x = (b.normal.x - a.normal.x) * mag;
+		v.normal.y = (b.normal.y - a.normal.y) * mag;
+		v.normal.z = (b.normal.z - a.normal.z) * mag;
+		v.worldPos.x = (b.worldPos.x - a.worldPos.x) * mag;
+		v.worldPos.y = (b.worldPos.y - a.worldPos.y) * mag;
+		v.worldPos.z = (b.worldPos.z - a.worldPos.z) * mag;
 	}
 
-	static void add(Vertex a, Vertex b, Vertex dst) {
-		dst.position.w = a.position.w + b.position.w;
-		addVecs(a.texcoord, b.texcoord, dst.texcoord);
-		addVecs(a.color, b.color, dst.color);
-		addVecs(a.normal, b.normal, dst.normal);
-		addVecs(a.worldPos, b.worldPos, dst.worldPos);
+	static void add(Vertex a, Vertex b, float f) {
+		a.texcoord.x += b.texcoord.x * f;
+		a.texcoord.y += b.texcoord.y * f;
+		a.texcoord.z += b.texcoord.z * f;
+		a.color.x += b.color.x * f;
+		a.color.y += b.color.y * f;
+		a.color.z += b.color.z * f;
+		a.color.w += b.color.w * f;
+		a.normal.x += b.normal.x * f;
+		a.normal.y += b.normal.y * f;
+		a.normal.z += b.normal.z * f;
+		a.worldPos.x += b.worldPos.x * f;
+		a.worldPos.y += b.worldPos.y * f;
+		a.worldPos.z += b.worldPos.z * f;
+		a.position.w += b.position.w * f;
 	}
 
 	private static void subVecs(Vector3 a, Vector3 b, Vector3 dst) {

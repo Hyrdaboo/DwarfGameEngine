@@ -1,6 +1,7 @@
 package Renderer3D;
 
 import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 import java.awt.*;
@@ -21,9 +22,17 @@ public final class TriangleRasterizer {
 	private static float[] depthBuffer;
 	private int width, height;
 
+	Plane[] clippingPlanes;
+
 	public TriangleRasterizer() {
 		width = getBufferWidth();
 		height = getBufferHeight();
+		clippingPlanes = new Plane[]{
+				new Plane(Vector3.zero(), Vector3.up()), // top
+				new Plane(Vector3.zero(), Vector3.right()), // left
+				new Plane(new Vector3(width, 0, 0), Vector3.left()), // right
+				new Plane(new Vector3(0, height, 0), Vector3.down()), // bottom
+		};
 	}
 
 	/**
@@ -72,12 +81,6 @@ public final class TriangleRasterizer {
 	 */
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
 
-		Plane[] clippingPlanes = new Plane[]{new Plane(Vector3.zero(), Vector3.up()), // top
-				new Plane(Vector3.zero(), Vector3.right()), // left
-				new Plane(new Vector3(width, 0, 0), Vector3.left()), // right
-				new Plane(new Vector3(0, height, 0), Vector3.down()), // bottom
-		};
-
 		Triangle in = new Triangle(vertices[0], vertices[1], vertices[2]);
 		List<Triangle> finalResult = new ArrayList<>();
 		finalResult.add(in);
@@ -89,10 +92,7 @@ public final class TriangleRasterizer {
 				finalResult.remove(0);
 
 				for (Triangle clipped : clippedTris) {
-
-					if (clipped == null)
-						continue;
-					finalResult.add(clipped);
+					if (clipped != null) finalResult.add(clipped);
 				}
 			}
 		}
@@ -105,30 +105,28 @@ public final class TriangleRasterizer {
 	private void DrawTriangleClipped(Vertex[] vertices, Shader shader) {
 		Arrays.sort(vertices, Comparator.comparingDouble((v) -> v.position.y));
 		Vertex v1 = vertices[0], v2 = vertices[1], v3 = vertices[2];
-
 		if (v2.position.y == v3.position.y) {
 			if (v2.position.x > v3.position.x) {
 				flatBottom(v1, v3, v2, shader);
-				return;
+			} else {
+				flatBottom(v1, v2, v3, shader);
 			}
-			flatBottom(v1, v2, v3, shader);
 		} else if (v1.position.y == v2.position.y) {
 			if (v1.position.x > v2.position.x) {
 				flatTop(v2, v1, v3, shader);
-				return;
+			} else {
+				flatTop(v1, v2, v3, shader);
 			}
-			flatTop(v1, v2, v3, shader);
 		} else {
 			float t = Mathf.inverseLerp(v1.position.y, v3.position.y, v2.position.y);
 			Vertex v4 = Vertex.Lerp(v1, v3, t);
-
 			if (v4.position.x > v2.position.x) {
 				flatBottom(v1, v2, v4, shader);
 				flatTop(v2, v4, v3, shader);
-				return;
+			} else {
+				flatBottom(v1, v4, v2, shader);
+				flatTop(v4, v2, v3, shader);
 			}
-			flatBottom(v1, v4, v2, shader);
-			flatTop(v4, v2, v3, shader);
 		}
 	}
 
@@ -140,47 +138,73 @@ public final class TriangleRasterizer {
 		flatTriangle(v1, v3, v2, v3, shader);
 	}
 
+	private final static ThreadLocal<RasterizerData> tld = ThreadLocal.withInitial(RasterizerData::new);
+
+	private static class RasterizerData {
+		Vertex startVertex = new Vertex(), endVertex = new Vertex();
+		Vertex in = new Vertex();
+		Vector3 col = new Vector3();
+		Vertex delta = new Vertex();
+
+		{
+			// a dirty hack, saves unnecessary copies
+			in.position = startVertex.position;
+			in.normal = startVertex.normal;
+			in.color = startVertex.color;
+		}
+	}
+
 	private void flatTriangle(Vertex leftSlope1, Vertex leftSlope2, Vertex rightSlope1, Vertex rightSlope2,
 							  Shader shader) {
 
-		int yStart = (int) Mathf.ceil(leftSlope1.position.y - 0.5f);
-		int yEnd = (int) Mathf.ceil(rightSlope2.position.y - 0.5f);
+		int yStart = (int) Mathf.round(leftSlope1.position.y);
+		int yEnd = (int) Mathf.round(rightSlope2.position.y);
 
 		float leftSlope = calculateSlope(leftSlope1.position, leftSlope2.position);
 		float rightSlope = calculateSlope(rightSlope1.position, rightSlope2.position);
 
-		Vertex startVertex = new Vertex(), endVertex = new Vertex();
-		Vertex in = new Vertex();
-		Vector3 col = new Vector3();
+		RasterizerData ftd = TriangleRasterizer.tld.get();
+
+		Vertex startVertex = ftd.startVertex, endVertex = ftd.endVertex;
+		Vertex in = ftd.in;
+		Vector3 col = ftd.col;
+		Vertex delta = ftd.delta;
 
 		for (int y = yStart; y < yEnd; y++) {
-			float px1 = (leftSlope * (y + 0.5f - leftSlope1.position.y)) + leftSlope1.position.x;
-			float px2 = (rightSlope * (y + 0.5f - rightSlope1.position.y)) + rightSlope1.position.x;
+			float yf = y + 0.5f;
+			float px1 = (leftSlope * (yf - leftSlope1.position.y)) + leftSlope1.position.x;
+			float px2 = (rightSlope * (yf - rightSlope1.position.y)) + rightSlope1.position.x;
 
-			int xStart = (int) Mathf.ceil(px1 - 0.5f);
-			int xEnd = (int) Mathf.ceil(px2 - 0.5f);
+			int xStart = (int) Mathf.round(px1);
+			int xEnd = (int) Mathf.round(px2);
+			if (xEnd <= xStart) continue;
 
-			float si = InverseLerp(leftSlope1.position, leftSlope2.position, new Vector3(xStart, y, 0));
-			float ei = InverseLerp(rightSlope1.position, rightSlope2.position, new Vector3(xEnd, y, 0));
+			float si = InverseLerp(leftSlope1.position, leftSlope2.position, xStart, y);
+			float ei = InverseLerp(rightSlope1.position, rightSlope2.position, xEnd, y);
 			Vertex.Lerp(leftSlope1, leftSlope2, si, startVertex);
 			Vertex.Lerp(rightSlope1, rightSlope2, ei, endVertex);
 
-			float mag = xEnd - xStart;
-			Vertex delta = Vertex.delta(startVertex, endVertex, mag);
+			Vertex.delta(startVertex, endVertex, 1f / (xEnd - xStart), delta);
 
+			int missing = 0;
+			float wi = startVertex.position.w, dwi = delta.position.w;
 			for (int x = xStart; x < xEnd; x++) {
-				in.cloneVertex(startVertex);
-
-				float w = 1f / in.position.w;
 
 				boolean depthTestPassed = true;
 				if (depthBuffer != null) {
-					depthTestPassed = w < readDepth(x, y);
+					depthTestPassed = 1f < readDepth(x, y) * wi;
 				}
 
 				if (depthTestPassed) {
-					in.texcoord.multiplyBy(w);
-					in.worldPos.multiplyBy(w);
+
+					if (missing > 0) {
+						Vertex.add(startVertex, delta, missing);
+						missing = 0;
+					}
+
+					float w = 1f / wi;
+					Vector2.mulVecFloat(startVertex.texcoord, w, in.texcoord);
+					Vector3.mulVecFloat(startVertex.worldPos, w, in.worldPos);
 
 					int finalCol = toColor(shader.Fragment(in, col));
 					SetPixel(x, y, finalCol);
@@ -190,7 +214,8 @@ public final class TriangleRasterizer {
 					}
 				}
 
-				Vertex.add(startVertex, delta, startVertex);
+				missing++;
+				wi += dwi;
 			}
 		}
 	}
@@ -202,10 +227,10 @@ public final class TriangleRasterizer {
 		return (r << 16) | (g << 8) | (b);
 	}
 
-	private static float InverseLerp(Vector3 a, Vector3 b, Vector3 value) {
-		Vector3 AB = Vector3.subtract2Vecs(b, a);
-		Vector3 AV = Vector3.subtract2Vecs(value, a);
-		return Vector3.Dot(AV, AB) / Vector3.Dot(AB, AB);
+	private static float InverseLerp(Vector3 a, Vector3 b, float vx, float vy) {
+		float abx = b.x - a.x, aby = b.y - a.y, abz = b.z - a.z;
+		float avx = vx - a.x, avy = vy - a.y, avz = -a.z;
+		return (avx * abx + avy * aby + avz * abz) / (abx * abx + aby * aby + abz * abz);
 	}
 
 	private float calculateSlope(Vector3 v1, Vector3 v2) {
