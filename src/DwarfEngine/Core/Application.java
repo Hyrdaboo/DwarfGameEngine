@@ -123,7 +123,7 @@ public abstract class Application extends Canvas {
 	}
 
 	double lastUpdate = .15;
-	double fpsRefreshRate = .15f;
+	double fpsRefreshRate = .0f;
 
 	private void updateFps() {
 		if (time > lastUpdate) {
@@ -247,7 +247,7 @@ public abstract class Application extends Canvas {
 	/**
 	 * Sets the icon of the application window
 	 *
-	 * @param icon The image to be set as a an icon
+	 * @param icon The image to be set as an icon
 	 */
 	public final void setIcon(Image icon) {
 		applicationWindow.setIconImage(icon);

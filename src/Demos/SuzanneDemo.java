@@ -80,4 +80,9 @@ public class SuzanneDemo extends Scene {
 		FpsControls.GetInput((float) app.getDeltaTime(), camera.transform);
 		suzanne.transform.rotation.y += app.getDeltaTime() * 10;
 	}
+
+	public static void main(String[] args) {
+		Application app = new DemoSceneLoader();
+		app.Initialize(1920, 1080, 1);
+	}
 }

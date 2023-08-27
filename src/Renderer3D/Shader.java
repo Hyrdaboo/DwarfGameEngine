@@ -2,6 +2,7 @@ package Renderer3D;
 
 import java.util.List;
 
+import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector3;
 
 /**
@@ -14,6 +15,7 @@ import DwarfEngine.MathTypes.Vector3;
 public abstract class Shader {
 	List<Light> lights = null;
 	protected Transform objectTransform = null;
+	protected Matrix4x4 rotationMatrix = null;
 	protected Transform cameraTransform = null;
 	/**
 	 * Specifies whether backface culling is enabled or disabled. Backface culling
