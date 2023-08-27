@@ -1,15 +1,14 @@
 package DwarfEngine;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The Texture class represents an image texture used for loading and
@@ -34,7 +33,7 @@ public final class Texture {
 	 * </ul>
 	 *
 	 * <strong>Note!</strong> This doesn't work with
-	 * {@link Texture#SampleFast(float, float)} as it ignores wrap modes and by
+	 * {@link Texture#SampleFast(float, float, Vector3)} as it ignores wrap modes and by
 	 * default only supports clamping
 	 */
 	public enum WrapMode {
@@ -166,9 +165,13 @@ public final class Texture {
 		int rgb = pixels[x + y * width];
 		int r = (rgb >> 16) & 0xFF;
 		int g = (rgb >> 8) & 0xFF;
-		int b = (rgb >> 0) & 0xFF;
-		int a = (rgb >> 24) & 0xFF;
+		int b = (rgb) & 0xFF;
+		int a = (rgb >>> 24);
 		return new Color(r, g, b, a);
+	}
+
+	public int GetPixelRaw(int x, int y) {
+		return pixels[x + y * width];
 	}
 
 	/**
@@ -179,7 +182,7 @@ public final class Texture {
 	 * @param w      The width of the region.
 	 * @param h      The height of the region.
 	 * @return An array of pixels representing the specified region. <br>
-	 *         <code>null</code> if something goes wrong
+	 * <code>null</code> if something goes wrong
 	 */
 	public int[] GetPixels(int xStart, int yStart, int w, int h) {
 		try {
@@ -243,13 +246,13 @@ public final class Texture {
 		}
 	}
 
-	private Vector3 GetPixelUv(int x, int y) {
+	private Vector3 GetPixelUv(int x, int y, Vector3 dst) {
 		y = height - 1 - y;
 		int rgb = pixels[x + y * width];
-		float r = ((rgb >> 16) & 0xFF) / 255.0f;
-		float g = ((rgb >> 8) & 0xFF) / 255.0f;
-		float b = ((rgb >> 0) & 0xFF) / 255.0f;
-		return new Vector3(r, g, b);
+		dst.x = ((rgb >> 16) & 0xFF) / 255.0f;
+		dst.y = ((rgb >> 8) & 0xFF) / 255.0f;
+		dst.z = ((rgb) & 0xFF) / 255.0f;
+		return dst;
 	}
 
 	/**
@@ -257,13 +260,13 @@ public final class Texture {
 	 * color as a Vector3. This method implements all the sampling and wrap modes,
 	 * but it exhibits slower performance due to the implementation of multiple
 	 * sampling and wrap modes. If performance is a concern and wrap modes aren't a
-	 * requirement, then using {@link Texture#SampleFast(float, float)} is advised.
+	 * requirement, then using {@link Texture#SampleFast(float, float, Vector3)} is advised.
 	 *
 	 * @param u The U-coordinate of the texture.
 	 * @param v The V-coordinate of the texture.
 	 * @return The sampled color as a Vector3.
 	 */
-	public Vector3 Sample(float u, float v) {
+	public Vector3 Sample(float u, float v, Vector3 dst) {
 		u *= tiling.x;
 		v *= tiling.y;
 		u += offset.x;
@@ -274,42 +277,42 @@ public final class Texture {
 		int y = (int) (v * height * precision);
 
 		switch (wrapMode) {
-		case Clamp: {
-			x = (int) Mathf.clamp(x, 0, ((width - 1) * precision));
-			y = (int) Mathf.clamp(y, 0, ((height - 1) * precision));
-			break;
-		}
-		case Repeat:
-			int w = width * precision;
-			int h = height * precision;
-			x = ((x % w) + w) % w;
-			y = ((y % h) + h) % h;
-			break;
-		case RepeatMirrored:
-			w = width * precision;
-			h = height * precision;
-
-			boolean xEven = (x / w) % 2 == 0;
-			boolean yEven = (y / h) % 2 == 0;
-
-			x = ((x % w) + w) % w;
-			y = ((y % h) + h) % h;
-
-			if (!xEven) {
-				x = w - 1 - x;
+			case Clamp: {
+				x = (int) Mathf.clamp(x, 0, ((width - 1) * precision));
+				y = (int) Mathf.clamp(y, 0, ((height - 1) * precision));
+				break;
 			}
-			if (!yEven) {
-				y = h - 1 - y;
-			}
-			break;
-		default:
-			break;
+			case Repeat:
+				int w = width * precision;
+				int h = height * precision;
+				x = ((x % w) + w) % w;
+				y = ((y % h) + h) % h;
+				break;
+			case RepeatMirrored:
+				w = width * precision;
+				h = height * precision;
+
+				boolean xEven = (x / w) % 2 == 0;
+				boolean yEven = (y / h) % 2 == 0;
+
+				x = ((x % w) + w) % w;
+				y = ((y % h) + h) % h;
+
+				if (!xEven) {
+					x = w - 1 - x;
+				}
+				if (!yEven) {
+					y = h - 1 - y;
+				}
+				break;
+			default:
+				break;
 		}
 
 		if (samplingMode == SamplingMode.Point) {
 			x /= precision;
 			y /= precision;
-			return GetPixelUv(x, y);
+			return GetPixelUv(x, y, dst);
 		} else {
 			float xf = x / (float) precision;
 			float yf = y / (float) precision;
@@ -323,29 +326,33 @@ public final class Texture {
 			float tx = xf - tl.x;
 			float ty = yf - tl.y;
 
-			Vector3 top = Vector3.Lerp(GetPixelUv((int) tl.x, (int) tl.y), GetPixelUv((int) tr.x, (int) tr.y), tx);
-			Vector3 bottom = Vector3.Lerp(GetPixelUv((int) bl.x, (int) bl.y), GetPixelUv((int) br.x, (int) br.y), tx);
+			Vector3 top = Vector3.Lerp(
+					GetPixelUv((int) tl.x, (int) tl.y, new Vector3()),
+					GetPixelUv((int) tr.x, (int) tr.y, new Vector3()), tx);
+			Vector3 bottom = Vector3.Lerp(
+					GetPixelUv((int) bl.x, (int) bl.y, new Vector3()),
+					GetPixelUv((int) br.x, (int) br.y, new Vector3()), tx);
 
-			return Vector3.Lerp(top, bottom, ty);
+			return Vector3.Lerp(top, bottom, ty, dst);
 		}
 	}
 
 	/**
 	 * Fast sampling method that performs clamping and interpolation to sample the
 	 * texture at the specified UV coordinates. This method is faster than the
-	 * regular {@link Texture#Sample(float, float)} method, making it advantageous
+	 * regular {@link Texture#Sample(float, float, Vector3)} method, making it advantageous
 	 * when performance is a concern.
 	 *
 	 * @param u The U-coordinate of the texture.
 	 * @param v The V-coordinate of the texture.
 	 * @return The sampled color as a Vector3.
 	 */
-	public Vector3 SampleFast(float u, float v) {
+	public Vector3 SampleFast(float u, float v, Vector3 dst) {
 		float x = Mathf.clamp(u * width, 0, width - 1);
 		float y = Mathf.clamp(v * height, 0, height - 1);
 
 		if (samplingMode == SamplingMode.Point) {
-			return GetPixelUv((int) x, (int) y);
+			return GetPixelUv((int) x, (int) y, dst);
 		} else {
 			Vector2 tl = new Vector2((int) x, (int) y);
 			Vector2 tr = new Vector2(Mathf.ceil(x), (int) y);
@@ -355,10 +362,14 @@ public final class Texture {
 			float tx = x - tl.x;
 			float ty = y - tl.y;
 
-			Vector3 top = Vector3.Lerp(GetPixelUv((int) tl.x, (int) tl.y), GetPixelUv((int) tr.x, (int) tr.y), tx);
-			Vector3 bottom = Vector3.Lerp(GetPixelUv((int) bl.x, (int) bl.y), GetPixelUv((int) br.x, (int) br.y), tx);
+			Vector3 top = Vector3.Lerp(
+					GetPixelUv((int) tl.x, (int) tl.y, new Vector3()),
+					GetPixelUv((int) tr.x, (int) tr.y, new Vector3()), tx);
+			Vector3 bottom = Vector3.Lerp(
+					GetPixelUv((int) bl.x, (int) bl.y, new Vector3()),
+					GetPixelUv((int) br.x, (int) br.y, new Vector3()), tx);
 
-			return Vector3.Lerp(top, bottom, ty);
+			return Vector3.Lerp(top, bottom, ty, dst);
 		}
 	}
 }

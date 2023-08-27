@@ -87,6 +87,10 @@ public final class Matrix4x4 {
 		return mat;
 	}
 
+	public Vector3 MultiplyByVector(Vector3 vec) {
+		return MultiplyByVector(vec, new Vector3());
+	}
+
 	/**
 	 * Multiplies the given vector by the matrix and returns the resulting vector.
 	 *
@@ -94,8 +98,7 @@ public final class Matrix4x4 {
 	 * @return The vector resulting from the multiplication of the given vector and
 	 *         the matrix.
 	 */
-	public Vector3 MultiplyByVector(Vector3 vec) {
-		Vector3 out = new Vector3(0, 0, 0);
+	public Vector3 MultiplyByVector(Vector3 vec, Vector3 out) {
 		out.x = vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + matrix[3][0];
 		out.y = vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + matrix[3][1];
 		out.z = vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + matrix[3][2];

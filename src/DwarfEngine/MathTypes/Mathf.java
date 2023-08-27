@@ -41,12 +41,7 @@ public final class Mathf {
 	}
 
 	public static float clamp(float value, float min, float max) {
-		if (value > max)
-			return max;
-		else if (value < min)
-			return min;
-		else
-			return value;
+		return Math.max(Math.min(value, max), min);
 	}
 
 	public static float clamp01(float value) {

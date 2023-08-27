@@ -9,7 +9,7 @@ class ErrorShader extends Shader {
 	Vector3 magenta = new Vector3(1, 0, 1);
 
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
 		return magenta;
 	}
 

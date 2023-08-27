@@ -76,5 +76,5 @@ public abstract class Shader {
 	 * @param in The input vertex information for the fragment.
 	 * @return The calculated color of the fragment.
 	 */
-	public abstract Vector3 Fragment(Vertex in);
+	public abstract Vector3 Fragment(Vertex in, Vector3 dst);
 }

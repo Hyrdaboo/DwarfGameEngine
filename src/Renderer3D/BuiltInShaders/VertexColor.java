@@ -10,7 +10,7 @@ import Renderer3D.Vertex;
 public class VertexColor extends Shader {
 
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
 		return in.color;
 	}
 

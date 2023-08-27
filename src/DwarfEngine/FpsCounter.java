@@ -7,6 +7,7 @@ package DwarfEngine;
  */
 public final class FpsCounter {
 	public int bufferLength = 25;
+	private int size = 0;
 
 	private double averageFps = 0;
 	private double[] fpsBuffer;
@@ -36,6 +37,7 @@ public final class FpsCounter {
 	private void updateBuffer(double deltaTime) {
 		fpsBuffer[fpsBufferIndex++] = 1.0 / deltaTime;
 		fpsBufferIndex %= bufferLength;
+		size = Math.min(size + 1, bufferLength);
 	}
 
 	private void calculateFps() {
@@ -45,6 +47,6 @@ public final class FpsCounter {
 			sum += f;
 		}
 
-		averageFps = sum / bufferLength;
+		averageFps = sum / size;
 	}
 }

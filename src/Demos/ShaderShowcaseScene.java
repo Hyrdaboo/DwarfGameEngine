@@ -39,7 +39,7 @@ class SolidColor extends Shader {
 	}
 
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
 		return col;
 	}
 }

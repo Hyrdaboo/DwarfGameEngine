@@ -1,18 +1,15 @@
 package Renderer3D;
 
-import static DwarfEngine.Core.DisplayRenderer.SetPixel;
-import static DwarfEngine.Core.DisplayRenderer.clear;
-import static DwarfEngine.Core.DisplayRenderer.getBufferHeight;
-import static DwarfEngine.Core.DisplayRenderer.getBufferWidth;
+import DwarfEngine.MathTypes.Mathf;
+import DwarfEngine.MathTypes.Vector3;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import DwarfEngine.MathTypes.Mathf;
-import DwarfEngine.MathTypes.Vector3;
+import static DwarfEngine.Core.DisplayRenderer.*;
 
 /**
  * The <code>TriangleRasterizer</code> class provides functionality for
@@ -75,7 +72,7 @@ public final class TriangleRasterizer {
 	 */
 	public void DrawTriangle(Vertex[] vertices, Shader shader) {
 
-		Plane[] clippingPlanes = new Plane[] { new Plane(Vector3.zero(), Vector3.up()), // top
+		Plane[] clippingPlanes = new Plane[]{new Plane(Vector3.zero(), Vector3.up()), // top
 				new Plane(Vector3.zero(), Vector3.right()), // left
 				new Plane(new Vector3(width, 0, 0), Vector3.left()), // right
 				new Plane(new Vector3(0, height, 0), Vector3.down()), // bottom
@@ -144,12 +141,17 @@ public final class TriangleRasterizer {
 	}
 
 	private void flatTriangle(Vertex leftSlope1, Vertex leftSlope2, Vertex rightSlope1, Vertex rightSlope2,
-			Shader shader) {
+							  Shader shader) {
+
 		int yStart = (int) Mathf.ceil(leftSlope1.position.y - 0.5f);
 		int yEnd = (int) Mathf.ceil(rightSlope2.position.y - 0.5f);
 
 		float leftSlope = calculateSlope(leftSlope1.position, leftSlope2.position);
 		float rightSlope = calculateSlope(rightSlope1.position, rightSlope2.position);
+
+		Vertex startVertex = new Vertex(), endVertex = new Vertex();
+		Vertex in = new Vertex();
+		Vector3 col = new Vector3();
 
 		for (int y = yStart; y < yEnd; y++) {
 			float px1 = (leftSlope * (y + 0.5f - leftSlope1.position.y)) + leftSlope1.position.x;
@@ -160,18 +162,16 @@ public final class TriangleRasterizer {
 
 			float si = InverseLerp(leftSlope1.position, leftSlope2.position, new Vector3(xStart, y, 0));
 			float ei = InverseLerp(rightSlope1.position, rightSlope2.position, new Vector3(xEnd, y, 0));
-			Vertex startVertex = Vertex.Lerp(leftSlope1, leftSlope2, si);
-			Vertex endVertex = Vertex.Lerp(rightSlope1, rightSlope2, ei);
+			Vertex.Lerp(leftSlope1, leftSlope2, si, startVertex);
+			Vertex.Lerp(rightSlope1, rightSlope2, ei, endVertex);
 
 			float mag = xEnd - xStart;
 			Vertex delta = Vertex.delta(startVertex, endVertex, mag);
 
-			Vertex in = new Vertex();
 			for (int x = xStart; x < xEnd; x++) {
 				in.cloneVertex(startVertex);
 
-				float w = in.position.w;
-				w = 1.0f / w;
+				float w = 1f / in.position.w;
 
 				boolean depthTestPassed = true;
 				if (depthBuffer != null) {
@@ -181,7 +181,8 @@ public final class TriangleRasterizer {
 				if (depthTestPassed) {
 					in.texcoord.multiplyBy(w);
 					in.worldPos.multiplyBy(w);
-					int finalCol = toColor(shader.Fragment(in));
+
+					int finalCol = toColor(shader.Fragment(in, col));
 					SetPixel(x, y, finalCol);
 
 					if (depthBuffer != null) {
@@ -195,15 +196,10 @@ public final class TriangleRasterizer {
 	}
 
 	private int toColor(Vector3 v) {
-		v.x = Mathf.clamp01(v.x);
-		v.y = Mathf.clamp01(v.y);
-		v.z = Mathf.clamp01(v.z);
-
-		int r = (int) (v.x * 255);
-		int g = (int) (v.y * 255);
-		int b = (int) (v.z * 255);
-		int rgb = (r << 16) | (g << 8) | (b << 0);
-		return rgb;
+		int r = Math.min((int) (v.x * 255), 255);
+		int g = Math.min((int) (v.y * 255), 255);
+		int b = Math.min((int) (v.z * 255), 255);
+		return (r << 16) | (g << 8) | (b);
 	}
 
 	private static float InverseLerp(Vector3 a, Vector3 b, Vector3 value) {

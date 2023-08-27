@@ -6,6 +6,10 @@ import java.util.Objects;
  * Represents a two-dimensional vector.
  */
 public final class Vector2 {
+
+	public Vector2() {
+	}
+
 	public float x = 0;
 	public float y = 0;
 	/**
@@ -58,7 +62,6 @@ public final class Vector2 {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "(" + x + ", " + y + ")";
 	}
 
@@ -186,7 +189,10 @@ public final class Vector2 {
 	 * @return The interpolated vector.
 	 */
 	public static Vector2 Lerp(Vector2 a, Vector2 b, float t) {
-		Vector2 v = Vector2.zero();
+		return Lerp(a, b, t, new Vector2());
+	}
+
+	public static Vector2 Lerp(Vector2 a, Vector2 b, float t, Vector2 v) {
 		v.x = Mathf.lerp(a.x, b.x, t);
 		v.y = Mathf.lerp(a.y, b.y, t);
 		return v;

@@ -1,11 +1,11 @@
 package DwarfEngine.Core;
 
-import java.awt.Color;
-import java.util.Arrays;
-
-import DwarfEngine.Texture;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
+import DwarfEngine.Texture;
+
+import java.awt.*;
+import java.util.Arrays;
 
 /**
  * The DisplayRenderer class is designed for low-level pixel manipulation on the
@@ -97,7 +97,6 @@ public final class DisplayRenderer {
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {
 		for (int y = 0; y < size.y; y++) {
 			for (int x = 0; x < size.x; x++) {
-
 				SetPixel((int) pos.x + x, (int) pos.y + y, color);
 			}
 		}
@@ -111,14 +110,16 @@ public final class DisplayRenderer {
 	 * @param texture The texture representing the image.
 	 */
 	public static void DrawImage(Vector2 pos, Vector2 size, Texture texture) {
-		for (int y = 0; y < size.y; y++) {
-			for (int x = 0; x < size.x; x++) {
-				int cx = (int) ((x / size.x) * texture.getWidth());
-				int cy = (int) ((y / size.y) * texture.getHeight());
+		int sx = (int) size.x, sy = (int) size.y, tw = texture.getWidth(), th = texture.getHeight();
+		int px = (int) pos.x, py = (int) pos.y;
+		for (int y = 0; y < sy; y++) {
+			for (int x = 0; x < sx; x++) {
+				int cx = ((x * tw / sx));
+				int cy = ((y * th / sy));
 				Color c = texture.GetPixel(cx, cy);
 				if (c.getAlpha() < 255)
 					continue;
-				SetPixel((int) pos.x + x, (int) pos.y + y, c);
+				SetPixel(px + x, py + y, c);
 			}
 		}
 	}

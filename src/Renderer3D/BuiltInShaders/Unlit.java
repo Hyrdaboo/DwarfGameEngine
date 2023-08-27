@@ -35,17 +35,15 @@ public class Unlit extends Shader {
 		this.texture = texture;
 	}
 
-	Vector3 magenta = new Vector3(1, 0, 1);
-
 	@Override
-	public Vector3 Fragment(Vertex in) {
-		Vector3 col = null;
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
+		Vector3 col;
 		if (fastSample) {
-			col = texture.SampleFast(in.texcoord.x, in.texcoord.y);
+			col = texture.SampleFast(in.texcoord.x, in.texcoord.y, dst);
 		} else {
-			col = texture.Sample(in.texcoord.x, in.texcoord.y);
+			col = texture.Sample(in.texcoord.x, in.texcoord.y, dst);
 		}
-		col = Vector3.mul2Vecs(col, tint);
+		Vector3.mul2Vecs(col, tint, col);
 		return col;
 	}
 

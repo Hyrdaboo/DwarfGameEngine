@@ -15,14 +15,18 @@ public final class Vertex implements Cloneable {
 	public Vector3 normal = Vector3.up(); // not normalized
 	public Vector3 worldPos = Vector3.one();
 
-	static Vertex Lerp(Vertex a, Vertex b, float t) {
-		Vertex v = new Vertex();
 
-		v.position = Vector3.Lerp(a.position, b.position, t);
-		v.texcoord = Vector2.Lerp(a.texcoord, b.texcoord, t);
-		v.color = Vector3.Lerp(a.color, b.color, t);
-		v.normal = Vector3.Lerp(a.normal, b.normal, t).normalized();
-		v.worldPos = Vector3.Lerp(a.worldPos, b.worldPos, t);
+	static Vertex Lerp(Vertex a, Vertex b, float t) {
+		return Lerp(a, b, t, new Vertex());
+	}
+
+	static Vertex Lerp(Vertex a, Vertex b, float t, Vertex v) {
+		Vector3.Lerp(a.position, b.position, t, v.position);
+		Vector2.Lerp(a.texcoord, b.texcoord, t, v.texcoord);
+		Vector3.Lerp(a.color, b.color, t, v.color);
+		Vector3.Lerp(a.normal, b.normal, t, v.normal);
+		v.normal.normalized(v.normal);
+		Vector3.Lerp(a.worldPos, b.worldPos, t, v.worldPos);
 		return v;
 	}
 
@@ -56,34 +60,34 @@ public final class Vertex implements Cloneable {
 		return v;
 	}
 
-	static void add(Vertex a, Vertex b, Vertex v) {
-		v.position.w = a.position.w + b.position.w;
-		addVecs(a.texcoord, b.texcoord, v.texcoord);
-		addVecs(a.color, b.color, v.color);
-		addVecs(a.normal, b.normal, v.normal);
-		addVecs(a.worldPos, b.worldPos, v.worldPos);
+	static void add(Vertex a, Vertex b, Vertex dst) {
+		dst.position.w = a.position.w + b.position.w;
+		addVecs(a.texcoord, b.texcoord, dst.texcoord);
+		addVecs(a.color, b.color, dst.color);
+		addVecs(a.normal, b.normal, dst.normal);
+		addVecs(a.worldPos, b.worldPos, dst.worldPos);
 	}
 
-	private static void subVecs(Vector3 a, Vector3 b, Vector3 p) {
-		p.x = a.x - b.x;
-		p.y = a.y - b.y;
-		p.z = a.z - b.z;
+	private static void subVecs(Vector3 a, Vector3 b, Vector3 dst) {
+		dst.x = a.x - b.x;
+		dst.y = a.y - b.y;
+		dst.z = a.z - b.z;
 	}
 
-	private static void subVecs(Vector2 a, Vector2 b, Vector2 p) {
-		p.x = a.x - b.x;
-		p.y = a.y - b.y;
+	private static void subVecs(Vector2 a, Vector2 b, Vector2 dst) {
+		dst.x = a.x - b.x;
+		dst.y = a.y - b.y;
 	}
 
-	private static void addVecs(Vector3 a, Vector3 b, Vector3 p) {
-		p.x = a.x + b.x;
-		p.y = a.y + b.y;
-		p.z = a.z + b.z;
+	private static void addVecs(Vector3 a, Vector3 b, Vector3 dst) {
+		dst.x = a.x + b.x;
+		dst.y = a.y + b.y;
+		dst.z = a.z + b.z;
 	}
 
-	private static void addVecs(Vector2 a, Vector2 b, Vector2 p) {
-		p.x = a.x + b.x;
-		p.y = a.y + b.y;
+	private static void addVecs(Vector2 a, Vector2 b, Vector2 dst) {
+		dst.x = a.x + b.x;
+		dst.y = a.y + b.y;
 	}
 
 	@Override
