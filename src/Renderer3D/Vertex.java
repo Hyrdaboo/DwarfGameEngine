@@ -11,7 +11,7 @@ import DwarfEngine.MathTypes.Vector3;
 public final class Vertex implements Cloneable {
 	public Vector3 position = Vector3.zero();
 	public Vector2 texcoord = Vector2.zero();
-	public Vector3 color = Vector3.one();
+	public Vector3 color;
 	public Vector3 normal = Vector3.up(); // not normalized
 	public Vector3 worldPos = Vector3.one();
 
@@ -23,7 +23,7 @@ public final class Vertex implements Cloneable {
 	static Vertex Lerp(Vertex a, Vertex b, float t, Vertex v) {
 		Vector3.Lerp(a.position, b.position, t, v.position);
 		Vector2.Lerp(a.texcoord, b.texcoord, t, v.texcoord);
-		Vector3.Lerp(a.color, b.color, t, v.color);
+		if (a.color != null && v.color != null) Vector3.Lerp(a.color, b.color, t, v.color);
 		Vector3.Lerp(a.normal, b.normal, t, v.normal);
 		v.normal.normalized(v.normal);
 		Vector3.Lerp(a.worldPos, b.worldPos, t, v.worldPos);
@@ -49,25 +49,23 @@ public final class Vertex implements Cloneable {
 		v.position.w = (b.position.w - a.position.w) * mag;
 		v.texcoord.x = (b.texcoord.x - a.texcoord.x) * mag;
 		v.texcoord.y = (b.texcoord.y - a.texcoord.y) * mag;
-		v.color.x = (b.color.x - a.color.x) * mag;
-		v.color.y = (b.color.y - a.color.y) * mag;
-		v.color.z = (b.color.z - a.color.z) * mag;
 		v.normal.x = (b.normal.x - a.normal.x) * mag;
 		v.normal.y = (b.normal.y - a.normal.y) * mag;
 		v.normal.z = (b.normal.z - a.normal.z) * mag;
 		v.worldPos.x = (b.worldPos.x - a.worldPos.x) * mag;
 		v.worldPos.y = (b.worldPos.y - a.worldPos.y) * mag;
 		v.worldPos.z = (b.worldPos.z - a.worldPos.z) * mag;
+		if (a.color != null) {
+			v.color.x = (b.color.x - a.color.x) * mag;
+			v.color.y = (b.color.y - a.color.y) * mag;
+			v.color.z = (b.color.z - a.color.z) * mag;
+		}
 	}
 
 	static void add(Vertex a, Vertex b, float f) {
 		a.texcoord.x += b.texcoord.x * f;
 		a.texcoord.y += b.texcoord.y * f;
 		a.texcoord.z += b.texcoord.z * f;
-		a.color.x += b.color.x * f;
-		a.color.y += b.color.y * f;
-		a.color.z += b.color.z * f;
-		a.color.w += b.color.w * f;
 		a.normal.x += b.normal.x * f;
 		a.normal.y += b.normal.y * f;
 		a.normal.z += b.normal.z * f;
@@ -75,6 +73,12 @@ public final class Vertex implements Cloneable {
 		a.worldPos.y += b.worldPos.y * f;
 		a.worldPos.z += b.worldPos.z * f;
 		a.position.w += b.position.w * f;
+		if (a.color != null) {
+			a.color.x += b.color.x * f;
+			a.color.y += b.color.y * f;
+			a.color.z += b.color.z * f;
+			a.color.w += b.color.w * f;
+		}
 	}
 
 	private static void subVecs(Vector3 a, Vector3 b, Vector3 dst) {

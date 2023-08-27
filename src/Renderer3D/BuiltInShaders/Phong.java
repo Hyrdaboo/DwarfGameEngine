@@ -44,6 +44,9 @@ public class Phong extends Shader {
 		in.normal.normalized(normal);
 		rotationMatrix.MultiplyByVector(normal, normal);
 
+		Vector3.subtract2Vecs(cameraTransform.position, in.worldPos, cameraDir);
+		cameraDir.normalized(cameraDir);
+
 		for (int i = 0; i < lightCount(); i++) {
 			Light light = GetLight(i);
 			if (light == null)
@@ -56,15 +59,12 @@ public class Phong extends Shader {
 
 			float attenuation = 1f;
 
-			Vector3.subtract2Vecs(cameraTransform.position, in.worldPos, cameraDir);
-			cameraDir.normalized(cameraDir);
-
 			if (light.type == LightType.Directional) {
 				light.transform.forward.normalized(-1f, lightDir);
 			} else {
 				Vector3.subtract2Vecs(light.transform.position, in.worldPos, lightDir);
 				float lightDist = lightDir.magnitude();
-				lightDir.normalized();
+				lightDir.normalized(lightDir);
 				attenuation = 1f - Mathf.clamp01(lightDist / light.radius);
 			}
 
@@ -82,13 +82,12 @@ public class Phong extends Shader {
 			finalCol.addTo(light.getColor(), diffuse);
 		}
 
-		if (baseColor == null) {
-			finalCol.addTo(finalSpecular);
-		} else {
-			Vector3 surfaceColor = baseColor.Fragment(in, new Vector3());
-			finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
-			finalCol.addTo(finalSpecular);
+		if (baseColor != null) {
+			Vector3 surfaceColor = baseColor.Fragment(in, Vector3.POOL.get());
+			Vector3.mul2Vecs(surfaceColor, finalCol, finalCol);
+			Vector3.POOL.sub(1);
 		}
+		finalCol.addTo(finalSpecular);
 
 		Vector3.POOL.sub(5);
 

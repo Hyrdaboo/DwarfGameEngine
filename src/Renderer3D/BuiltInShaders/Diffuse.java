@@ -62,8 +62,10 @@ public class Diffuse extends Shader {
 		}
 
 		if (baseColor != null) {
-			Vector3 surfaceColor = baseColor.Fragment(in, new Vector3());
+			Vector3 tmp = Vector3.POOL.get();
+			Vector3 surfaceColor = baseColor.Fragment(in, tmp);
 			Vector3.mul2Vecs(dst, surfaceColor, dst);
+			Vector3.POOL.sub(1);
 		}
 
 		return dst;

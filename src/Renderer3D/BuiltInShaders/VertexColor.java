@@ -11,7 +11,9 @@ public class VertexColor extends Shader {
 
 	@Override
 	public Vector3 Fragment(Vertex in, Vector3 dst) {
-		return in.color;
+		if (in.color != null) return in.color;
+		dst.x = dst.y = dst.z = 1f;
+		return dst;
 	}
 
 }

@@ -183,14 +183,15 @@ public final class Vector3 {
 	}
 
 	public static Vector3 mul2Vecs(Vector3 vec1, Vector3 vec2) {
-		return mul2Vecs(vec1, vec2, new Vector3());
+		Vector3 dst = new Vector3();
+		mul2Vecs(vec1, vec2, dst);
+		return dst;
 	}
 
-	public static Vector3 mul2Vecs(Vector3 vec1, Vector3 vec2, Vector3 dst) {
+	public static void mul2Vecs(Vector3 vec1, Vector3 vec2, Vector3 dst) {
 		dst.x = vec1.x * vec2.x;
 		dst.y = vec1.y * vec2.y;
 		dst.z = vec1.z * vec2.z;
-		return dst;
 	}
 
 	/**
@@ -277,10 +278,10 @@ public final class Vector3 {
 	}
 
 	public static Vector3 Lerp(Vector3 a, Vector3 b, float t, Vector3 dst) {
-		dst.x = Mathf.lerp(a.x, b.x, t);
-		dst.y = Mathf.lerp(a.y, b.y, t);
-		dst.z = Mathf.lerp(a.z, b.z, t);
-		dst.w = Mathf.lerp(a.w, b.w, t);
+		dst.x = a.x + (b.x - a.x) * t;
+		dst.y = a.y + (b.y - a.y) * t;
+		dst.z = a.z + (b.z - a.z) * t;
+		dst.w = a.w + (b.w - a.w) * t;
 		return dst;
 	}
 

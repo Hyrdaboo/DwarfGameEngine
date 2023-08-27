@@ -96,6 +96,7 @@ public class ShaderShowcaseScene extends Scene {
 
 		Texture skyTexture = new Texture();
 		skyTexture.Load("DemoResources/skyImage.png");
+		skyTexture.samplingMode = Texture.SamplingMode.Bilinear;
 
 		Unlit skyShader = new Unlit();
 		skyShader.setTexture(skyTexture);

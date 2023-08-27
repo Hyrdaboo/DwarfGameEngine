@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 public class ThreadPool {
 	private static final int numThreads = Runtime.getRuntime().availableProcessors();
 	private static final ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-	private static final ArrayList<Future> futures = new ArrayList<>();
+	private static final ArrayList<Future<?>> futures = new ArrayList<>();
 
 	public static void executeInParallel(int numItems, Task task) {
 		futures.ensureCapacity(numItems);

@@ -68,9 +68,7 @@ public final class DisplayRenderer {
 	 * @param rgb The RGB value representing the color to set for the pixel.
 	 */
 	public static void SetPixel(int x, int y, int rgb) {
-		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0)
-			return;
-		rgb = (int) Mathf.clamp(rgb, 0, 0xffffff);
+		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0) return;
 		pixelBuffer[x + y * bufferWidth] = rgb;
 	}
 
@@ -116,9 +114,8 @@ public final class DisplayRenderer {
 			for (int x = 0; x < sx; x++) {
 				int cx = ((x * tw / sx));
 				int cy = ((y * th / sy));
-				Color c = texture.GetPixel(cx, cy);
-				if (c.getAlpha() < 255)
-					continue;
+				int c = texture.GetPixelRaw(cx, cy);
+				if ((c >>> 24) < 255) continue;
 				SetPixel(px + x, py + y, c);
 			}
 		}

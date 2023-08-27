@@ -96,13 +96,17 @@ public final class Matrix4x4 {
 	 *
 	 * @param vec The vector to be multiplied by the matrix.
 	 * @return The vector resulting from the multiplication of the given vector and
-	 *         the matrix.
+	 * the matrix.
 	 */
 	public Vector3 MultiplyByVector(Vector3 vec, Vector3 out) {
-		out.x = vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + matrix[3][0];
-		out.y = vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + matrix[3][1];
-		out.z = vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + matrix[3][2];
-		out.w = vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + matrix[3][3];
+		float x = vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + matrix[3][0];
+		float y = vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + matrix[3][1];
+		float z = vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + matrix[3][2];
+		float w = vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + matrix[3][3];
+		out.x = x;
+		out.y = y;
+		out.z = z;
+		out.w = w;
 		return out;
 	}
 
@@ -117,7 +121,7 @@ public final class Matrix4x4 {
 	 * @param projectionMatrix The projection matrix to be modified.
 	 */
 	public static void PerspectiveProjection(float fov, float aspectRatio, float near, float far,
-			Matrix4x4 projectionMatrix) {
+											 Matrix4x4 projectionMatrix) {
 		fov = Mathf.clamp(fov, 1, 179);
 
 		float fovRad = 1.0f / Mathf.tan(fov * 0.5f * Mathf.Deg2Rad);

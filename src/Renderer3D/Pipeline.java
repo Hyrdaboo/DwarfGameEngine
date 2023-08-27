@@ -86,8 +86,8 @@ public final class Pipeline {
 		}
 		camera.frameSize = frameSize;
 
-		Vector2 windowSize = new Vector2(application.getWidth() / application.getPixelScale(),
-				application.getHeight() / application.getPixelScale());
+		Vector2 windowSize = new Vector2((float) application.getWidth() / application.getPixelScale(),
+				(float) application.getHeight() / application.getPixelScale());
 		float aspectRatio = windowSize.y / windowSize.x;
 
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
@@ -139,12 +139,13 @@ public final class Pipeline {
 
 				for (Triangle clipped : finalResult) {
 					for (int i = 0; i < 3; i++) {
+						// here it is important, that the values are copied! why ever
 						clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
 						clipped.verts[i].position.w = 1.0f / clipped.verts[i].position.w;
 						clipped.verts[i].position.multiplyBy(clipped.verts[i].position.w);
 						clipped.verts[i].texcoord = Vector2.mulVecFloat(clipped.verts[i].texcoord, clipped.verts[i].position.w);
 						clipped.verts[i].worldPos = Vector3.mulVecFloat(clipped.verts[i].worldPos, clipped.verts[i].position.w);
-						clipped.verts[i].position = camera.viewportToScreenPoint(clipped.verts[i].position);
+						camera.viewportToScreenPoint(clipped.verts[i].position, clipped.verts[i].position);
 					}
 
 					DrawProjectedTriangle(clipped, renderObject.shader);

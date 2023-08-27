@@ -24,8 +24,10 @@ class Triplanar extends Shader {
 	public Triplanar() {
 		grass = new Texture();
 		grass.Load("DemoResources/Grass.png");
+		grass.samplingMode = Texture.SamplingMode.Bilinear;
 		sand = new Texture();
 		sand.Load("DemoResources/Sand.png");
+		sand.samplingMode = Texture.SamplingMode.Bilinear;
 	}
 
 	@Override
@@ -104,6 +106,7 @@ public class TerrainDemo extends Scene {
 		heightmap.Load("DemoResources/Heightmap.png");
 		Texture skyTexture = new Texture();
 		skyTexture.Load("DemoResources/skyImage.png");
+		skyTexture.samplingMode = Texture.SamplingMode.Bilinear;
 
 		Unlit skyShader = new Unlit();
 		skyShader.setTexture(skyTexture);

@@ -246,12 +246,14 @@ public final class Texture {
 		}
 	}
 
+	private static final float inv255 = 1f / 255f;
+
 	private Vector3 GetPixelUv(int x, int y, Vector3 dst) {
 		y = height - 1 - y;
 		int rgb = pixels[x + y * width];
-		dst.x = ((rgb >> 16) & 0xFF) / 255.0f;
-		dst.y = ((rgb >> 8) & 0xFF) / 255.0f;
-		dst.z = ((rgb) & 0xFF) / 255.0f;
+		dst.x = ((rgb >> 16) & 0xFF) * inv255;
+		dst.y = ((rgb >> 8) & 0xFF) * inv255;
+		dst.z = ((rgb) & 0xFF) * inv255;
 		return dst;
 	}
 
@@ -355,7 +357,7 @@ public final class Texture {
 			return GetPixelUv((int) x, (int) y, dst);
 		} else {
 			float fx = Mathf.floor(x), fy = Mathf.floor(y);
-			int x0 = (int) fx, y0 = (int) fy, x1 = x0 + 1, y1 = y0 + 1;
+			int x0 = Math.min((int) fx, width - 2), y0 = Math.min((int) fy, height - 2), x1 = x0 + 1, y1 = y0 + 1;
 
 			float tx = x - fx;
 			float ty = y - fy;

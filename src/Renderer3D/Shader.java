@@ -66,6 +66,8 @@ public abstract class Shader {
 			other.objectTransform = this.objectTransform;
 		if (other.cameraTransform == null)
 			other.cameraTransform = this.cameraTransform;
+		if (other.rotationMatrix == null)
+			other.rotationMatrix = this.rotationMatrix;
 	}
 
 	/**

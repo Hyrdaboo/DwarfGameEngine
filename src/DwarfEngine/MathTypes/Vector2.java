@@ -203,8 +203,8 @@ public final class Vector2 {
 	}
 
 	public static Vector2 Lerp(Vector2 a, Vector2 b, float t, Vector2 v) {
-		v.x = Mathf.lerp(a.x, b.x, t);
-		v.y = Mathf.lerp(a.y, b.y, t);
+		v.x = a.x + (b.x - a.x) * t;
+		v.y = a.y + (b.y - a.y) * t;
 		return v;
 	}
 
