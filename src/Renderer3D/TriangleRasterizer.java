@@ -20,7 +20,7 @@ import static DwarfEngine.Core.DisplayRenderer.*;
 public final class TriangleRasterizer {
 
 	private static float[] depthBuffer;
-	private int width, height;
+	private final int width, height;
 
 	Plane[] clippingPlanes;
 

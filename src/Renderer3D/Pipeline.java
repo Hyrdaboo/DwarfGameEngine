@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static DwarfEngine.Core.DisplayRenderer.DrawTriangle;
+import static DwarfEngine.Core.DisplayRenderer.DrawLineTriangle;
 
 /**
  * Represents a pipeline that a mesh goes through to get rendered on the screen.
@@ -33,14 +33,13 @@ public final class Pipeline {
 
 	public RenderFlag renderFlag = RenderFlag.Shaded;
 
-	private Application application;
+	private final Application application;
 	private Camera camera;
-	private Matrix4x4 projectionMatrix;
+	private final Matrix4x4 projectionMatrix;
 
-	private float[] depthBuffer;
-	private Vector2 frameSize;
+	private final Vector2 frameSize;
 
-	private TriangleRasterizer tr;
+	private final TriangleRasterizer tr;
 
 	public Pipeline(Application application) {
 		this.application = application;
@@ -48,7 +47,7 @@ public final class Pipeline {
 		projectionMatrix = new Matrix4x4();
 
 		frameSize = application.getFrameSize();
-		depthBuffer = new float[(int) (frameSize.x * frameSize.y)];
+		float[] depthBuffer = new float[(int) (frameSize.x * frameSize.y)];
 
 		tr = new TriangleRasterizer();
 		tr.bindDepth(depthBuffer);
@@ -76,6 +75,7 @@ public final class Pipeline {
 	 *                     mesh and shader references.
 	 */
 	public void DrawMesh(Prop renderObject) {
+
 		if (renderObject == null) {
 			System.err.println("RenderObject is null");
 			return;
@@ -159,7 +159,7 @@ public final class Pipeline {
 			tr.DrawTriangle(projected.verts, shader);
 		}
 		if (renderFlag != RenderFlag.Shaded) {
-			DrawTriangle(new Vector2(projected.verts[0].position), new Vector2(projected.verts[1].position),
+			DrawLineTriangle(new Vector2(projected.verts[0].position), new Vector2(projected.verts[1].position),
 					new Vector2(projected.verts[2].position), Color.gray);
 		}
 	}

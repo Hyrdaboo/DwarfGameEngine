@@ -248,7 +248,7 @@ public final class DisplayRenderer {
 	 * @param p3    The third vertex of the triangle.
 	 * @param color The color of the triangle.
 	 */
-	public static void DrawTriangle(Vector2 p1, Vector2 p2, Vector2 p3, Color color) {
+	public static void DrawLineTriangle(Vector2 p1, Vector2 p2, Vector2 p3, Color color) {
 		DrawLine(p1, p2, color);
 		DrawLine(p2, p3, color);
 		DrawLine(p3, p1, color);
