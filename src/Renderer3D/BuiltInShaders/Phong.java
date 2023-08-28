@@ -13,7 +13,7 @@ import Renderer3D.Vertex;
 public class Phong extends Shader {
 	public float shininess = 1;
 	public Vector3 specularColor = Vector3.one();
-	private Shader baseColor;
+	private final Shader baseColor;
 
 	/**
 	 * Uses another unlit shader and applies phong lighting on it
@@ -25,15 +25,12 @@ public class Phong extends Shader {
 		baseColor = shader;
 	}
 
-	private Vector3 white = Vector3.one();
-
 	@Override
 	public Vector3 Fragment(Vertex in, Vector3 dst) {
 
-		Vector3 finalCol = dst;
 		Vector3 finalSpecular = Vector3.POOL.get();
 
-		finalCol.x = finalCol.y = finalCol.z = 0;
+		dst.x = dst.y = dst.z = 0;
 		finalSpecular.x = finalSpecular.y = finalSpecular.z = 0;
 
 		Vector3 normal = Vector3.POOL.get();
@@ -53,7 +50,7 @@ public class Phong extends Shader {
 				continue;
 
 			if (light.type == LightType.Ambient) {
-				finalCol.addTo(light.getColor());
+				dst.addTo(light.getColor());
 				continue;
 			}
 
@@ -79,18 +76,18 @@ public class Phong extends Shader {
 			float diffuse = Vector3.Dot(normal, lightDir);
 			diffuse = Mathf.clamp01(diffuse);
 			diffuse *= light.intensity * attenuation;
-			finalCol.addTo(light.getColor(), diffuse);
+			dst.addTo(light.getColor(), diffuse);
 		}
 
 		if (baseColor != null) {
 			Vector3 surfaceColor = baseColor.Fragment(in, Vector3.POOL.get());
-			Vector3.mul2Vecs(surfaceColor, finalCol, finalCol);
+			Vector3.mul2Vecs(surfaceColor, dst, dst);
 			Vector3.POOL.sub(1);
 		}
-		finalCol.addTo(finalSpecular);
+		dst.addTo(finalSpecular);
 
 		Vector3.POOL.sub(5);
 
-		return finalCol;
+		return dst;
 	}
 }

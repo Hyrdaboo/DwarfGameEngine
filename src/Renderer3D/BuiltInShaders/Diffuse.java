@@ -12,7 +12,7 @@ import Renderer3D.Vertex;
  */
 public class Diffuse extends Shader {
 
-	private Shader baseColor;
+	private final Shader baseColor;
 
 	/**
 	 * Uses another unlit shader and applies diffuse lighting on it
