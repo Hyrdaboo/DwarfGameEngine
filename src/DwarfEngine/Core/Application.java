@@ -31,7 +31,7 @@ public abstract class Application extends Canvas {
 	private double deltaTime;
 	private double time;
 	private double startTime;
-	private FpsCounter fpsCounter = new FpsCounter();
+	private final FpsCounter fpsCounter = new FpsCounter();
 
 	private boolean isRunning = true;
 
@@ -86,7 +86,6 @@ public abstract class Application extends Canvas {
 	}
 
 	private void Update() {
-		updateFps();
 
 		String modifiedTitle = "Dwarf Engine - " + title;
 		if (onTitleFrameStats) {
@@ -114,16 +113,6 @@ public abstract class Application extends Canvas {
 		OnUpdate();
 	}
 
-	double lastUpdate = .15;
-	double fpsRefreshRate = .0f;
-
-	private void updateFps() {
-		if (time > lastUpdate) {
-			lastUpdate = time + fpsRefreshRate;
-			fpsCounter.updateFps(deltaTime);
-		}
-	}
-
 	/**
 	 * Gracefully exits the application by stopping the main loop and triggering the
 	 * window closing event. This method should be called to terminate the
@@ -149,18 +138,42 @@ public abstract class Application extends Canvas {
 
 	private void Run() {
 		long timeLastFrame = System.nanoTime();
+		long frameIndex = 0;
+		long benchmarkWarmup = 20;
+		long benchmarkFrames = -1;
+		long benchmarkTime = 0;
+		deltaTime = 1e-9;
+		time = (System.currentTimeMillis() - startTime) / 1e9;
 		while (isRunning) {
-			long currentTime = System.nanoTime();
-			deltaTime = (currentTime - timeLastFrame) / 1e9;
-			timeLastFrame = currentTime;
-			time = (System.currentTimeMillis() - startTime) / 1000.0f;
+
+			boolean isBenchmarking = frameIndex >= benchmarkWarmup && frameIndex - benchmarkWarmup < benchmarkFrames;
+			if (isBenchmarking) { // disable input, fix time
+				time = 10;
+				deltaTime = 0;
+			}
 
 			Update();
-			render();
+			Render();
+
+			long currentTime = System.nanoTime();
+			long deltaTimeNanos = currentTime - timeLastFrame;
+			deltaTime = deltaTimeNanos / 1e9;
+			timeLastFrame = currentTime;
+			time = (System.currentTimeMillis() - startTime) / 1e9;
+			fpsCounter.updateFps(deltaTime);
+			if (isBenchmarking) {
+				benchmarkTime += deltaTimeNanos;
+				if (frameIndex == benchmarkWarmup + benchmarkFrames - 1) {
+					System.out.println("Benchmark Result: " + (benchmarkTime * 1e-6f / benchmarkFrames) + " ms/frame");
+					// frameIndex = benchmarkWarmup - 1;// restarting benchmark ^^
+					benchmarkTime = 0;
+				}
+			}
+			frameIndex++;
 		}
 	}
 
-	private void render() {
+	private void Render() {
 		BufferStrategy bufferStrategy = getBufferStrategy();
 
 		if (bufferStrategy == null) {
@@ -253,9 +266,9 @@ public abstract class Application extends Canvas {
 	 * @param imageName The name of the image file (without the file extension).
 	 */
 	public void saveImage(String directory, String imageName) {
-		File outputFile = new File(directory + "/" + imageName + ".png");
+		File outputFile = new File(directory, imageName + ".png");
 		if (!outputFile.getParentFile().exists()) {
-			System.err.println("Specified directiory is not valid!");
+			System.err.println("Specified directory is invalid!");
 			return;
 		}
 		try {

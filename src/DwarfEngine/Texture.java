@@ -246,7 +246,7 @@ public final class Texture {
 		}
 	}
 
-	private static final float inv255 = 1f / 255f;
+	private static final float inv255 = 1f / 255f, inv65535 = 1f / 65535f;
 
 	private Vector3 GetPixelUv(int x, int y, Vector3 dst) {
 		y = height - 1 - y;
@@ -356,23 +356,27 @@ public final class Texture {
 		if (samplingMode == SamplingMode.Point) {
 			return GetPixelUv((int) x, (int) y, dst);
 		} else {
+
 			float fx = Mathf.floor(x), fy = Mathf.floor(y);
-			int x0 = Math.min((int) fx, width - 2), y0 = Math.min((int) fy, height - 2), x1 = x0 + 1, y1 = y0 + 1;
+			int x0 = Math.min((int) fx, width - 2), y0 = Math.min((int) fy, height - 2);
 
 			float tx = x - fx;
 			float ty = y - fy;
-			Vector3 a = Vector3.POOL.get(), b = Vector3.POOL.get();
 
-			Vector3 top = Vector3.Lerp(
-					GetPixelUv(x0, y0, a),
-					GetPixelUv(x1, y0, b), tx, dst);
-			Vector3 bottom = Vector3.Lerp(
-					GetPixelUv(x0, y1, a),
-					GetPixelUv(x1, y1, b), tx, a);
+			int[] pixels = this.pixels;
+			int qx = (int) (256 * tx), py = (int) (256 * ty), px = 256 - qx, qy = 256 - py;
+			int i0 = (height - 1 - y0) * width + x0, i1 = i0 - width;
+			int c0 = pixels[i0], c1 = pixels[i0 + 1],
+					c2 = pixels[i1], c3 = pixels[i1 + 1];
 
-			Vector3.POOL.sub(2);
+			int rMask = 0xff0000, gMask = 0xff00, bMask = 0xff;
+			int cr = ((((c0 & rMask) * px + qx * (c1 & rMask)) >>> 8) * qy + py * (((c2 & rMask) * px + qx * (c3 & rMask)) >>> 8)) >>> 16;
+			int cg = (((c0 & gMask) * px + qx * (c1 & gMask)) * qy + py * ((c2 & gMask) * px + qx * (c3 & gMask))) >>> 16;
+			int cb = (((c0 & bMask) * px + qx * (c1 & bMask)) * qy + py * ((c2 & bMask) * px + qx * (c3 & bMask))) >> 8;
 
-			return Vector3.Lerp(top, bottom, ty, dst);
+			float inv = inv65535;
+			return dst.set(cr * inv, cg * inv, cb * inv);
+
 		}
 	}
 }

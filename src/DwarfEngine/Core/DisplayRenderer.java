@@ -111,9 +111,9 @@ public final class DisplayRenderer {
 		int sx = (int) size.x, sy = (int) size.y, tw = texture.getWidth(), th = texture.getHeight();
 		int px = (int) pos.x, py = (int) pos.y;
 		for (int y = 0; y < sy; y++) {
+			int cy = ((y * th / sy));
 			for (int x = 0; x < sx; x++) {
 				int cx = ((x * tw / sx));
-				int cy = ((y * th / sy));
 				int c = texture.GetPixelRaw(cx, cy);
 				if ((c >>> 24) < 255) continue;
 				SetPixel(px + x, py + y, c);
@@ -143,8 +143,9 @@ public final class DisplayRenderer {
 	 * @param color  The color to fill the circle with.
 	 */
 	public static void FillCircle(Vector2 center, float radius, Color color) {
-		for (int y = (int) -radius; y < radius; y++) {
-			for (int x = (int) -radius; x < radius; x++) {
+		int r = (int) radius;
+		for (int y = -r + 1; y < r; y++) {
+			for (int x = -r + 1; x < r; x++) {
 				if (x * x + y * y < radius * radius) {
 					SetPixel((int) (center.x + x), (int) (center.y + y), color);
 				}
@@ -162,8 +163,9 @@ public final class DisplayRenderer {
 	 */
 	public static void DrawCircle(Vector2 center, float radius, float strokeWidth, Color color) {
 		strokeWidth = Mathf.clamp(strokeWidth, 1, radius - 1);
-		for (int y = (int) -radius; y < radius; y++) {
-			for (int x = (int) -radius; x < radius; x++) {
+		int r = (int) radius;
+		for (int y = -r; y <= r; y++) {
+			for (int x = -r; x <= r; x++) {
 				float dst = Vector2.distance(Vector2.zero(), new Vector2(x, y));
 				if (dst < radius && dst > radius - strokeWidth) {
 					SetPixel((int) (center.x + x), (int) (center.y + y), color);

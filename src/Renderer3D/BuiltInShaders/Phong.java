@@ -30,7 +30,7 @@ public class Phong extends Shader {
 
 		Vector3 finalSpecular = Vector3.POOL.get();
 
-		dst.x = dst.y = dst.z = 0;
+		dst.set(ambientLight);
 		finalSpecular.x = finalSpecular.y = finalSpecular.z = 0;
 
 		Vector3 normal = Vector3.POOL.get();
@@ -44,15 +44,7 @@ public class Phong extends Shader {
 		Vector3.subtract2Vecs(cameraTransform.position, in.worldPos, cameraDir);
 		cameraDir.normalized(cameraDir);
 
-		for (int i = 0; i < lightCount(); i++) {
-			Light light = GetLight(i);
-			if (light == null)
-				continue;
-
-			if (light.type == LightType.Ambient) {
-				dst.addTo(light.getColor());
-				continue;
-			}
+		for (Light light : lights) {
 
 			float attenuation = 1f;
 

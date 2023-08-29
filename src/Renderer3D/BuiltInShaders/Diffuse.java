@@ -1,6 +1,5 @@
 package Renderer3D.BuiltInShaders;
 
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Light;
 import Renderer3D.Light.LightType;
@@ -26,47 +25,37 @@ public class Diffuse extends Shader {
 
 	@Override
 	public Vector3 Fragment(Vertex in, Vector3 dst) {
-		dst.x = dst.y = dst.z = 0f;
+		dst.set(ambientLight);
 
-		for (int i = 0; i < lightCount(); i++) {
-			Light light = GetLight(i);
-			if (light == null)
-				continue;
+		Vector3 lightDir = Vector3.POOL.get();
+		Vector3 normal = Vector3.POOL.get();
+		for (Light light : lights) {
 
-			if (light.type == LightType.Ambient) {
-				dst.addTo(light.getColor());
-				continue;
-			}
+			in.normal.normalized(normal);
+			rotationMatrix.MultiplyByVector(normal, normal);
 
-			Vector3 normal = in.normal.normalized();
-			normal = rotationMatrix.MultiplyByVector(normal);
-
-			Vector3 lightDir;
-			float attenuation = 1;
-
+			float attenuation = 1f;
 			if (light.type == LightType.Directional) {
-				lightDir = new Vector3(light.transform.forward.normalized());
-				lightDir.multiplyBy(-1);
+				light.transform.forward.normalized(-1f, lightDir);
 			} else {
-				Vector3 difference = Vector3.subtract2Vecs(light.transform.position, in.worldPos);
-				lightDir = difference.normalized();
-				float lightDist = difference.magnitude();
-				attenuation = Mathf.clamp01(lightDist / light.radius);
-				attenuation = 1 - attenuation;
+				Vector3.subtract2Vecs(light.transform.position, in.worldPos, lightDir);
+				float lightDist = lightDir.magnitude();
+				lightDir.multiplyBy(1f / lightDist);
+				attenuation = 1f - Math.min(lightDist / light.radius, 1f);
 			}
 
 			float diffuse = Vector3.Dot(normal, lightDir);
-			diffuse = Mathf.clamp01(diffuse);
+			diffuse = Math.max(diffuse, 0f);
 			diffuse *= light.intensity * attenuation;
-			dst.addTo(Vector3.mulVecFloat(light.getColor(), diffuse));
+			dst.addTo(light.getColor(), diffuse);
 		}
 
 		if (baseColor != null) {
-			Vector3 tmp = Vector3.POOL.get();
-			Vector3 surfaceColor = baseColor.Fragment(in, tmp);
+			// normal is being abused here as a temporary variable
+			Vector3 surfaceColor = baseColor.Fragment(in, normal);
 			Vector3.mul2Vecs(dst, surfaceColor, dst);
-			Vector3.POOL.sub(1);
 		}
+		Vector3.POOL.sub(2);
 
 		return dst;
 	}

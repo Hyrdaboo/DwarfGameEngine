@@ -1,23 +1,12 @@
 package DwarfEngine.Core;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple polling-based input system that provides methods for handling user
@@ -81,21 +70,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * @return True if the key is currently held down, false otherwise.
 	 */
 	public static boolean OnKeyHeld(Keycode e) {
-		for (Integer heldKey : heldKeys) {
-			try {
-				if (heldKey == e.GetKeyCode()) {
-					return true;
-				}
-			} catch (Exception e2) {
-				return false;
-			}
-		}
-
-		if (heldKeys.size() > 0 && e == Keycode.AnyKey) {
-			return true;
-		}
-
-		return false;
+		return heldKeys.contains(e.GetKeyCode()) || (e == Keycode.AnyKey && heldKeys.size() > 0);
 	}
 
 	static void resetKeyStates() {
@@ -126,7 +101,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	}
 
 	//////// MOUSE EVENTS /////////
-	private static Vector2 mousePosition = Vector2.zero();
+	private static final Vector2 mousePosition = Vector2.zero();
 
 	/**
 	 * Returns the current position of the mouse cursor.
@@ -150,7 +125,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
 	 *               and 3.
 	 * @return {@code true} if the specified mouse button is being held down,
-	 *         {@code false} otherwise.
+	 * {@code false} otherwise.
 	 * @throws IllegalArgumentException if an invalid mouse button index is
 	 *                                  provided.
 	 */
@@ -158,10 +133,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 		if (button < 1 || button > 3) {
 			throw new IllegalArgumentException("Invalid Mouse button index. Valid indexes are 1, 2, 3");
 		}
-		if (heldButton == button) {
-			return true;
-		}
-		return false;
+		return heldButton == button;
 	}
 
 	/**
@@ -170,7 +142,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
 	 *               and 3.
 	 * @return {@code true} if the specified mouse button has been clicked,
-	 *         {@code false} otherwise.
+	 * {@code false} otherwise.
 	 * @throws IllegalArgumentException if an invalid mouse button index is
 	 *                                  provided.
 	 */
@@ -191,7 +163,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * @param button The index of the mouse button to check. Valid indexes are 1, 2,
 	 *               and 3.
 	 * @return {@code true} if the specified mouse button has been released,
-	 *         {@code false} otherwise.
+	 * {@code false} otherwise.
 	 * @throws IllegalArgumentException if an invalid mouse button index is
 	 *                                  provided.
 	 */
@@ -328,8 +300,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 	 * Returns the direction of the mouse wheel scroll.
 	 *
 	 * @return An integer representing the direction of the mouse wheel scroll.
-	 *         Positive value indicates scrolling up, negative value indicates
-	 *         scrolling down, and 0 indicates no scrolling.
+	 * Positive value indicates scrolling up, negative value indicates
+	 * scrolling down, and 0 indicates no scrolling.
 	 */
 	public static int getMouseWheel() {
 		return scrollDir;

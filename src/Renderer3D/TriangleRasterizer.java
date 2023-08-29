@@ -5,10 +5,8 @@ import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 import static DwarfEngine.Core.DisplayRenderer.*;
 
@@ -74,30 +72,13 @@ public final class TriangleRasterizer {
 	}
 
 	/**
-	 * Draws a triangle using the specified vertices and shader.
+	 * Draws a triangle using the specified shader.
 	 *
-	 * @param vertices The array of vertices that make up the triangle.
-	 * @param shader   The shader to use for rendering the triangle.
+	 * @param in     The triangle to render
+	 * @param shader The shader to use for rendering the triangle.
 	 */
-	public void DrawTriangle(Vertex[] vertices, Shader shader) {
-
-		Triangle in = new Triangle(vertices[0], vertices[1], vertices[2]);
-		List<Triangle> finalResult = new ArrayList<>();
-		finalResult.add(in);
-
-		for (Plane p : clippingPlanes) {
-			int initialSize = finalResult.size();
-			for (int i = 0; i < initialSize; i++) {
-				Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, finalResult.get(0));
-				finalResult.remove(0);
-
-				for (Triangle clipped : clippedTris) {
-					if (clipped != null) finalResult.add(clipped);
-				}
-			}
-		}
-
-		for (Triangle clipped : finalResult) {
+	public void DrawTriangle(Triangle in, Shader shader) {
+		for (Triangle clipped : Pipeline.clipTriangleAgainstPlanes(in, clippingPlanes)) {
 			DrawTriangleClipped(clipped.verts, shader);
 		}
 	}
@@ -155,10 +136,12 @@ public final class TriangleRasterizer {
 	}
 
 	private void flatTriangle(Vertex leftSlope1, Vertex leftSlope2, Vertex rightSlope1, Vertex rightSlope2,
-							  Shader shader) {
+														Shader shader) {
 
 		int yStart = (int) Mathf.round(leftSlope1.position.y);
 		int yEnd = (int) Mathf.round(rightSlope2.position.y);
+
+		int pixelation = shader.pixelation;
 
 		float leftSlope = calculateSlope(leftSlope1.position, leftSlope2.position);
 		float rightSlope = calculateSlope(rightSlope1.position, rightSlope2.position);
@@ -187,6 +170,8 @@ public final class TriangleRasterizer {
 			Vertex.delta(startVertex, endVertex, 1f / (xEnd - xStart), delta);
 
 			int missing = 0;
+			int color = 0;
+			int index = 0;
 			float wi = startVertex.position.w, dwi = delta.position.w;
 			for (int x = xStart; x < xEnd; x++) {
 
@@ -197,17 +182,22 @@ public final class TriangleRasterizer {
 
 				if (depthTestPassed) {
 
-					if (missing > 0) {
-						Vertex.add(startVertex, delta, missing);
-						missing = 0;
-					}
-
 					float w = 1f / wi;
-					Vector2.mulVecFloat(startVertex.texcoord, w, in.texcoord);
-					Vector3.mulVecFloat(startVertex.worldPos, w, in.worldPos);
+					if (index > 0) {
+						SetPixel(x, y, color);
+					} else {
+						if (missing > 0) {
+							Vertex.add(startVertex, delta, missing);
+							missing = 0;
+						}
 
-					int finalCol = toColor(shader.Fragment(in, col));
-					SetPixel(x, y, finalCol);
+						Vector2.mulVecFloat(startVertex.texcoord, w, in.texcoord);
+						Vector3.mulVecFloat(startVertex.worldPos, w, in.worldPos);
+
+						color = toColor(shader.Fragment(in, col));
+						SetPixel(x, y, color);
+						index = pixelation;
+					}
 
 					if (depthBuffer != null) {
 						writeDepth(x, y, w);
@@ -215,6 +205,7 @@ public final class TriangleRasterizer {
 				}
 
 				missing++;
+				index--;
 				wi += dwi;
 			}
 		}

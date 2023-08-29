@@ -14,6 +14,20 @@ public final class Vector3 {
 	public Vector3() {
 	}
 
+	public Vector3 set(float nx, float ny, float nz){
+		x = nx;
+		y = ny;
+		z = nz;
+		return this;
+	}
+
+	public Vector3 set(Vector3 n){
+		x = n.x;
+		y = n.y;
+		z = n.z;
+		return this;
+	}
+
 	public float x = 0;
 	public float y = 0;
 	public float z = 0;

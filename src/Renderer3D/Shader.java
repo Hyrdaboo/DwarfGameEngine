@@ -1,9 +1,9 @@
 package Renderer3D;
 
-import java.util.List;
-
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector3;
+
+import java.util.List;
 
 /**
  * The Shader class represents a shader used for rendering objects in a 3D
@@ -13,7 +13,8 @@ import DwarfEngine.MathTypes.Vector3;
  * words pixels that make up this object.
  */
 public abstract class Shader {
-	List<Light> lights = null;
+	protected Light[] lights = null;
+	protected final Vector3 ambientLight = new Vector3();
 	protected Transform objectTransform = null;
 	protected Matrix4x4 rotationMatrix = null;
 	protected Transform cameraTransform = null;
@@ -24,24 +25,9 @@ public abstract class Shader {
 	public boolean cull = true;
 
 	/**
-	 * Retrieves a light from the list of lights of this shader
-	 *
-	 * @param index index of the light in the list
-	 * @return the light with this index <br>
-	 *         <code>null</code> if the lights for this shader have not been
-	 *         initialized or the index is out of bounds
+	 * If the colors don't vary a lot, reduce the shader sampling resolution here.
 	 */
-	protected Light GetLight(int index) {
-		if (lights == null || index < 0 || index >= lights.size())
-			return null;
-		return lights.get(index);
-	}
-
-	protected int lightCount() {
-		if (lights == null)
-			return 0;
-		return lights.size();
-	}
+	public int pixelation = 1;
 
 	/**
 	 * Passes object data of this Shader to another shader. Use this if you wanna
@@ -55,7 +41,7 @@ public abstract class Shader {
 	 * Vector3 baseCol = base.Fragment(in);
 	 * </pre>
 	 *
-	 * @param other
+	 * @param other destination object
 	 */
 	protected void passObjectData(Shader other) {
 		if (other == null)
@@ -79,4 +65,14 @@ public abstract class Shader {
 	 * @return The calculated color of the fragment.
 	 */
 	public abstract Vector3 Fragment(Vertex in, Vector3 dst);
+
+	public void SetLights(List<Light> lights) {
+		this.lights = lights.stream().filter((l) -> l.type != Light.LightType.Ambient).toArray(Light[]::new);
+		ambientLight.set(0f, 0f, 0f);
+		for (Light l : lights) {
+			if (l.type == Light.LightType.Ambient) {
+				ambientLight.addTo(l.getColor());
+			}
+		}
+	}
 }

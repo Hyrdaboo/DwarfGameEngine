@@ -1,8 +1,8 @@
 package Renderer3D;
 
-import java.util.List;
-
 import DwarfEngine.MathTypes.Vector3;
+
+import java.util.List;
 
 class ErrorShader extends Shader {
 
@@ -67,6 +67,6 @@ public final class Prop {
 	 * @param lights List of lights to set
 	 */
 	public void SetLights(List<Light> lights) {
-		shader.lights = lights;
+		shader.SetLights(lights);
 	}
 }

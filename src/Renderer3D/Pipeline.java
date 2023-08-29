@@ -123,21 +123,7 @@ public final class Pipeline {
 
 				if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f && renderObject.shader.cull) return;
 
-				List<Triangle> finalResult = new ArrayList<>();
-				finalResult.add(fullyTransformed);
-
-				for (Plane p : clippingPlanes) {
-					int initialSize = finalResult.size();
-					for (int i = 0; i < initialSize; i++) {
-						Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, finalResult.get(0));
-						finalResult.remove(0);
-						for (Triangle clipped : clippedTris) {
-							if (clipped != null) finalResult.add(clipped);
-						}
-					}
-				}
-
-				for (Triangle clipped : finalResult) {
+				for (Triangle clipped : clipTriangleAgainstPlanes(fullyTransformed, clippingPlanes)) {
 					for (int i = 0; i < 3; i++) {
 						// here it is important, that the values are copied! why ever
 						clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
@@ -156,12 +142,29 @@ public final class Pipeline {
 
 	private void DrawProjectedTriangle(Triangle projected, Shader shader) {
 		if (renderFlag != RenderFlag.Wireframe) {
-			tr.DrawTriangle(projected.verts, shader);
+			tr.DrawTriangle(projected, shader);
 		}
 		if (renderFlag != RenderFlag.Shaded) {
 			DrawLineTriangle(new Vector2(projected.verts[0].position), new Vector2(projected.verts[1].position),
 					new Vector2(projected.verts[2].position), Color.gray);
 		}
+	}
+
+	public static List<Triangle> clipTriangleAgainstPlanes(Triangle in, Plane[] clippingPlanes) {
+		List<Triangle> result = new ArrayList<>();
+		result.add(in);
+
+		for (Plane p : clippingPlanes) {
+			int initialSize = result.size();
+			for (int i = 0; i < initialSize; i++) {
+				Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, result.remove(0));
+				for (Triangle clipped : clippedTris) {
+					if (clipped != null) result.add(clipped);
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/**
