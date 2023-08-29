@@ -13,7 +13,9 @@ public class ThreadPool {
 
 	public static void executeInParallel(int numItems, Task task) {
 		ArrayList<Future<?>> futures = ThreadPool.futures.get();
-		int numTasks = numItems / 8;
+		// just an estimate for what is good; good value depends on triangle size;
+		// must not be < 1 if numItems is >= 1
+		int numTasks = numItems < 16 ? numItems : numItems < 32 ? numItems / 4 : numItems / 8;
 		int size0 = futures.size();
 		futures.ensureCapacity(size0 + numTasks);
 		for (int i = 0; i < numTasks; i++) {
