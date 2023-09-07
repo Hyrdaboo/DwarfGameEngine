@@ -66,4 +66,10 @@ public class DemoSceneLoader extends Application {
 			sceneIndex %= sceneNames.length;
 		}
 	}
+
+	public static void main(String[] args) {
+		Application app = new DemoSceneLoader();
+		int scale = 1;
+		app.Initialize(1920 / scale, 1080 / scale, scale);
+	}
 }

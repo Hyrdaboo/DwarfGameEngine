@@ -1,11 +1,11 @@
 package DwarfEngine.Core;
 
-import java.awt.Color;
-import java.util.Arrays;
-
-import DwarfEngine.Texture;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector2;
+import DwarfEngine.Texture;
+
+import java.awt.*;
+import java.util.Arrays;
 
 /**
  * The DisplayRenderer class is designed for low-level pixel manipulation on the
@@ -68,9 +68,7 @@ public final class DisplayRenderer {
 	 * @param rgb The RGB value representing the color to set for the pixel.
 	 */
 	public static void SetPixel(int x, int y, int rgb) {
-		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0)
-			return;
-		rgb = (int) Mathf.clamp(rgb, 0, 0xffffff);
+		if (y >= bufferHeight || y < 0 || x >= bufferWidth || x < 0) return;
 		pixelBuffer[x + y * bufferWidth] = rgb;
 	}
 
@@ -97,7 +95,6 @@ public final class DisplayRenderer {
 	public static void FillRect(Vector2 pos, Vector2 size, Color color) {
 		for (int y = 0; y < size.y; y++) {
 			for (int x = 0; x < size.x; x++) {
-
 				SetPixel((int) pos.x + x, (int) pos.y + y, color);
 			}
 		}
@@ -111,14 +108,15 @@ public final class DisplayRenderer {
 	 * @param texture The texture representing the image.
 	 */
 	public static void DrawImage(Vector2 pos, Vector2 size, Texture texture) {
-		for (int y = 0; y < size.y; y++) {
-			for (int x = 0; x < size.x; x++) {
-				int cx = (int) ((x / size.x) * texture.getWidth());
-				int cy = (int) ((y / size.y) * texture.getHeight());
-				Color c = texture.GetPixel(cx, cy);
-				if (c.getAlpha() < 255)
-					continue;
-				SetPixel((int) pos.x + x, (int) pos.y + y, c);
+		int sx = (int) size.x, sy = (int) size.y, tw = texture.getWidth(), th = texture.getHeight();
+		int px = (int) pos.x, py = (int) pos.y;
+		for (int y = 0; y < sy; y++) {
+			int cy = ((y * th / sy));
+			for (int x = 0; x < sx; x++) {
+				int cx = ((x * tw / sx));
+				int c = texture.GetPixelRaw(cx, cy);
+				if ((c >>> 24) < 255) continue;
+				SetPixel(px + x, py + y, c);
 			}
 		}
 	}
@@ -145,8 +143,9 @@ public final class DisplayRenderer {
 	 * @param color  The color to fill the circle with.
 	 */
 	public static void FillCircle(Vector2 center, float radius, Color color) {
-		for (int y = (int) -radius; y < radius; y++) {
-			for (int x = (int) -radius; x < radius; x++) {
+		int r = (int) radius;
+		for (int y = -r + 1; y < r; y++) {
+			for (int x = -r + 1; x < r; x++) {
 				if (x * x + y * y < radius * radius) {
 					SetPixel((int) (center.x + x), (int) (center.y + y), color);
 				}
@@ -164,8 +163,9 @@ public final class DisplayRenderer {
 	 */
 	public static void DrawCircle(Vector2 center, float radius, float strokeWidth, Color color) {
 		strokeWidth = Mathf.clamp(strokeWidth, 1, radius - 1);
-		for (int y = (int) -radius; y < radius; y++) {
-			for (int x = (int) -radius; x < radius; x++) {
+		int r = (int) radius;
+		for (int y = -r; y <= r; y++) {
+			for (int x = -r; x <= r; x++) {
 				float dst = Vector2.distance(Vector2.zero(), new Vector2(x, y));
 				if (dst < radius && dst > radius - strokeWidth) {
 					SetPixel((int) (center.x + x), (int) (center.y + y), color);
@@ -250,7 +250,7 @@ public final class DisplayRenderer {
 	 * @param p3    The third vertex of the triangle.
 	 * @param color The color of the triangle.
 	 */
-	public static void DrawTriangle(Vector2 p1, Vector2 p2, Vector2 p3, Color color) {
+	public static void DrawLineTriangle(Vector2 p1, Vector2 p2, Vector2 p3, Color color) {
 		DrawLine(p1, p2, color);
 		DrawLine(p2, p3, color);
 		DrawLine(p3, p1, color);

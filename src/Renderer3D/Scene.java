@@ -1,11 +1,11 @@
 package Renderer3D;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import DwarfEngine.Core.Application;
 import Renderer3D.Light.LightType;
 import Renderer3D.Pipeline.RenderFlag;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The base class for defining a scene in the 3D rendering engine. Subclasses of
@@ -46,7 +46,7 @@ public abstract class Scene {
 
 		for (Light l : lights) {
 			if (l == null) {
-				lights.remove(l);
+				lights.remove(null);
 				continue;
 			}
 			if (l.type == LightType.Ambient)
@@ -56,7 +56,7 @@ public abstract class Scene {
 
 		for (Prop obj : objects) {
 			Shader shader = obj.getShader();
-			shader.lights = lights;
+			shader.SetLights(lights);
 			pipeline.DrawMesh(obj);
 		}
 

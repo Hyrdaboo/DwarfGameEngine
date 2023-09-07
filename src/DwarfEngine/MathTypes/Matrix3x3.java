@@ -12,11 +12,9 @@ import Renderer3D.TriangleRasterizer;
  * I don't know it's here do whatever you please with this.
  */
 public final class Matrix3x3 {
-	private float[] matrix;
+	private final float[] matrix = new float[9];
 
-	public Matrix3x3() {
-		matrix = new float[9];
-	}
+	public Matrix3x3() {}
 
 	private static int i2D(int x, int y) {
 		return x + y * 3;

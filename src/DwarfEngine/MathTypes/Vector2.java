@@ -1,11 +1,19 @@
 package DwarfEngine.MathTypes;
 
+import DwarfEngine.Pool;
+
 import java.util.Objects;
 
 /**
  * Represents a two-dimensional vector.
  */
 public final class Vector2 {
+
+	public static final Pool<Vector2> POOL = new Pool<>(Vector2::new);
+
+	public Vector2() {
+	}
+
 	public float x = 0;
 	public float y = 0;
 	/**
@@ -58,7 +66,6 @@ public final class Vector2 {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "(" + x + ", " + y + ")";
 	}
 
@@ -108,7 +115,13 @@ public final class Vector2 {
 	}
 
 	public static Vector2 mulVecFloat(Vector2 vec, float num) {
-		return new Vector2(vec.x * num, vec.y * num);
+		return mulVecFloat(vec, num, new Vector2());
+	}
+
+	public static Vector2 mulVecFloat(Vector2 vec, float num, Vector2 dst) {
+		dst.x = vec.x * num;
+		dst.y = vec.y * num;
+		return dst;
 	}
 
 	public static Vector2 divide2Vecs(Vector2 a, Vector2 b) {
@@ -186,9 +199,12 @@ public final class Vector2 {
 	 * @return The interpolated vector.
 	 */
 	public static Vector2 Lerp(Vector2 a, Vector2 b, float t) {
-		Vector2 v = Vector2.zero();
-		v.x = Mathf.lerp(a.x, b.x, t);
-		v.y = Mathf.lerp(a.y, b.y, t);
+		return Lerp(a, b, t, new Vector2());
+	}
+
+	public static Vector2 Lerp(Vector2 a, Vector2 b, float t, Vector2 v) {
+		v.x = a.x + (b.x - a.x) * t;
+		v.y = a.y + (b.y - a.y) * t;
 		return v;
 	}
 

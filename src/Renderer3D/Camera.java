@@ -62,7 +62,7 @@ public class Camera {
 	 * Retrieves the view matrix of the camera.
 	 *
 	 * @return The view matrix representing the camera's orientation and position in
-	 *         the scene.
+	 * the scene.
 	 */
 	public Matrix4x4 getViewMatrix() {
 		transform.getMatrixTRS();
@@ -84,7 +84,9 @@ public class Camera {
 	 * @return The point's coordinates in screen space.
 	 */
 	public Vector3 worldToScreenPoint(Vector3 point) {
-		return viewportToScreenPoint(worldToViewportPoint(point));
+		Vector3 dst = new Vector3();
+		viewportToScreenPoint(worldToViewportPoint(point), dst);
+		return dst;
 	}
 
 	/**
@@ -110,14 +112,16 @@ public class Camera {
 	 * @param point The point in viewport coordinates to transform.
 	 * @return The point's coordinates in screen space.
 	 */
-	public Vector3 viewportToScreenPoint(Vector3 point) {
-		if (frameSize == null)
-			return Vector3.zero();
-		float x = (point.x + 1) / 2.0f * frameSize.x;
-		float y = (-point.y + 1) / 2.0f * frameSize.y;
-
-		Vector3 v = new Vector3(x, y, point.z);
-		v.w = point.w;
-		return v;
+	public void viewportToScreenPoint(Vector3 point, Vector3 dst) {
+		if (frameSize == null) {
+			dst.x = dst.y = 0;
+		} else {
+			float x = (point.x + 1) / 2.0f * frameSize.x;
+			float y = (-point.y + 1) / 2.0f * frameSize.y;
+			dst.x = x;
+			dst.y = y;
+			dst.z = point.z;
+			dst.w = point.w;
+		}
 	}
 }

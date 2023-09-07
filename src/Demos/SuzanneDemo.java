@@ -1,18 +1,14 @@
 package Demos;
 
-import java.io.File;
-
-import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.Camera;
-import Renderer3D.Light;
-import Renderer3D.Light.LightType;
-import Renderer3D.ObjLoader;
-import Renderer3D.Prop;
-import Renderer3D.Scene;
+import DwarfEngine.Texture;
 import Renderer3D.BuiltInShaders.Phong;
 import Renderer3D.BuiltInShaders.Unlit;
+import Renderer3D.*;
+import Renderer3D.Light.LightType;
+
+import java.io.File;
 
 // Loading a simple 3D scene with a model
 public class SuzanneDemo extends Scene {

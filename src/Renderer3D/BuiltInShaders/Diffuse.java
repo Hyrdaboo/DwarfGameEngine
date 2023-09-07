@@ -1,6 +1,5 @@
 package Renderer3D.BuiltInShaders;
 
-import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
 import Renderer3D.Light;
 import Renderer3D.Light.LightType;
@@ -12,7 +11,7 @@ import Renderer3D.Vertex;
  */
 public class Diffuse extends Shader {
 
-	private Shader baseColor;
+	private final Shader baseColor;
 
 	/**
 	 * Uses another unlit shader and applies diffuse lighting on it
@@ -24,48 +23,40 @@ public class Diffuse extends Shader {
 		baseColor = shader;
 	}
 
-	private Vector3 white = Vector3.one();
-
 	@Override
-	public Vector3 Fragment(Vertex in) {
-		Vector3 finalCol = Vector3.zero();
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
+		dst.set(ambientLight);
 
-		for (int i = 0; i < lightCount(); i++) {
-			Light light = GetLight(i);
-			if (light == null)
-				continue;
+		Vector3 lightDir = Vector3.POOL.get();
+		Vector3 normal = Vector3.POOL.get();
+		for (Light light : lights) {
 
-			if (light.type == LightType.Ambient) {
-				finalCol.addTo(light.getColor());
-				continue;
-			}
+			in.normal.normalized(normal);
+			rotationMatrix.MultiplyByVector(normal, normal);
 
-			Vector3 normal = in.normal.normalized();
-			normal = objectTransform.getRotationMatrix().MultiplyByVector(normal);
-
-			Vector3 lightDir = null;
-			float attenuation = 1;
-
+			float attenuation = 1f;
 			if (light.type == LightType.Directional) {
-				lightDir = new Vector3(light.transform.forward.normalized());
-				lightDir.multiplyBy(-1);
+				light.transform.forward.normalized(-1f, lightDir);
 			} else {
-				Vector3 difference = Vector3.subtract2Vecs(light.transform.position, in.worldPos);
-				lightDir = difference.normalized();
-				float lightDist = difference.magnitude();
-				attenuation = Mathf.clamp01(lightDist / light.radius);
-				attenuation = 1 - attenuation;
+				Vector3.subtract2Vecs(light.transform.position, in.worldPos, lightDir);
+				float lightDist = lightDir.magnitude();
+				lightDir.multiplyBy(1f / lightDist);
+				attenuation = 1f - Math.min(lightDist / light.radius, 1f);
 			}
 
 			float diffuse = Vector3.Dot(normal, lightDir);
-			diffuse = Mathf.clamp01(diffuse);
+			diffuse = Math.max(diffuse, 0f);
 			diffuse *= light.intensity * attenuation;
-			finalCol.addTo(Vector3.mulVecFloat(light.getColor(), diffuse));
+			dst.addTo(light.getColor(), diffuse);
 		}
 
-		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
-		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
+		if (baseColor != null) {
+			// normal is being abused here as a temporary variable
+			Vector3 surfaceColor = baseColor.Fragment(in, normal);
+			Vector3.mul2Vecs(dst, surfaceColor, dst);
+		}
+		Vector3.POOL.sub(2);
 
-		return finalCol;
+		return dst;
 	}
 }

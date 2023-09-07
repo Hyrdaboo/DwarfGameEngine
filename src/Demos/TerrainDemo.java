@@ -1,23 +1,16 @@
 package Demos;
 
-import java.awt.Color;
-import java.io.File;
-
-import DwarfEngine.Texture;
 import DwarfEngine.Core.Application;
 import DwarfEngine.MathTypes.Mathf;
 import DwarfEngine.MathTypes.Vector3;
-import Renderer3D.Camera;
-import Renderer3D.Light;
-import Renderer3D.Light.LightType;
-import Renderer3D.Mesh;
-import Renderer3D.ObjLoader;
-import Renderer3D.Prop;
-import Renderer3D.Scene;
-import Renderer3D.Shader;
-import Renderer3D.Vertex;
+import DwarfEngine.Texture;
 import Renderer3D.BuiltInShaders.Diffuse;
 import Renderer3D.BuiltInShaders.Unlit;
+import Renderer3D.*;
+import Renderer3D.Light.LightType;
+
+import java.awt.*;
+import java.io.File;
 
 class Triplanar extends Shader {
 	float scale = 1;
@@ -31,23 +24,25 @@ class Triplanar extends Shader {
 	public Triplanar() {
 		grass = new Texture();
 		grass.Load("DemoResources/Grass.png");
+		grass.samplingMode = Texture.SamplingMode.Bilinear;
 		sand = new Texture();
 		sand.Load("DemoResources/Sand.png");
+		sand.samplingMode = Texture.SamplingMode.Bilinear;
 	}
 
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in,Vector3 dst) {
 		Vector3 worldPos = in.worldPos;
 		float mask = worldPos.y / Math.max(1, maxHeight);
 		mask = Mathf.smoothstep(blendHeight - blend, blendHeight + blend, mask);
 
 		float u = Mathf.abs(worldPos.x) / scale;
 		float v = Mathf.abs(worldPos.z) / scale;
-		Vector3 grassCol = grass.SampleFast(u, v);
+		Vector3 grassCol = grass.SampleFast(u, v, new Vector3());
 		grassCol.multiplyBy(mask);
-		Vector3 sandCol = sand.Sample(u, v);
+		Vector3 sandCol = sand.Sample(u, v, new Vector3());
 		sandCol.multiplyBy(1 - mask);
-		return Vector3.add2Vecs(grassCol, sandCol);
+		return Vector3.add2Vecs(grassCol, sandCol, dst);
 	}
 
 }
@@ -68,15 +63,12 @@ class Fog extends Shader {
 	}
 
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
 		float d = 1.0f / in.position.w;
-		float depth = Mathf.pow(2.71828f, -(d * d * density * density));
-		depth = 1 - depth;
-		Vector3 fogCol = new Vector3(fogColor);
-		fogCol.multiplyBy(depth);
+		float depth = 1f - (float) Math.exp(-(d * d * density * density));
 		passObjectData(base);
-		Vector3 baseCol = base.Fragment(in);
-		return Vector3.Lerp(baseCol, fogCol, depth);
+		Vector3 baseCol = base.Fragment(in, dst);
+		return Vector3.Lerp(baseCol, fogColor, depth, dst);
 	}
 }
 
@@ -114,6 +106,7 @@ public class TerrainDemo extends Scene {
 		heightmap.Load("DemoResources/Heightmap.png");
 		Texture skyTexture = new Texture();
 		skyTexture.Load("DemoResources/skyImage.png");
+		skyTexture.samplingMode = Texture.SamplingMode.Bilinear;
 
 		Unlit skyShader = new Unlit();
 		skyShader.setTexture(skyTexture);
@@ -149,7 +142,7 @@ public class TerrainDemo extends Scene {
 
 		for (int y = 0; y < res; y++) {
 			for (int x = 0; x < res; x++) {
-				Vector3 col = heightmap.SampleFast(x / (float) res, y / (float) res);
+				Vector3 col = heightmap.SampleFast(x / (float) res, y / (float) res, new Vector3());
 				float h = (col.x + col.y + col.z) / 3.0f;
 				h *= maxHeight;
 				vertices[x + y * res] = new Vector3(x, h, y);

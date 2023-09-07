@@ -15,77 +15,56 @@ public final class Vertex implements Cloneable {
 	public Vector3 normal = Vector3.up(); // not normalized
 	public Vector3 worldPos = Vector3.one();
 
+
 	static Vertex Lerp(Vertex a, Vertex b, float t) {
-		Vertex v = new Vertex();
+		return Lerp(a, b, t, new Vertex());
+	}
 
-		v.position = Vector3.Lerp(a.position, b.position, t);
-		v.texcoord = Vector2.Lerp(a.texcoord, b.texcoord, t);
-		v.color = Vector3.Lerp(a.color, b.color, t);
-		v.normal = Vector3.Lerp(a.normal, b.normal, t).normalized();
-		v.worldPos = Vector3.Lerp(a.worldPos, b.worldPos, t);
+	static Vertex Lerp(Vertex a, Vertex b, float t, Vertex v) {
+		Vector3.Lerp(a.position, b.position, t, v.position);
+		Vector2.Lerp(a.texcoord, b.texcoord, t, v.texcoord);
+		if (a.color != null && v.color != null) Vector3.Lerp(a.color, b.color, t, v.color);
+		Vector3.Lerp(a.normal, b.normal, t, v.normal);
+		v.normal.normalized(v.normal);
+		Vector3.Lerp(a.worldPos, b.worldPos, t, v.worldPos);
 		return v;
 	}
 
-	void cloneVertex(Vertex startVertex) {
-		this.position.w = startVertex.position.w;
-		this.texcoord.x = startVertex.texcoord.x;
-		this.texcoord.y = startVertex.texcoord.y;
-		this.color.x = startVertex.color.x;
-		this.color.y = startVertex.color.y;
-		this.color.z = startVertex.color.z;
-		this.normal.x = startVertex.normal.x;
-		this.normal.y = startVertex.normal.y;
-		this.normal.z = startVertex.normal.z;
-		this.worldPos.x = startVertex.worldPos.x;
-		this.worldPos.y = startVertex.worldPos.y;
-		this.worldPos.z = startVertex.worldPos.z;
+	static void delta(Vertex a, Vertex b, float mag, Vertex v) {
+		v.position.w = (b.position.w - a.position.w) * mag;
+		v.texcoord.x = (b.texcoord.x - a.texcoord.x) * mag;
+		v.texcoord.y = (b.texcoord.y - a.texcoord.y) * mag;
+		v.normal.x = (b.normal.x - a.normal.x) * mag;
+		v.normal.y = (b.normal.y - a.normal.y) * mag;
+		v.normal.z = (b.normal.z - a.normal.z) * mag;
+		v.worldPos.x = (b.worldPos.x - a.worldPos.x) * mag;
+		v.worldPos.y = (b.worldPos.y - a.worldPos.y) * mag;
+		v.worldPos.z = (b.worldPos.z - a.worldPos.z) * mag;
+		if (a.color != null) {
+			v.color.x = (b.color.x - a.color.x) * mag;
+			v.color.y = (b.color.y - a.color.y) * mag;
+			v.color.z = (b.color.z - a.color.z) * mag;
+		}
 	}
 
-	static Vertex delta(Vertex a, Vertex b, float mag) {
-		Vertex v = new Vertex();
-
-		v.position.w = (b.position.w - a.position.w) / mag;
-		subVecs(b.texcoord, a.texcoord, v.texcoord);
-		v.texcoord.divideBy(mag);
-		subVecs(b.color, a.color, v.color);
-		v.color.divideBy(mag);
-		subVecs(b.normal, a.normal, v.normal);
-		v.normal.divideBy(mag);
-		subVecs(b.worldPos, a.worldPos, v.worldPos);
-		v.worldPos.divideBy(mag);
-		return v;
+	static void add(Vertex a, Vertex b, float f) {
+		a.texcoord.x += b.texcoord.x * f;
+		a.texcoord.y += b.texcoord.y * f;
+		a.texcoord.z += b.texcoord.z * f;
+		a.normal.x += b.normal.x * f;
+		a.normal.y += b.normal.y * f;
+		a.normal.z += b.normal.z * f;
+		a.worldPos.x += b.worldPos.x * f;
+		a.worldPos.y += b.worldPos.y * f;
+		a.worldPos.z += b.worldPos.z * f;
+		a.position.w += b.position.w * f;
+		if (a.color != null) {
+			a.color.x += b.color.x * f;
+			a.color.y += b.color.y * f;
+			a.color.z += b.color.z * f;
+			a.color.w += b.color.w * f;
+		}
 	}
-
-	static void add(Vertex a, Vertex b, Vertex v) {
-		v.position.w = a.position.w + b.position.w;
-		addVecs(a.texcoord, b.texcoord, v.texcoord);
-		addVecs(a.color, b.color, v.color);
-		addVecs(a.normal, b.normal, v.normal);
-		addVecs(a.worldPos, b.worldPos, v.worldPos);
-	}
-
-	private static void subVecs(Vector3 a, Vector3 b, Vector3 p) {
-		p.x = a.x - b.x;
-		p.y = a.y - b.y;
-		p.z = a.z - b.z;
-	}
-
-	private static void subVecs(Vector2 a, Vector2 b, Vector2 p) {
-		p.x = a.x - b.x;
-		p.y = a.y - b.y;
-	}
-
-	private static void addVecs(Vector3 a, Vector3 b, Vector3 p) {
-		p.x = a.x + b.x;
-		p.y = a.y + b.y;
-		p.z = a.z + b.z;
-	}
-
-	private static void addVecs(Vector2 a, Vector2 b, Vector2 p) {
-		p.x = a.x + b.x;
-		p.y = a.y + b.y;
-	}
-
 	@Override
 	public String toString() {
 		return position.toString();

@@ -1,19 +1,20 @@
 package Renderer3D;
 
-import static DwarfEngine.Core.DisplayRenderer.DrawTriangle;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
 import DwarfEngine.Core.Application;
 import DwarfEngine.MathTypes.Matrix4x4;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
+import DwarfEngine.ThreadPool;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static DwarfEngine.Core.DisplayRenderer.DrawLineTriangle;
 
 /**
  * Represents a pipeline that a mesh goes through to get rendered on the screen.
- *
+ * <p>
  * This class provides a way to render a single Mesh on the screen. By making a
  * call to <code>DrawMesh</code> method you can draw a single mesh on the
  * screen. When a mesh gets rendered it goes through all the stages of pipeline
@@ -32,14 +33,13 @@ public final class Pipeline {
 
 	public RenderFlag renderFlag = RenderFlag.Shaded;
 
-	private Application application;
+	private final Application application;
 	private Camera camera;
-	private Matrix4x4 projectionMatrix;
+	private final Matrix4x4 projectionMatrix;
 
-	private float[] depthBuffer;
-	private Vector2 frameSize;
+	private final Vector2 frameSize;
 
-	private TriangleRasterizer tr;
+	private final TriangleRasterizer tr;
 
 	public Pipeline(Application application) {
 		this.application = application;
@@ -47,7 +47,7 @@ public final class Pipeline {
 		projectionMatrix = new Matrix4x4();
 
 		frameSize = application.getFrameSize();
-		depthBuffer = new float[(int) (frameSize.x * frameSize.y)];
+		float[] depthBuffer = new float[(int) (frameSize.x * frameSize.y)];
 
 		tr = new TriangleRasterizer();
 		tr.bindDepth(depthBuffer);
@@ -75,6 +75,7 @@ public final class Pipeline {
 	 *                     mesh and shader references.
 	 */
 	public void DrawMesh(Prop renderObject) {
+
 		if (renderObject == null) {
 			System.err.println("RenderObject is null");
 			return;
@@ -85,8 +86,8 @@ public final class Pipeline {
 		}
 		camera.frameSize = frameSize;
 
-		Vector2 windowSize = new Vector2(application.getWidth() / application.getPixelScale(),
-				application.getHeight() / application.getPixelScale());
+		Vector2 windowSize = new Vector2((float) application.getWidth() / application.getPixelScale(),
+				(float) application.getHeight() / application.getPixelScale());
 		float aspectRatio = windowSize.y / windowSize.x;
 
 		Matrix4x4.PerspectiveProjection(camera.fov, aspectRatio, camera.near, camera.far, projectionMatrix);
@@ -97,73 +98,73 @@ public final class Pipeline {
 		Matrix4x4 cameraObjectCombined = Matrix4x4.matrixMultiplyMatrix(transformMatrix, viewMatrix);
 
 		renderObject.shader.objectTransform = renderObject.transform;
+		renderObject.shader.rotationMatrix = renderObject.transform.getRotationMatrix();
 		renderObject.shader.cameraTransform = camera.transform;
-		for (Triangle t : renderObject.triangles) {
-			Triangle fullyTransformed = new Triangle();
-			Triangle transformed = new Triangle();
 
-			for (int i = 0; i < 3; i++) {
-				transformed.verts[i].position = transformMatrix.MultiplyByVector(t.verts[i].position);
-				fullyTransformed.verts[i] = t.verts[i].clone();
-				fullyTransformed.verts[i].position = cameraObjectCombined.MultiplyByVector(t.verts[i].position);
-				fullyTransformed.verts[i].worldPos = transformed.verts[i].position;
-			}
+		Plane[] clippingPlanes = new Plane[]{new Plane(new Vector3(0, 0, camera.near), Vector3.forward()),
+				new Plane(new Vector3(0, 0, camera.far), Vector3.back()),};
 
-			Vector3 faceNormal = Mesh.surfaceNormalFromVertices(transformed.verts[0].position,
-					transformed.verts[1].position, transformed.verts[2].position);
-			Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position)
-					.normalized();
+		ThreadPool.executeInParallel(renderObject.triangles.length, new ThreadPool.Task() {
+			@Override
+			public void run(int ti) {
+				Triangle t = renderObject.triangles[ti];
+				Triangle fullyTransformed = new Triangle();
+				Triangle transformed = new Triangle();
 
-			if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f && renderObject.shader.cull)
-				continue;
-
-			Plane[] clippingPlanes = new Plane[] { new Plane(new Vector3(0, 0, camera.near), Vector3.forward()),
-					new Plane(new Vector3(0, 0, camera.far), Vector3.back()), };
-
-			List<Triangle> finalResult = new ArrayList<>();
-			finalResult.add(fullyTransformed);
-
-			for (Plane p : clippingPlanes) {
-				int initialSize = finalResult.size();
-				for (int i = 0; i < initialSize; i++) {
-					Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, finalResult.get(0));
-					finalResult.remove(0);
-
-					for (Triangle clipped : clippedTris) {
-
-						if (clipped == null)
-							continue;
-						finalResult.add(clipped);
-					}
-				}
-			}
-
-			for (Triangle clipped : finalResult) {
 				for (int i = 0; i < 3; i++) {
-					clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
-					clipped.verts[i].position.w = 1.0f / clipped.verts[i].position.w;
-					clipped.verts[i].position.multiplyBy(clipped.verts[i].position.w);
-					clipped.verts[i].texcoord = Vector2.mulVecFloat(clipped.verts[i].texcoord,
-							clipped.verts[i].position.w);
-					clipped.verts[i].worldPos = Vector3.mulVecFloat(clipped.verts[i].worldPos,
-							clipped.verts[i].position.w);
-
-					clipped.verts[i].position = camera.viewportToScreenPoint(clipped.verts[i].position);
+					transformed.verts[i].position = transformMatrix.MultiplyByVector(t.verts[i].position);
+					fullyTransformed.verts[i] = t.verts[i].clone();
+					fullyTransformed.verts[i].position = cameraObjectCombined.MultiplyByVector(t.verts[i].position);
+					fullyTransformed.verts[i].worldPos = transformed.verts[i].position;
 				}
 
-				DrawProjectedTriangle(clipped, renderObject.shader);
+				Vector3 faceNormal = Mesh.surfaceNormalFromVertices(transformed.verts[0].position, transformed.verts[1].position, transformed.verts[2].position);
+				Vector3 dirToCamera = Vector3.subtract2Vecs(camera.transform.position, transformed.verts[0].position);
+
+				if (Vector3.Dot(faceNormal, dirToCamera) < 0.0f && renderObject.shader.cull) return;
+
+				for (Triangle clipped : clipTriangleAgainstPlanes(fullyTransformed, clippingPlanes)) {
+					for (int i = 0; i < 3; i++) {
+						// here it is important, that the values are copied! why ever
+						clipped.verts[i].position = projectionMatrix.MultiplyByVector(clipped.verts[i].position);
+						clipped.verts[i].position.w = 1.0f / clipped.verts[i].position.w;
+						clipped.verts[i].position.multiplyBy(clipped.verts[i].position.w);
+						clipped.verts[i].texcoord = Vector2.mulVecFloat(clipped.verts[i].texcoord, clipped.verts[i].position.w);
+						clipped.verts[i].worldPos = Vector3.mulVecFloat(clipped.verts[i].worldPos, clipped.verts[i].position.w);
+						camera.viewportToScreenPoint(clipped.verts[i].position, clipped.verts[i].position);
+					}
+
+					DrawProjectedTriangle(clipped, renderObject.shader);
+				}
 			}
-		}
+		});
 	}
 
 	private void DrawProjectedTriangle(Triangle projected, Shader shader) {
 		if (renderFlag != RenderFlag.Wireframe) {
-			tr.DrawTriangle(projected.verts, shader);
+			tr.DrawTriangle(projected, shader);
 		}
 		if (renderFlag != RenderFlag.Shaded) {
-			DrawTriangle(new Vector2(projected.verts[0].position), new Vector2(projected.verts[1].position),
+			DrawLineTriangle(new Vector2(projected.verts[0].position), new Vector2(projected.verts[1].position),
 					new Vector2(projected.verts[2].position), Color.gray);
 		}
+	}
+
+	public static List<Triangle> clipTriangleAgainstPlanes(Triangle in, Plane[] clippingPlanes) {
+		List<Triangle> result = new ArrayList<>();
+		result.add(in);
+
+		for (Plane p : clippingPlanes) {
+			int initialSize = result.size();
+			for (int i = 0; i < initialSize; i++) {
+				Triangle[] clippedTris = Plane.triangleClipAgainstPlane(p.point, p.normal, result.remove(0));
+				for (Triangle clipped : clippedTris) {
+					if (clipped != null) result.add(clipped);
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/**

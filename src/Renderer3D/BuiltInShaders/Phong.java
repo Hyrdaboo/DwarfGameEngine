@@ -13,7 +13,7 @@ import Renderer3D.Vertex;
 public class Phong extends Shader {
 	public float shininess = 1;
 	public Vector3 specularColor = Vector3.one();
-	private Shader baseColor;
+	private final Shader baseColor;
 
 	/**
 	 * Uses another unlit shader and applies phong lighting on it
@@ -25,58 +25,61 @@ public class Phong extends Shader {
 		baseColor = shader;
 	}
 
-	private Vector3 white = Vector3.one();
-
 	@Override
-	public Vector3 Fragment(Vertex in) {
+	public Vector3 Fragment(Vertex in, Vector3 dst) {
 
-		Vector3 finalCol = Vector3.zero();
-		Vector3 finalSpecular = Vector3.zero();
-		for (int i = 0; i < lightCount(); i++) {
-			Light light = GetLight(i);
-			if (light == null)
-				continue;
+		Vector3 finalSpecular = Vector3.POOL.get();
 
-			if (light.type == LightType.Ambient) {
-				finalCol.addTo(light.getColor());
-				continue;
-			}
+		dst.set(ambientLight);
+		finalSpecular.x = finalSpecular.y = finalSpecular.z = 0;
 
-			Vector3 normal = in.normal.normalized();
-			normal = objectTransform.getRotationMatrix().MultiplyByVector(normal);
+		Vector3 normal = Vector3.POOL.get();
+		Vector3 cameraDir = Vector3.POOL.get();
+		Vector3 halfVector = Vector3.POOL.get();
+		Vector3 lightDir = Vector3.POOL.get();
 
-			Vector3 lightDir = null;
-			float attenuation = 1;
+		in.normal.normalized(normal);
+		rotationMatrix.MultiplyByVector(normal, normal);
 
-			Vector3 cameraDir = Vector3.subtract2Vecs(cameraTransform.position, in.worldPos).normalized();
+		Vector3.subtract2Vecs(cameraTransform.position, in.worldPos, cameraDir);
+		cameraDir.normalized(cameraDir);
+
+		for (Light light : lights) {
+
+			float attenuation = 1f;
 
 			if (light.type == LightType.Directional) {
-				lightDir = new Vector3(light.transform.forward.normalized());
-				lightDir.multiplyBy(-1);
+				light.transform.forward.normalized(-1f, lightDir);
 			} else {
-				Vector3 difference = Vector3.subtract2Vecs(light.transform.position, in.worldPos);
-				lightDir = difference.normalized();
-				float lightDist = difference.magnitude();
-				attenuation = Mathf.clamp01(lightDist / light.radius);
-				attenuation = 1 - attenuation;
+				Vector3.subtract2Vecs(light.transform.position, in.worldPos, lightDir);
+				float lightDist = lightDir.magnitude();
+				lightDir.normalized(lightDir);
+				attenuation = 1f - Mathf.clamp01(lightDist / light.radius);
 			}
 
-			Vector3 halfVector = Vector3.add2Vecs(lightDir, cameraDir).normalized();
+			Vector3.add2Vecs(lightDir, cameraDir, halfVector);
+			halfVector.normalized(halfVector);
 			float specular = Vector3.Dot(normal, halfVector);
 			specular = Mathf.pow(specular, shininess);
 			specular = Mathf.clamp01(specular);
 			specular *= light.intensity * attenuation;
-			finalSpecular.addTo(Vector3.mul2Vecs(Vector3.mulVecFloat(specularColor, specular), light.getColor()));
+			finalSpecular.addTo(specularColor, light.getColor(), specular);
 
 			float diffuse = Vector3.Dot(normal, lightDir);
 			diffuse = Mathf.clamp01(diffuse);
 			diffuse *= light.intensity * attenuation;
-			finalCol.addTo(Vector3.mulVecFloat(light.getColor(), diffuse));
+			dst.addTo(light.getColor(), diffuse);
 		}
-		Vector3 surfaceColor = baseColor == null ? white : baseColor.Fragment(in);
-		finalCol = Vector3.mul2Vecs(finalCol, surfaceColor);
-		finalCol.addTo(finalSpecular);
 
-		return finalCol;
+		if (baseColor != null) {
+			Vector3 surfaceColor = baseColor.Fragment(in, Vector3.POOL.get());
+			Vector3.mul2Vecs(surfaceColor, dst, dst);
+			Vector3.POOL.sub(1);
+		}
+		dst.addTo(finalSpecular);
+
+		Vector3.POOL.sub(5);
+
+		return dst;
 	}
 }
