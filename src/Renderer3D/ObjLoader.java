@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
@@ -107,54 +109,52 @@ public final class ObjLoader {
 			System.err.println("An unknown error occured while trying to load your obj file: \n" + e.getMessage());
 		}
 
+		Map<Vertex, Integer> vertexMap = new HashMap<>();
 		List<Vector3> vertices = new ArrayList<>();
-		for (int i : vertexIndices) {
-			vertices.add(tempVertices.get(i));
-		}
+		List<Vector2> uvs = new ArrayList<>();
+		List<Vector3> normals = new ArrayList<>();
+		List<Vector3> colors = new ArrayList<>();
+		List<Integer> indices = new ArrayList<>();
+		for (int k = 0; k < vertexIndices.size(); k++) {
+			int vertexIndex = vertexIndices.get(k);
+			Vector3 vertex = tempVertices.get(vertexIndex);
+			Vector3 color = tempColors.size() > 0 ? tempColors.get(vertexIndex) : Vector3.zero();
+			Vector2 uv = tempUvs.size() > 0 ? uv = tempUvs.get(uvIndices.get(k)) : Vector2.zero();
+			Vector3 normal = tempNormals.size() > 0 ? tempNormals.get(normalIndices.get(k)) : Vector3.zero();
+			Vertex v = new Vertex();
+			v.position = vertex;
+			v.color = color;
+			v.texcoord = uv;
+			v.normal = normal;
 
-		List<Vector3> colors = null;
-		if (tempColors.size() > 0) {
-			colors = new ArrayList<>();
-			for (int i : vertexIndices) {
-				colors.add(tempColors.get(i));
+			if (vertexMap.containsKey(v)) {
+				indices.add(vertexMap.get(v));
 			}
-		}
+			else {
+				int newIndex = vertices.size();
+				vertices.add(vertex);
+				colors.add(color);
+				uvs.add(uv);
+				normals.add(normal);
 
-		List<Vector2> uvs = null;
-		if (tempUvs.size() > 0) {
-			uvs = new ArrayList<>();
-			for (int i : uvIndices) {
-				uvs.add(tempUvs.get(i));
+				vertexMap.put(v, newIndex);
+				indices.add(newIndex);
 			}
-		}
-
-		List<Vector3> normals = null;
-		if (tempNormals.size() > 0) {
-			normals = new ArrayList<>();
-			for (int i : normalIndices) {
-				normals.add(tempNormals.get(i).normalized());
-			}
-		}
-
-		int indexCount = vertexIndices.size();
-		vertexIndices.clear();
-		for (int i = 0; i < indexCount; i++) {
-			vertexIndices.add(i);
 		}
 
 		Mesh mesh = new Mesh();
 		mesh.setVertices(vertices.toArray(new Vector3[vertices.size()]));
+		mesh.setTriangles(indices.stream().mapToInt(Integer::intValue).toArray());
 		if (colors != null) {
 			mesh.setColors(colors.toArray(new Vector3[colors.size()]));
 		}
-		if (uvs != null) {
+		if (uvs != null && uvs.size() > 0) {
 			mesh.setUV(uvs.toArray(new Vector2[uvs.size()]));
 		}
-		if (normals != null) {
+		if (normals != null && normals.size() > 0) {
 			mesh.setNormals(normals.toArray(new Vector3[normals.size()]));
 		}
-		mesh.setTriangles(vertexIndices.stream().mapToInt(Integer::intValue).toArray());
-		System.out.println("Loaded mesh with " + indexCount / 3 + " triangles");
+		System.out.printf("Loaded mesh with %d triangles and %d vertices\n", indices.size() / 3, vertices.size());
 		return mesh;
 	}
 }

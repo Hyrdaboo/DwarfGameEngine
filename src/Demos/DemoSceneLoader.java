@@ -70,6 +70,6 @@ public class DemoSceneLoader extends Application {
 	public static void main(String[] args) {
 		Application app = new DemoSceneLoader();
 		int scale = 1;
-		app.Initialize(1920 / scale, 1080 / scale, scale);
+		app.Initialize(1280 / scale, 720 / scale, scale);
 	}
 }

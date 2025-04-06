@@ -3,6 +3,8 @@ package Renderer3D;
 import DwarfEngine.MathTypes.Vector2;
 import DwarfEngine.MathTypes.Vector3;
 
+import java.util.Objects;
+
 /**
  * The Vertex class represents a vertex of a model with all of its various
  * attributes such as position, texture coordinates, color, normal, and world
@@ -65,6 +67,20 @@ public final class Vertex implements Cloneable {
 			a.color.w += b.color.w * f;
 		}
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Vertex vertex = (Vertex) o;
+		return Objects.equals(position, vertex.position) && Objects.equals(texcoord, vertex.texcoord) && Objects.equals(color, vertex.color) && Objects.equals(normal, vertex.normal) && Objects.equals(worldPos, vertex.worldPos);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(position, texcoord, color, normal, worldPos);
+	}
+
 	@Override
 	public String toString() {
 		return position.toString();
